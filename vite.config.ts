@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-
+import path from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
@@ -8,6 +8,10 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import VueRouter from 'unplugin-vue-router/vite'
 import UnoCSS from 'unocss/vite'
+import process from 'node:process'
+import { VueRouterAutoImports } from 'unplugin-vue-router'
+
+const root = process.cwd()
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -25,14 +29,7 @@ export default defineConfig({
     UnoCSS(),
     AutoImport({
       // Auto import Vue composables and functions
-      imports: [
-        'vue',
-        'pinia',
-        // 不要导入 vue-router，因为我们使用 unplugin-vue-router
-        // 'vue-router',
-        // Import VueUse
-        '@vueuse/core',
-      ],
+      imports: ['vue', 'pinia', VueRouterAutoImports, '@vueuse/core'],
       dirs: ['src/store/modules'],
       resolvers: [ElementPlusResolver()],
       dts: 'src/types/auto-imports.d.ts',
@@ -42,9 +39,11 @@ export default defineConfig({
       dts: 'src/types/components.d.ts',
     }),
   ],
+  envDir: path.resolve(root, 'env'),
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@': `${root}/src`,
+      '@common': `${root}/common`,
     },
   },
 })

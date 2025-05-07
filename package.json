@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^13.1.0",
+    "alova": "^3.2.10",
     "crypto-js": "4.1",
     "element-plus": "^2.9.9",
     "pinia": "^3.0.1",

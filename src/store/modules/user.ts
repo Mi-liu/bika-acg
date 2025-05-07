@@ -1,10 +1,16 @@
 import { store } from '@/store'
 
-const useUserStore = defineStore('user', () => {
-  const token = ref('')
+const useUserStore = defineStore(
+  'user',
+  () => {
+    const token = ref('')
 
-  return { token }
-})
+    return { token }
+  },
+  {
+    persist: true,
+  },
+)
 
 /** 用户信息 store */
 export function useUserStoreHook() {

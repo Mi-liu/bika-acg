@@ -3,7 +3,7 @@
   "include": [
     "src/**/*",
     "src/**/*.vue",
-    "src/types/**/*.d.ts"
+    "typings/**/*.d.ts"
   ],
   "exclude": [
     "src/**/__tests__/*"
@@ -14,6 +14,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@common/*": [
+        "./common/*"
       ]
     }
   }

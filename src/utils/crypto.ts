@@ -3,6 +3,7 @@
  * 使用 crypto-js 实现加密和解密功能
  */
 import CryptoJS from 'crypto-js'
+import type { MethodType } from 'alova'
 
 /** 密钥 */
 export const DEFAULT_KEY = "Please don't hack the api, thanks"
@@ -61,7 +62,7 @@ function getAppleKillFlag() {
  * @param { string } ts getTimeOnece的返回值
  * @param { string } method 请求方式
  * */
-export function getsignature(url: string, ts: string, method: 'POST' | 'GET') {
+export function getsignature(url: string, ts: string, method: MethodType) {
   let raw = url + ts + getNonce() + method + appleKillFlag
   raw = raw.toLowerCase()
   return CryptoJS.HmacSHA256(raw, appleVerSion).toString(CryptoJS.enc.Hex)
@@ -70,7 +71,7 @@ export function getsignature(url: string, ts: string, method: 'POST' | 'GET') {
 /**
  * 生成请求头对象
  * */
-export const createHeader = (pathname: string, method: 'POST' | 'GET') => {
+export const createHeader = (pathname: string, method: MethodType) => {
   const setTime = getTimeOnece()
 
   const header = {
