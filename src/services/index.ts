@@ -3,6 +3,7 @@ import { createAlova } from 'alova'
 
 import adapterFetch from 'alova/fetch'
 import { createHeader } from '@/utils/crypto'
+import { objectToUrlParams } from '@/utils/object'
 
 export interface Response<T = unknown> {
   code: number
@@ -21,7 +22,13 @@ const alova = createAlova({
   requestAdapter: adapterFetch(),
   beforeRequest(method) {
     // 设置请求头
-    Object.assign(method.config.headers, createHeader(method.url, method.type))
+    Object.assign(
+      method.config.headers,
+      createHeader(
+        method.type === 'GET' ? objectToUrlParams(method.config.params, method.url) : method.url,
+        method.type,
+      ),
+    )
   },
   responded: {
     onSuccess: async (response, method) => {

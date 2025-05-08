@@ -1,50 +1,50 @@
 <script setup lang="ts">
-import { getCategories } from '@/api/comic'
+import { getCategories, getComics } from '@/api/comic'
 
-getCategories().then((res) => {
-  console.log(res.categories)
-})
+const { data: categories } = useRequest(getCategories)
 
-console.log(useRequest);
+
+const props = defineProps<{
+  title?: string
+}>()
+
+console.log(props.title);
+
+
+const handleCategoryClick = (title: string) => {
+  console.log(title)
+}
+
+// https://api.manhuabika.com/comics?page=1&s=dd
+// https://api.go2778.com/comics?page=1&s=dd
+// getComics({
+//   page: 1,
+//   s: 'dd',
+// })
 
 </script>
 
 <template>
   <div class="home-container">
-    111
+    <div class="category-list">
+      <div class="category-item" v-for="category in categories" :key="category.title">
+        <el-button class="w-full" plain @click="handleCategoryClick(category.title)">
+          {{ category.title }}
+        </el-button>
+      </div>
+    </div>
   </div>
 </template>
 
-<style scoped>
-.home-container {}
+<style scoped lang="scss">
+.home-container {
+  .category-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 100px);
+    gap: 10px;
 
-h1 {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 20px;
-}
+    .category-item {}
+  }
 
-p {
-  font-size: 1.2rem;
-  color: #666;
-  margin-bottom: 30px;
-  line-height: 1.6;
-}
-
-.login-button {
-  padding: 12px 24px;
-  background: linear-gradient(to right, #667eea, #764ba2);
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: opacity 0.3s, transform 0.3s;
-}
-
-.login-button:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
 }
 </style>
