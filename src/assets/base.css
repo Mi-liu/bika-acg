@@ -7,6 +7,8 @@ body {
   height: 100vh;
 }
 
-div {
+div,
+header,
+main {
   box-sizing: border-box;
 }

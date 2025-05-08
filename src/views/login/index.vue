@@ -3,21 +3,17 @@ import { login } from '@/api/user'
 import CommonButton from '@common/components/CommonButton/index.vue'
 const userStore = useUserStoreHook()
 
+const router = useRouter()
+
 const form = reactive({
   email: '17608921776',
   password: 'a17608921776',
 })
 
-console.log(userStore.token);
-
-
 const handleLogin = () => {
   login(form).then((res) => {
-    console.log(res);
-
     userStore.token = res.token
-    console.log(userStore);
-
+    router.push('/')
   })
 }
 

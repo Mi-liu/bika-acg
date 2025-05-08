@@ -1,11 +1,23 @@
 import { store } from '@/store'
+import { getUserProfile as getUserProfileApi } from '@/api/user'
 
 const useUserStore = defineStore(
   'user',
   () => {
     const token = ref('')
 
-    return { token }
+    const user = ref<Awaited<ReturnType<typeof getUserProfileApi>>['user']>()
+
+    /**
+     * 获取用户信息
+     */
+    function getUserProfile() {
+      getUserProfileApi().then((res) => {
+        user.value = res.user
+      })
+    }
+
+    return { token, getUserProfile, user }
   },
   {
     persist: true,

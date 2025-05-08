@@ -11,9 +11,6 @@ export const DEFAULT_KEY = "Please don't hack the api, thanks"
 const appleKillFlag = getAppleKillFlag()
 const appleVerSion = getAppleVersion()
 
-const userStroe = useUserStoreHook()
-const settingStore = useSettingStoreHook()
-
 /**
  * 获取当前时间戳 / 1000
  * */
@@ -72,8 +69,10 @@ export function getsignature(url: string, ts: string, method: MethodType) {
  * 生成请求头对象
  * */
 export const createHeader = (pathname: string, method: MethodType) => {
-  const setTime = getTimeOnece()
+  const userStroe = useUserStoreHook()
+  const settingStore = useSettingStoreHook()
 
+  const setTime = getTimeOnece()
   const header = {
     'app-channel': 1,
     'app-uuid': 'webUUID',

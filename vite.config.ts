@@ -10,7 +10,7 @@ import VueRouter from 'unplugin-vue-router/vite'
 import UnoCSS from 'unocss/vite'
 import process from 'node:process'
 import { VueRouterAutoImports } from 'unplugin-vue-router'
-
+import { VueHooksPlusResolver } from '@vue-hooks-plus/resolvers'
 const root = process.cwd()
 
 // https://vite.dev/config/
@@ -31,7 +31,7 @@ export default defineConfig({
       // Auto import Vue composables and functions
       imports: ['vue', 'pinia', VueRouterAutoImports, '@vueuse/core'],
       dirs: ['src/store/modules'],
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver(), VueHooksPlusResolver()],
       dts: 'src/types/auto-imports.d.ts',
     }),
     Components({

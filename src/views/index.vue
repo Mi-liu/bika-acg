@@ -1,28 +1,22 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { getCategories } from '@/api/comic'
 
-const router = useRouter()
+getCategories().then((res) => {
+  console.log(res.categories)
+})
 
-const goToLogin = () => {
-  router.push('/login')
-}
+console.log(useRequest);
+
 </script>
 
 <template>
   <div class="home-container">
-    <h1>欢迎来到首页</h1>
-    <p>这是一个示例首页，您可以在这里看到登录后的内容。</p>
-    <button @click="goToLogin" class="login-button">去登录</button>
+    111
   </div>
 </template>
 
 <style scoped>
-.home-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  text-align: center;
-}
+.home-container {}
 
 h1 {
   font-size: 2.5rem;
