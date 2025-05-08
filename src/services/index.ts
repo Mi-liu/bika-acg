@@ -43,6 +43,7 @@ const alova = createAlova({
     /** 使用alova/fetch请求适配器时, 只有在连接超时或连接中断时才会触发 */
     onError: async (error) => {
       ElMessage.error(error.message)
+      return Promise.reject(error)
     },
     // onComplete: async (res) => {},
   },

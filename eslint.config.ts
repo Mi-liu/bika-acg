@@ -28,6 +28,7 @@ export default defineConfigWithVueTs(
       // 将组件名必须是多词的规则降级为警告
       'vue/multi-word-component-names': 'warn', // 或者使用数字 1
       '@typescript-eslint/no-unused-expressions': 'off',
+      'eslint-disable-next-line @typescript-eslint/no-unused-vars': 'warn',
     },
   },
 )

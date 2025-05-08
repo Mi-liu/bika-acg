@@ -8,17 +8,25 @@ const form = reactive({
   password: 'a17608921776',
 })
 
+console.log(userStore.token);
+
+
 const handleLogin = () => {
   login(form).then((res) => {
+    console.log(res);
+
     userStore.token = res.token
+    console.log(userStore);
+
   })
 }
+
+
 </script>
 
 <template>
   <div class="size-full flex-center">
     <div class="w-500px flex-center bg-white rounded-lg p-10">
-      <CommonButton>111</CommonButton>
       <el-form w-full>
         <el-form-item>
           <el-input v-model="form.email" placeholder="用户名" />
@@ -27,7 +35,7 @@ const handleLogin = () => {
           <el-input v-model="form.password" placeholder="密码" />
         </el-form-item>
         <el-form-item>
-          <el-button w-full type="primary" @click="handleLogin">登录</el-button>
+          <CommonButton w-full type="primary" @click="handleLogin">登录</CommonButton>
         </el-form-item>
       </el-form>
     </div>

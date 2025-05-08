@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CommonButtonProps } from './type'
+import { omit } from 'lodash-es'
 
 defineOptions({
   name: 'CommonButton',
@@ -7,15 +8,23 @@ defineOptions({
 
 const props = defineProps<CommonButtonProps>()
 
-const slots = useSlots()
+const buttonProps = omit(props, 'onClick')
 
-console.log(slots);
+const loading = ref(false)
 
-
+// 移除调试日志
+const handleClick = (evt: MouseEvent) => {
+  if (props.onClick) {
+    loading.value = true
+    Promise.resolve(props.onClick(evt)).finally(() => {
+      loading.value = false
+    })
+  }
+}
 </script>
 
 <template>
-  <el-button v-bind="props">
+  <el-button v-bind="buttonProps" :loading="loading" @click="handleClick">
     <template v-for="(_, name) in $slots" :key="name" #[name]="scoped">
       <slot :name="name" v-bind="scoped || {}" />
     </template>
