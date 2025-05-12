@@ -10,6 +10,8 @@ const useSettingStore = defineStore(
       imageQuality: pictureQuality[2].value,
       /** 图片代理链接 */
       imageBaseUrl: imageBaseUrl[0].value,
+      /** 屏蔽的分类 */
+      blockedCategories: [] as string[],
     })
 
     return { comic }
