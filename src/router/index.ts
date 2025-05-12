@@ -1,6 +1,21 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 // 导入由 unplugin-vue-router 生成的路由
 import { routes, handleHotUpdate } from 'vue-router/auto-routes'
+import { cloneDeep } from 'lodash-es'
+
+const cloneRoutes = cloneDeep(routes)
+
+function addPropsToRoutes(routes: RouteRecordRaw[]) {
+  routes.forEach((route) => {
+    route.props = (route) => ({ ...route.query, ...route.params })
+    if (route.children && route.children.length > 0) {
+      addPropsToRoutes(route.children)
+    }
+  })
+}
+
+addPropsToRoutes(cloneRoutes)
 
 /**
  * 使用 unplugin-vue-router 创建路由实例
@@ -16,7 +31,7 @@ import { routes, handleHotUpdate } from 'vue-router/auto-routes'
  */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes,
+  routes: cloneRoutes,
 })
 
 if (import.meta.hot) {

@@ -17,7 +17,12 @@ const handleLogin = () => {
   })
 }
 
-
+definePage({
+  meta: {
+    title: '登录',
+    layout: false,
+  },
+})
 </script>
 
 <template>

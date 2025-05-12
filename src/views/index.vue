@@ -1,26 +1,19 @@
 <script setup lang="ts">
 import { getCategories, getComics } from '@/api/comic'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const { data: categories } = useRequest(getCategories)
 
-
-const props = defineProps<{
-  title?: string
-}>()
-
-console.log(props.title);
-
-
 const handleCategoryClick = (title: string) => {
-  console.log(title)
+  router.push({
+    path: '/list',
+    query: {
+      title: title
+    }
+  })
 }
-
-// https://api.manhuabika.com/comics?page=1&s=dd
-// https://api.go2778.com/comics?page=1&s=dd
-// getComics({
-//   page: 1,
-//   s: 'dd',
-// })
 
 </script>
 

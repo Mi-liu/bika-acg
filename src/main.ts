@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './assets/css/main.css'
 // 导入 UnoCSS 样式
 import 'uno.css'
 
