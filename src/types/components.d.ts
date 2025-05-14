@@ -8,6 +8,9 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ComicList: typeof import('./../components/ComicList/index.vue')['default']
+    ComicsList: typeof import('../components/ComicList/index.vue')['default']
+    ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
@@ -16,14 +19,18 @@ declare module 'vue' {
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
+    ElEmpty: typeof import('element-plus/es')['ElEmpty']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
+    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
     ElPageHeader: typeof import('element-plus/es')['ElPageHeader']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
     ElPopover: typeof import('element-plus/es')['ElPopover']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
+    ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
     ElTag: typeof import('element-plus/es')['ElTag']
     Image: typeof import('./../components/Image/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

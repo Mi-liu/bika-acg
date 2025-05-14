@@ -5,7 +5,7 @@ import layout from '@/layout/index.vue'
 </script>
 
 <template>
-  <el-config-provider :locale="zhCn" size="large">
+  <el-config-provider :locale="zhCn" size="default">
     <layout />
   </el-config-provider>
 </template>

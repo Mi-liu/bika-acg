@@ -2,7 +2,6 @@ import alova from '@/services'
 import { CATEGORIES } from '@/local/key'
 import { storage } from '@/local'
 import { HIDDEN_CATEGORIES } from '@/config/categories'
-import type { InputNumberEmits } from 'element-plus'
 
 interface Categories {
   categories: {
@@ -28,7 +27,8 @@ export async function getCategories() {
   }
 }
 
-interface ComicsParams {
+/** 漫画列表入参格式 */
+export interface ComicsParams {
   /**
    * 页码
    */
@@ -48,9 +48,9 @@ interface ComicsParams {
 }
 
 /**
- * 漫画列表
+ * 漫画列表返回
  */
-interface Comics {
+export interface Comics {
   comics: {
     /** 漫画列表 */
     docs: Comic[]
