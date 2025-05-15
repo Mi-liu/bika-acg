@@ -20,6 +20,9 @@ export const sort = <const>[
   },
 ]
 
+/** 默认排序 */
+export const defaultSort = sort[0].value
+
 /** 图片质量列表  */
 export const pictureQuality = <const>[
   {

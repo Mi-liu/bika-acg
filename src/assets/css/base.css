@@ -12,3 +12,7 @@ header,
 main {
   box-sizing: border-box;
 }
+
+img {
+  -webkit-user-drag: none;
+}
