@@ -1,68 +1,62 @@
 <script setup lang="ts">
-import type { PaginationProps } from './type'
-import { omit } from 'lodash-es'
-import { computed } from 'vue'
+import type { CommonPaginationProps } from './type'
+import { watch, watchEffect } from 'vue'
+import { CommonPaginationConfig } from './config'
 
-import { defaultPager, defaultProps } from './config'
+defineOptions({
+  name: 'CommonPagination',
+})
+const props = withDefaults(defineProps<CommonPaginationProps>(), {
+  /** 总数 */
+  total: 0,
+  /** 带有背景色的分页 */
+  background: true,
+  /** 是否将下拉菜单teleport至 body */
+  teleported: true,
+  /** 组件布局，子组件名用逗号分隔 */
+  layout: 'slot, ->, total, sizes, prev, pager, next, jumper',
+  /** 每页显示个数选择器的选项设置 */
+  pageSizes: () => [10, 20, 30, 40, 50],
+})
 
-const props = withDefaults(defineProps<PaginationProps>(), defaultProps)
-const emits = defineEmits<{
+const emit = defineEmits<{
   change: [{
-    pageNum: number
+    currentPage: number
     pageSize: number
   }]
 }>()
-const Props = computed(() => omit(props, ['pageSize', 'currentPage']))
 
-const pageSize = defineModel<number>('pageSize', {
-  default: defaultPager.pageSize,
+const currentPage = defineModel('currentPage', {
+  type: Number,
+  default: CommonPaginationConfig.defaultCurrentPage,
 })
-const currentPage = defineModel<number>('currentPage', {
-  default: defaultPager.pageNum,
+const pageSize = defineModel('pageSize', {
+  type: Number,
+  default: CommonPaginationConfig.defaultPageSize,
 })
 
-/** 条数改变 */
-function handleSizeChange(nextPageSize: number) {
+watch(() => pageSize.value, () => {
   currentPage.value = 1
-  pageSize.value = nextPageSize
-  emitsChange({
-    pageNum: 1,
-    pageSize: nextPageSize,
-  })
-}
+})
 
-/** 页数改变 */
-function handleCurrentChange(nextCurrentPage: number) {
-  currentPage.value = nextCurrentPage
-  emitsChange({
-    pageNum: nextCurrentPage,
+watchEffect(() => {
+  emit('change', {
+    currentPage: currentPage.value,
     pageSize: pageSize.value,
   })
-}
-
-function emitsChange(event: {
-  pageNum: number
-  pageSize: number
-}) {
-  emits('change', event)
-}
+})
 </script>
 
 <template>
   <el-pagination
-    v-bind="Props"
+    v-bind="props"
     v-model:page-size="pageSize"
     v-model:current-page="currentPage"
-    :total="Number(total)"
-    @size-change="handleSizeChange"
-    @current-change="handleCurrentChange"
   >
     <slot />
   </el-pagination>
 </template>
 
 <style scoped>
-.el-pagination {
-  padding: 10px 0;
-}
+
 </style>
