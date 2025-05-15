@@ -22,7 +22,8 @@ function handleRefreshImage() {
 
 <template>
   <div class="relative aspect-3/4 bg-[--el-fill-color]">
-    <el-image class="size-full" :src="uri" fit="cover" loading="lazy" @load="state = 'load'" @error="state = 'error'">
+    <el-image class="size-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
+      @error="state = 'error'">
       <template #error>
         <div class="size-full flex flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
           @click="handleRefreshImage">
