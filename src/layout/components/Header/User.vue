@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Star, Setting, ChatLineSquare, Link, SwitchButton } from '@element-plus/icons-vue'
+import { Star, Setting, ChatLineSquare, Link, SwitchButton, Timer } from '@element-plus/icons-vue'
 const layoutStore = useLayoutStoreHook()
 
 const userStore = useUserStoreHook()
@@ -20,6 +20,7 @@ const settingStore = useSettingStoreHook()
         <el-dropdown-item :icon="Link">我的关注</el-dropdown-item>
         <el-dropdown-item :icon="Star">我的收藏</el-dropdown-item>
         <el-dropdown-item :icon="ChatLineSquare">我的评论</el-dropdown-item>
+        <el-dropdown-item :icon="Timer">稍后再看</el-dropdown-item>
         <el-dropdown-item :icon="Setting">设置</el-dropdown-item>
         <el-dropdown-item :icon="SwitchButton" divided>退出登录</el-dropdown-item>
       </el-dropdown-menu>
