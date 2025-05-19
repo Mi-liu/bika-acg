@@ -12,11 +12,14 @@ import { Timer } from '@element-plus/icons-vue'
 const props = defineProps<ComicsListProps>()
 
 const settingStore = useSettingStoreHook()
+
+const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
+
 const loading = ref(false)
 
 const data = ref<Comics['comics']>({
   docs: [],
-  total: 0,
+  total: 22,
   page: 1,
   pages: 0,
   limit: DEFAULT_PAGE_SIZE,
@@ -25,9 +28,7 @@ const data = ref<Comics['comics']>({
 const s = ref<SortOptionValue>(defaultSort);
 
 function handelSelectChange(_event: SortOptionValue) {
-  // 当排序选项变化时，重新加载当前页面的数据
-  data.value.page = 1
-  // handelPageChange({ currentPage: data.value.page || 1 });
+  CommonPaginationRef.value?.reset();
 }
 
 async function handelPageChange(event: { currentPage: number }) {
@@ -74,8 +75,8 @@ async function handelCloseTag(tag: string) {
           <el-option v-for="item in sort" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
-      <CommonPagination v-model:current-page="data.page" :total="data.total"
-        layout="slot, ->, total, prev, pager, next, jumper" @change="handelPageChange">
+      <CommonPagination ref="CommonPaginationRef" :total="data.total"
+        layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" @change="handelPageChange">
       </CommonPagination>
     </div>
     <div class="comics-container h-full flex-1">

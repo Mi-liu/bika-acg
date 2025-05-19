@@ -45,6 +45,14 @@ watchEffect(() => {
     pageSize: pageSize.value,
   })
 })
+
+defineExpose({
+  reset() {
+    currentPage.value = CommonPaginationConfig.defaultCurrentPage
+    pageSize.value = CommonPaginationConfig.defaultPageSize
+  }
+})
+
 </script>
 
 <template>
