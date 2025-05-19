@@ -23,6 +23,9 @@ export const sort = <const>[
 /** 默认排序 */
 export const defaultSort = sort[0].value
 
+/** 排序选项的值类型 */
+export type SortOptionValue = (typeof sort)[number]['value']
+
 /** 图片质量列表  */
 export const pictureQuality = <const>[
   {
