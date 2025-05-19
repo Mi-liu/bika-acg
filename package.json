@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.1.0"
+  },
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/check-node-version.js && vite",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -12,7 +15,8 @@
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "check-node": "node scripts/check-node-version.js"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
