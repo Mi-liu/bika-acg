@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ImageProps } from './type'
+import { Hide } from '@element-plus/icons-vue'
 
 const props = defineProps<ImageProps>()
 
@@ -35,6 +36,11 @@ function handleRefreshImage() {
     <div class="absolute inset-0 flex-center" v-if="state === 'loading'">
       <img src="@/assets/image/app/loading.gif" alt="加载中...">
     </div>
+    <!-- <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
+      <el-icon>
+        <Hide />
+      </el-icon>
+    </div> -->
   </div>
 </template>
 
