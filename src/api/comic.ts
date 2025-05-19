@@ -2,8 +2,9 @@ import alova from '@/services'
 import { CATEGORIES } from '@/local/key'
 import { storage } from '@/local'
 import { HIDDEN_CATEGORIES } from '@/config/categories'
+import type { SortOptionValue } from '@/constants/options'
 
-interface Categories {
+export interface Categories {
   categories: {
     title: string
   }[]
@@ -13,8 +14,8 @@ interface Categories {
  * 获取漫画分类
  */
 export async function getCategories() {
-  const res = await storage.getItem<Categories['categories']>(CATEGORIES)
-  if (res) {
+  const res = await storage.getItem(CATEGORIES, [])
+  if (res.length) {
     return res
   } else {
     return alova.Get<Categories>('categories').then((res) => {
@@ -42,9 +43,9 @@ export interface ComicsParams {
    */
   a?: string
   /**
-   * 排序
+   * 排序选项
    */
-  s?: string
+  s?: SortOptionValue
 }
 
 /**
