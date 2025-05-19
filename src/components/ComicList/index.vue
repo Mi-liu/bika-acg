@@ -81,7 +81,7 @@ async function handelCloseTag(tag: string) {
     </div>
     <div class="comics-container h-full flex-1">
       <el-scrollbar height="100%">
-        <div class="comics-grid grid px">
+        <div class="comics-grid grid gap-20px px text-14px">
           <div class="rounded-2 overflow-hidden cursor-pointer" v-for="item in comics" :key="item.id">
             <!-- 封面图 -->
             <div class="relative">
@@ -95,16 +95,15 @@ async function handelCloseTag(tag: string) {
               </el-tooltip>
             </div>
             <!-- 标题 -->
-            <div class="line-clamp-2">
+            <div class="line-clamp-2 text-16px font-500 my-2">
               {{ item.title }}
             </div>
             <!-- 章节信息 -->
-            <div class="text-14px">
+            <div class="text-13px text-[--el-text-color-secondary]">
               <el-text class="mx-1" type="primary" v-if="item.finished">[完结]</el-text> 共 {{ item.epsCount }}P
             </div>
-            天原，クール教信者
             <!-- 作者 -->
-            <div class="text-14px flex">
+            <div class="text-13px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-x-2 ml-2">
                 <el-link type="primary" underline="always" v-for="author in item.author.split(/[、, ，]/)">{{ author
@@ -113,9 +112,9 @@ async function handelCloseTag(tag: string) {
 
             </div>
             <!-- 分类 -->
-            <div>
-              <el-tag class="mr-2" v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
-                @close="handelCloseTag(tag)">
+            <div class="mt-2">
+              <el-tag class="mr-2 text-12px" v-for="tag in item.categories" :key="tag" closable type="primary"
+                effect="plain" @close="handelCloseTag(tag)">
                 {{ tag }}
               </el-tag>
             </div>
@@ -128,7 +127,6 @@ async function handelCloseTag(tag: string) {
 
 <style lang="scss" scoped>
 .comics-grid {
-  gap: 20px;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 </style>
