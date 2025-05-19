@@ -86,7 +86,6 @@ async function handelCloseTag(tag: string) {
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)"></Image>
-
               <el-tooltip class="box-item" effect="dark" content="添加到稍后再看" placement="top-start">
                 <div class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center">
                   <el-icon class="text-[--el-color-white]!">
@@ -103,11 +102,17 @@ async function handelCloseTag(tag: string) {
             <div class="text-14px">
               <el-text class="mx-1" type="primary" v-if="item.finished">[完结]</el-text> 共 {{ item.epsCount }}P
             </div>
+            天原，クール教信者
             <!-- 作者 -->
-            <div class="text-14px space-x-2 flex items-center">
-              <div>作者:</div>
-              <el-link type="primary" underline="always" v-for="author in item.author.split(',')">{{ author }}</el-link>
+            <div class="text-14px flex">
+              作者:
+              <div class="flex-1 flex gap-x-2 ml-2">
+                <el-link type="primary" underline="always" v-for="author in item.author.split(/[、, ，]/)">{{ author
+                  }}</el-link>
+              </div>
+
             </div>
+            <!-- 分类 -->
             <div>
               <el-tag class="mr-2" v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
                 @close="handelCloseTag(tag)">
