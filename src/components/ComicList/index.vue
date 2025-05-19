@@ -50,6 +50,19 @@ const comics = computed(() => data.value.docs.filter(item => {
   return !item.categories.some(tag => settingStore.comic.blockedCategories.includes(tag))
 }))
 
+async function handelCloseTag(tag: string) {
+  await ElMessageBox.alert('是否屏蔽分类：' + tag, '提示', {
+    showCancelButton: true,
+  })
+  if (settingStore.comic.blockedCategories.includes(tag)) {
+    ElMessage.warning('分类已被屏蔽，请勿重复添加')
+  } else {
+    settingStore.comic.blockedCategories.push(tag)
+    ElMessage.success('分类已被屏蔽')
+  }
+}
+
+
 </script>
 
 <template>
@@ -89,9 +102,16 @@ const comics = computed(() => data.value.docs.filter(item => {
             <div class="text-14px">
               <el-text class="mx-1" type="primary" v-if="item.finished">[完结]</el-text> 共 {{ item.epsCount }}P
             </div>
+            <!-- 作者 -->
             <div class="text-14px space-x-2 flex items-center">
               <div>作者:</div>
               <el-link type="primary" underline="always" v-for="author in item.author.split(',')">{{ author }}</el-link>
+            </div>
+            <div>
+              <el-tag class="mr-2" v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
+                @close="handelCloseTag(tag)">
+                {{ tag }}
+              </el-tag>
             </div>
           </div>
         </div>
