@@ -48,15 +48,9 @@ watchEffect(() => {
 </script>
 
 <template>
-  <el-pagination
-    v-bind="props"
-    v-model:page-size="pageSize"
-    v-model:current-page="currentPage"
-  >
+  <el-pagination v-bind="props" v-model:page-size="pageSize" v-model:current-page="currentPage">
     <slot />
   </el-pagination>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
