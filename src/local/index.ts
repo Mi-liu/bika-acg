@@ -35,7 +35,7 @@ export const storage = {
    */
   length: localforage.length,
 
-  keys() {
-    return localforage.keys() as Promise<Array<keyof Local>>
+  keys<T extends keyof Local>() {
+    return localforage.keys() as Promise<Array<T>>
   },
 }

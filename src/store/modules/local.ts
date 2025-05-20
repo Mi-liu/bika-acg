@@ -15,17 +15,12 @@ const useLocalStore = defineStore('local', () => {
 
   /** 初始化本地local数据，将其同步到 useLocalStore.local中  */
   async function initStorage() {
-    // 分别处理每种类型的数据，避免类型问题
-    try {
-      // 加载分类数据
-      const categoriesData = await storage.getItem(CATEGORIES, [])
-      local[CATEGORIES] = categoriesData
+    const keys = await storage.keys()
 
-      // 加载稍后观看列表
-      const watchLaterData = await storage.getItem(WATCH_LATER_LIST, [])
-      local[WATCH_LATER_LIST] = watchLaterData
-    } catch (error) {
-      console.error('初始化本地存储失败:', error)
+    for (const element of keys) {
+      const store = await storage.getItem(element, local[element])
+      // @ts-ignore
+      local[element] = store
     }
   }
   function getLocalItem<K extends keyof Local>(key: K) {
