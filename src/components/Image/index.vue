@@ -34,7 +34,11 @@ function handleRefreshImage() {
       </template>
     </el-image>
     <div class="absolute inset-0 flex-center" v-if="state === 'loading'">
-      <img src="@/assets/image/app/loading.gif" alt="加载中...">
+      <el-skeleton class="size-full" :loading="true" animated>
+        <template #template>
+          <el-skeleton-item class="size-full!" variant="image" />
+        </template>
+      </el-skeleton>
     </div>
     <!-- <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
       <el-icon>
