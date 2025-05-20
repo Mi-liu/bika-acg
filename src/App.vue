@@ -2,6 +2,8 @@
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import layout from '@/layout/index.vue'
 
+const localStore = useLocalStoreHook()
+localStore.initStorage();
 </script>
 
 <template>

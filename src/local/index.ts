@@ -34,12 +34,8 @@ export const storage = {
    * 获取存储长度
    */
   length: localforage.length,
+
+  keys() {
+    return localforage.keys() as Promise<Array<keyof Local>>
+  },
 }
-
-// 测试类型推断
-const a = storage.getItem('CATEGORIES', [])
-
-a.then((res) => {
-  // res 现在应该被正确推断为 Categories['categories'] 类型
-  console.log(res)
-})
