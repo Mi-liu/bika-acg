@@ -24,6 +24,7 @@
     "alova": "^3.2.10",
     "crypto-js": "4.1",
     "element-plus": "^2.9.9",
+    "gsap": "^3.13.0",
     "localforage": "^1.10.0",
     "lodash-es": "^4.17.21",
     "pinia": "^3.0.1",

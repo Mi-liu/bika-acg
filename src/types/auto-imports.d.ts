@@ -204,6 +204,7 @@ declare global {
   const useLastChanged: typeof import('@vueuse/core')['useLastChanged']
   const useLayoutStoreHook: typeof import('../store/modules/layout')['useLayoutStoreHook']
   const useLocalStorage: typeof import('@vueuse/core')['useLocalStorage']
+  const useLocalStoreHook: typeof import('../store/modules/local')['useLocalStoreHook']
   const useMagicKeys: typeof import('@vueuse/core')['useMagicKeys']
   const useManualRefHistory: typeof import('@vueuse/core')['useManualRefHistory']
   const useMediaControls: typeof import('@vueuse/core')['useMediaControls']
