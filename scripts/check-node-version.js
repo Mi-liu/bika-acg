@@ -83,6 +83,6 @@ else if (!isInstalled) {
 }
 
 // 不再在这里启动项目，而是返回成功状态
-console.log('Node.js 版本检查完成')
+console.log('Node.js 版本检查完成，正在启动项目')
 // 返回成功状态码
 process.exit(0)

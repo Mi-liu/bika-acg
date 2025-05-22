@@ -6,11 +6,14 @@ import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
 import { sort, defaultSort } from '@/constants/options'
 import { getImageUrl } from '@/utils/string'
 import type { SortOptionValue } from '@/constants/options'
-import type { Comics } from '@/api/comic'
+import type { Comics, Comic } from '@/api/comic'
 import { Timer } from '@element-plus/icons-vue'
-import gsap from 'gsap'
+import { cardAnimations } from '@/animations/cardAnimation'
+import '@/animations/cardAnimation.scss'
 
 const props = defineProps<ComicsListProps>()
+
+const router = useRouter()
 
 const settingStore = useSettingStoreHook()
 
@@ -35,7 +38,6 @@ function handelSelectChange(_event: SortOptionValue) {
 async function handelPageChange(event: { currentPage: number }) {
   try {
     loading.value = true
-    console.log(1, data.value);
     const result = await props.fetch({
       page: event.currentPage,
       c: encodeURIComponent(props.title),
@@ -67,83 +69,18 @@ async function handelCloseTag(tag: string) {
   }
 }
 
-/**
- * GSAP 动画相关函数
- */
-// 计算网格中的行和列
-const calculateGridPosition = (index: number) => {
-  // 估计每行显示的卡片数量，根据窗口宽度动态计算
-  const itemsPerRow = Math.floor(window.innerWidth / 240) || 4
-  const row = Math.floor(index / itemsPerRow)
-  const col = index % itemsPerRow
-  return { row, col, itemsPerRow }
+// 选择动画效果
+const animation = cardAnimations.leftToRight
+
+function handelComicClick(item: Comic) {
+  const url = router.resolve(`/detail/${item.id}`).href
+  window.open(url, '_blank');
 }
 
-// 元素进入前的初始状态
-const onBeforeEnter = (el: Element) => {
-  gsap.set(el, {
-    opacity: 0,
-    scale: 0.8, // 缩放初始值
-    x: -30, // 从左侧开始
-    y: 15, // 轻微的垂直偏移
-    rotateZ: -2, // 轻微的旋转
-    transformOrigin: 'center bottom'
-  })
+function handelAuthorClick(author: string) {
+  console.log('作者的点击', author);
 }
 
-// 元素进入时的动画 - 根据索引依次从左到右进入，像卡片一样浮现
-const onEnter = (el: Element, done: () => void) => {
-  // 获取元素在父容器中的索引
-  const index = Array.from(el.parentElement?.children || []).indexOf(el)
-
-  // 计算行和列位置
-  const { row, col } = calculateGridPosition(index)
-
-  // 计算延迟，使同一行的卡片从左到右依次浮现
-  const delay = (row * 0.06) + (col * 0.05)
-
-  // 根据索引设置延迟，实现卡片式浮现效果
-  gsap.to(el, {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    y: 0,
-    rotateZ: 0,
-    duration: 0.4,
-    delay: delay,
-    ease: 'back.out(1.1)', // 使用back缓动函数，但减小参数值
-    onComplete: done
-  })
-}
-
-// 元素离开时的动画
-const onLeave = (el: Element, done: () => void) => {
-  // 获取元素在父容器中的索引
-  const index = Array.from(el.parentElement?.children || []).indexOf(el)
-
-  // 计算行和列位置
-  const { col } = calculateGridPosition(index)
-
-  gsap.to(el, {
-    opacity: 0,
-    scale: 0.9,
-    y: 20, // 向下移动
-    rotateZ: 1, // 轻微旋转
-    duration: 0.3,
-    delay: col * 0.03,
-    ease: 'power1.in',
-    onComplete: done
-  })
-}
-
-// 元素移动时的动画
-const onMove = (el: Element, done: () => void) => {
-  gsap.to(el, {
-    duration: 0.3,
-    ease: 'power1.out',
-    onComplete: done
-  })
-}
 
 </script>
 
@@ -162,9 +99,12 @@ const onMove = (el: Element, done: () => void) => {
     </div>
     <div class="h-full flex-1 overflow-hidden">
       <el-scrollbar height="100%">
-        <TransitionGroup tag="div" class="comics-grid grid gap-20px pb" :css="false" @before-enter="onBeforeEnter"
-          @enter="onEnter" @leave="onLeave" @move="onMove">
-          <div class="comic-item rounded-2 overflow-hidden cursor-pointer p-3" v-for="item in comics" :key="item.id">
+        <TransitionGroup tag="div" class="card-animation-grid card-grid-custom"
+          style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;" :css="false"
+          @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
+          @move="animation.onMove">
+          <div class="card-animation-item rounded-2 overflow-hidden cursor-pointer p-3" v-for="item in comics"
+            :key="item.id" @click="handelComicClick(item)">
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)"></Image>
@@ -188,8 +128,9 @@ const onMove = (el: Element, done: () => void) => {
             <div class="text-14px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-link type="primary" underline="always" v-for="author in item.author.split(/[、, ，]/)">{{ author
-                }}</el-link>
+                <el-link type="primary" underline="always" v-for="author in item.author.split(/[、, ，]/)"
+                  @click.stop="handelAuthorClick(author)">{{ author
+                  }}</el-link>
               </div>
 
             </div>
@@ -208,50 +149,5 @@ const onMove = (el: Element, done: () => void) => {
 </template>
 
 <style lang="scss" scoped>
-.comics-grid {
-  grid-template-columns: repeat(auto-fill, 270px);
-  justify-content: center;
-  perspective: 1200px;
-  /* 增强透视效果 */
-  transform-style: preserve-3d;
-  overflow: visible;
-  /* 允许卡片溢出，增强立体感 */
-  /* 添加内边距，为卡片浮现提供空间 */
-  /* 整个网格容器居中 */
-  width: 100%;
-  /* 确保宽度占满容器 */
-}
-
-/* 动画相关样式 */
-.comic-item {
-  will-change: transform, opacity;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* 更有弹性的过渡 */
-  transform-origin: center bottom;
-  /* 从底部中心为变换原点，增强卡片感 */
-  backface-visibility: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  /* 更明显的阴影，增强卡片感 */
-  /* 增强卡片感 */
-  position: relative;
-  /* 确保z-index生效 */
-
-  /* 添加卡片边框效果 */
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
-    pointer-events: none;
-  }
-
-  &:hover {
-    transform: translateY(-8px) scale(1.02);
-    /* 向上浮动，增强卡片感 */
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-    /* 更明显的阴影 */
-    z-index: 2;
-  }
-}
+/* 自定义样式可以在这里添加 */
 </style>

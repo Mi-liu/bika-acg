@@ -8,6 +8,8 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    CardAnimation: typeof import('./../components/CardAnimation/index.vue')['default']
+    CardItem: typeof import('./../components/CardAnimation/CardItem.vue')['default']
     ComicList: typeof import('./../components/ComicList/index.vue')['default']
     ComicsList: typeof import('../components/ComicList/index.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
