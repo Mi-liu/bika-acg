@@ -1,3 +1,3 @@
 export interface ImageProps {
-  src: string
+  src?: string
 }

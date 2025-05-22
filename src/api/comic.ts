@@ -100,9 +100,41 @@ export interface Comic {
 }
 
 /**
+ * 本子详情信息
+ */
+export interface ComicDetail extends Omit<Comic, 'id'> {
+  _id: string
+  /** 简介  */
+  description: string
+  /** 汉化团队  */
+  chineseTeam: string
+  /** 标签  */
+  tags: string[]
+  /** 是否允许下载  */
+  allowDownload: boolean
+  /** 是否允许评论  */
+  allowComment: boolean
+  /** 评论数量  */
+  totalComments: number
+  /** 是否已收藏  */
+  isFavourite: boolean
+  /** 是否已喜欢  */
+  isLiked: boolean
+  /** 更新时间  */
+  updated_at: string
+  /** 上传人员 */
+  _creator: {
+    /** 资源路径 */
+    avatar: Comic['thumb']
+    /** 名字 */
+    name: string
+  }
+}
+
+/**
  * 获取漫画列表
  */
-export async function getComics(params: ComicsParams) {
+export function getComics(params: ComicsParams) {
   return alova
     .Get<Comics>('comics', {
       params: params,
@@ -110,4 +142,22 @@ export async function getComics(params: ComicsParams) {
     .then((res) => {
       return res.comics
     })
+}
+
+/** 获取本子的详情信息 */
+export function getComicDetail(id: string) {
+  return alova
+    .Get<{
+      comic: ComicDetail
+    }>(`comics/${id}`)
+    .then((res) => res.comic)
+}
+
+/** 收藏 or 取消收藏本子 */
+export function favorites(id: string) {
+  return alova
+    .Post<{
+      action: 'favourite' | 'un_favourite'
+    }>(`comics/${id}/favourite`)
+    .then((res) => res.action)
 }

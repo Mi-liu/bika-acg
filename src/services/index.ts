@@ -4,7 +4,8 @@ import { createAlova } from 'alova'
 import adapterFetch from 'alova/fetch'
 import { createHeader } from '@/utils/crypto'
 import { objectToUrlParams } from '@/utils/object'
-
+import { ApiCode } from '@/enum/apiCode'
+import router from '@/router'
 export interface Response<T = unknown> {
   code: number
   data: T
@@ -38,8 +39,11 @@ const alova = createAlova({
         if (response.status >= 400) {
           reject(data)
         }
-        if (data.code !== 200) {
+        if (data.code !== ApiCode.Success) {
           reject(data)
+        }
+        if (data.code === ApiCode.Logout) {
+          router.replace('/login')
         }
         resolve(data.data)
       }).catch((err) => {

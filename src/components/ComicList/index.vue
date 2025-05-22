@@ -81,6 +81,17 @@ function handelAuthorClick(author: string) {
   console.log('作者的点击', author);
 }
 
+function handelTagClick(tag: string) {
+  const url = router.resolve({
+    path: '/list',
+    query: {
+      title: tag
+    }
+  }).href
+  window.open(url, '_blank');
+}
+
+
 
 </script>
 
@@ -103,7 +114,7 @@ function handelAuthorClick(author: string) {
           style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;" :css="false"
           @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
           @move="animation.onMove">
-          <div class="card-animation-item rounded-2 overflow-hidden cursor-pointer p-3" v-for="item in comics"
+          <div class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]" v-for="item in comics"
             :key="item.id" @click="handelComicClick(item)">
             <!-- 封面图 -->
             <div class="relative">
@@ -137,7 +148,7 @@ function handelAuthorClick(author: string) {
             <!-- 分类 -->
             <div class="mt-2 flex flex-wrap gap-2">
               <el-tag v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
-                @close="handelCloseTag(tag)">
+                @close="handelCloseTag(tag)" @click.stop="handelTagClick(tag)">
                 {{ tag }}
               </el-tag>
             </div>

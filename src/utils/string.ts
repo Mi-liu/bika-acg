@@ -25,7 +25,8 @@ export function isExternal(path: string) {
  * getImageUrl('https://example.com/avatar.png') // https://example.com/avatar.png
  * getImageUrl('data:image/png;base64,...') // data:image/png;base64,...
  */
-export function getImageUrl(path: string) {
+export function getImageUrl(path?: string) {
+  if (!path) return undefined
   if (isExternal(path)) {
     return path
   }

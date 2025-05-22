@@ -2,7 +2,9 @@
 import type { ImageProps } from './type'
 import { Hide } from '@element-plus/icons-vue'
 
-const props = defineProps<ImageProps>()
+const props = withDefaults(defineProps<ImageProps>(), {
+  src: '',
+})
 
 const uri = ref('');
 watchEffect(() => {
@@ -24,7 +26,7 @@ function handleRefreshImage() {
 <template>
   <div class="relative aspect-3/4 bg-[--el-fill-color]">
     <el-image class="size-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
-      @error="state = 'error'">
+      @error="state = 'error'" v-if="uri.length">
       <template #error>
         <div class="size-full flex flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
           @click="handleRefreshImage">
