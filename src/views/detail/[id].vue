@@ -50,35 +50,48 @@ function handelFavoritesClick() {
       <div class="h-400px flex">
         <Image :src="getImageUrl(data?.thumb.path)"></Image>
         <div class="flex-1 flex flex-col justify-between ml">
-          <div>
-            <!-- 标题 -->
-            <div class="text-26px">
-              {{ data?.title }}
-            </div>
-            <!-- 章节信息 -->
-            <div class="text-20px mt-1 text-[--el-text-color-secondary]">
-              <el-text class="mx-1 text-20px!" type="primary" v-if="data?.finished">[完结]</el-text> 共 {{ data?.epsCount
-              }}P
-            </div>
-            <!-- 作者 -->
-            <div class="text-20px text-[--el-text-color-secondary] flex">
-              作者:
-              <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-link class="text-20px!" type="primary" underline="always"
-                  v-for="author in data?.author.split(/[、, ，]/)" @click.stop="handelAuthorClick(author)">{{ author
-                  }}</el-link>
+          <div class="flex-1 overflow-hidden flex flex-col">
+            <!-- 标题和基本信息区域 -->
+            <div>
+              <!-- 标题 -->
+              <div class="text-26px">
+                {{ data?.title }}
+              </div>
+              <!-- 章节信息 -->
+              <div class="text-20px mt-1 text-[--el-text-color-secondary]">
+                <el-text class="mx-1 text-20px!" type="primary" v-if="data?.finished">[完结]</el-text> 共 {{ data?.epsCount
+                }}P
+              </div>
+              <!-- 作者 -->
+              <div class="text-20px text-[--el-text-color-secondary] flex">
+                作者:
+                <div class="flex-1 flex gap-2 ml-2 flex-wrap">
+                  <el-link class="text-20px!" type="primary" underline="always"
+                    v-for="author in data?.author.split(/[、,，]\s*/)" @click.stop="handelAuthorClick(author)">{{ author
+                    }}</el-link>
+                </div>
+              </div>
+              <!-- 分类 -->
+              <div class="mt-2 flex flex-wrap gap-2">
+                分类:
+                <el-tag class="cursor-pointer" v-for="tag in data?.categories" :key="tag" type="primary" effect="plain"
+                  @click="handelTagClick(tag)">
+                  {{ tag }}
+                </el-tag>
+              </div>
+              <!-- 标签 -->
+              <div class="flex gap-10px cursor-pointer">
+                <el-tag v-for="item in data?.tags">
+                  {{ item }}
+                </el-tag>
               </div>
             </div>
-            <!-- 分类 -->
-            <div class="mt-2 flex flex-wrap gap-2">
-              <el-tag class="cursor-pointer" v-for="tag in data?.categories" :key="tag" type="primary" effect="plain"
-                @click="handelTagClick(tag)">
-                {{ tag }}
-              </el-tag>
-            </div>
-            <!-- 简介 -->
-            <div class="text-[--el-text-color-secondary]">
-              {{ data?.description }}
+
+            <!-- 滚动区域 - 使用flex-1自动撑开 -->
+            <div class="flex-1 min-h-0 mt-2 flex flex-col">
+              <el-scrollbar class="h-full whitespace-pre text-[--el-text-color-secondary]">
+                {{ data?.description }}
+              </el-scrollbar>
             </div>
           </div>
           <div class="flex">
