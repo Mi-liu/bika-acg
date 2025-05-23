@@ -139,7 +139,7 @@ function handelTagClick(tag: string) {
             <div class="text-14px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-link type="primary" underline="always" v-for="author in item.author.split(/[、, ，]/)"
+                <el-link type="primary" underline="always" v-for="author in item.author.split(/[、,，]\s*/)"
                   @click.stop="handelAuthorClick(author)">{{ author
                   }}</el-link>
               </div>
