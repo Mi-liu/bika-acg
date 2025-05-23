@@ -4,6 +4,18 @@ import { storage } from '@/local'
 import { HIDDEN_CATEGORIES } from '@/config/categories'
 import type { SortOptionValue } from '@/constants/options'
 
+/** 分页返回的数据 */
+export interface PageData {
+  /** 页码 */
+  page: number
+  /** 每页数量 */
+  limit: number
+  /** 总页数 */
+  pages: number
+  /** 总数量 */
+  total: number
+}
+
 export interface Categories {
   categories: {
     title: string
@@ -55,15 +67,7 @@ export interface Comics {
   comics: {
     /** 漫画列表 */
     docs: Comic[]
-    /** 页码 */
-    page: number
-    /** 每页数量 */
-    limit: number
-    /** 总页数 */
-    pages: number
-    /** 总数量 */
-    total: number
-  }
+  } & PageData
 }
 
 /**
@@ -160,4 +164,27 @@ export function favorites(id: string) {
       action: 'favourite' | 'un_favourite'
     }>(`comics/${id}/favourite`)
     .then((res) => res.action)
+}
+
+/** 本子章节列表返回 */
+export interface ComicEps extends PageData {
+  /** 章节列表 */
+  docs: ComicEpsItem[]
+}
+
+/** 本子章节列表返回 */
+export interface ComicEpsItem {
+  /** 章节标题 */
+  title: string
+  /** 章节id */
+  id: string
+}
+
+/** 获取本子章节列表 */
+export function getComicEps(id: string, page: number) {
+  return alova
+    .Get<{
+      eps: ComicEps
+    }>(`comics/${id}/eps`, { params: { page } })
+    .then((res) => res.eps)
 }
