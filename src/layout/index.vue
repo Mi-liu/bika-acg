@@ -8,18 +8,11 @@ const settingStore = useSettingStoreHook()
 
 userStore.getUserProfile()
 
-const route = useRoute()
-
-const currentRoute = computed(() => {
-  return route.matched[route.matched.length - 1]
-})
-
-
 </script>
 
 <template>
   <main class="size-full flex flex-col bg-[--el-bg-color-page]">
-    <template v-if="currentRoute?.meta.layout === undefined || currentRoute?.meta.layout">
+    <template v-if="$route.meta.layout">
       <Header />
       <Main class="mt-2" />
     </template>
