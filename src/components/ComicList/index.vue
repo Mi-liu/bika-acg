@@ -31,11 +31,11 @@ const data = ref<Comics['comics']>({
 
 const s = ref<SortOptionValue>(defaultSort);
 
-function handelSelectChange(_event: SortOptionValue) {
+function handleSelectChange(_event: SortOptionValue) {
   CommonPaginationRef.value?.reset();
 }
 
-async function handelPageChange(event: { currentPage: number }) {
+async function handlePageChange(event: { currentPage: number }) {
   try {
     loading.value = true
     const result = await props.fetch({
@@ -49,7 +49,7 @@ async function handelPageChange(event: { currentPage: number }) {
     loading.value = false
   }
 }
-handelPageChange({
+handlePageChange({
   currentPage: 1,
 })
 
@@ -57,7 +57,7 @@ const comics = computed(() => data.value.docs.filter(item => {
   return !item.categories.some(tag => settingStore.comic.blockedCategories.includes(tag))
 }))
 
-async function handelCloseTag(tag: string) {
+async function handleCloseTag(tag: string) {
   await ElMessageBox.alert('是否屏蔽分类：' + tag, '提示', {
     showCancelButton: true,
   })
@@ -72,16 +72,16 @@ async function handelCloseTag(tag: string) {
 // 选择动画效果
 const animation = cardAnimations.leftToRight
 
-function handelComicClick(item: Comic) {
+function handleComicClick(item: Comic) {
   const url = router.resolve(`/detail/${item.id}`).href
   window.open(url, '_blank');
 }
 
-function handelAuthorClick(author: string) {
+function handleAuthorClick(author: string) {
   console.log('作者的点击', author);
 }
 
-function handelTagClick(tag: string) {
+function handleTagClick(tag: string) {
   const url = router.resolve({
     path: '/list',
     query: {
@@ -100,12 +100,12 @@ function handelTagClick(tag: string) {
     <div class="flex px py">
       <div class="size-full flex justify-between">
         <div class="text-18px">{{ title }}</div>
-        <el-select class="w-110px!" v-model="s" @change="handelSelectChange">
+        <el-select class="w-110px!" v-model="s" @change="handleSelectChange">
           <el-option v-for="item in sort" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </div>
       <CommonPagination ref="CommonPaginationRef" :total="data.total"
-        layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" @change="handelPageChange">
+        layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" @change="handlePageChange">
       </CommonPagination>
     </div>
     <div class="h-full flex-1 overflow-hidden">
@@ -115,7 +115,7 @@ function handelTagClick(tag: string) {
           @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
           @move="animation.onMove">
           <div class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]" v-for="item in comics"
-            :key="item.id" @click="handelComicClick(item)">
+            :key="item.id" @click="handleComicClick(item)">
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)"></Image>
@@ -140,7 +140,7 @@ function handelTagClick(tag: string) {
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
                 <el-link type="primary" underline="always" v-for="author in item.author.split(/[、,，]\s*/)"
-                  @click.stop="handelAuthorClick(author)">{{ author
+                  @click.stop="handleAuthorClick(author)">{{ author
                   }}</el-link>
               </div>
 
@@ -148,7 +148,7 @@ function handelTagClick(tag: string) {
             <!-- 分类 -->
             <div class="mt-2 flex flex-wrap gap-2">
               <el-tag v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
-                @close="handelCloseTag(tag)" @click.stop="handelTagClick(tag)">
+                @close="handleCloseTag(tag)" @click.stop="handleTagClick(tag)">
                 {{ tag }}
               </el-tag>
             </div>

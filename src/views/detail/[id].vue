@@ -26,11 +26,11 @@ const { data: epsData } = loopRequestList((page) => getComicEps(props.id, page),
   },
 })
 
-function handelAuthorClick(author: string) {
+function handleAuthorClick(author: string) {
   console.log('作者的点击', author);
 }
 
-function handelTagClick(tag: string) {
+function handleTagClick(tag: string) {
   const url = router.resolve({
     path: '/list',
     query: {
@@ -40,7 +40,7 @@ function handelTagClick(tag: string) {
   window.open(url, '_blank');
 }
 
-function handelFavoritesClick() {
+function handleFavoritesClick() {
   if (data.value === undefined) return
   return favorites(data.value._id)
     .then(res => {
@@ -73,7 +73,7 @@ function handelFavoritesClick() {
                 作者:
                 <div class="flex-1 flex gap-2 ml-2 flex-wrap">
                   <el-link class="text-20px!" type="primary" underline="always"
-                    v-for="author in data?.author.split(/[、,，]\s*/)" @click.stop="handelAuthorClick(author)">{{ author
+                    v-for="author in data?.author.split(/[、,，]\s*/)" @click.stop="handleAuthorClick(author)">{{ author
                     }}</el-link>
                 </div>
               </div>
@@ -86,7 +86,7 @@ function handelFavoritesClick() {
               <div class="mt-2 flex flex-wrap gap-2">
                 分类:
                 <el-tag class="cursor-pointer" v-for="tag in data?.categories" :key="tag" type="primary" effect="plain"
-                  @click="handelTagClick(tag)">
+                  @click="handleTagClick(tag)">
                   {{ tag }}
                 </el-tag>
               </div>
@@ -107,13 +107,13 @@ function handelFavoritesClick() {
           </div>
           <div class="flex mt">
             <el-button type="primary">开始阅读</el-button>
-            <CommonButton v-if="data?.isFavourite" @click="handelFavoritesClick">
+            <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
               取消收藏
               <el-icon size="18" color="var(--el-color-warning-light-3)">
                 <StarFilled></StarFilled>
               </el-icon>
             </CommonButton>
-            <CommonButton @click="handelFavoritesClick" v-else>
+            <CommonButton @click="handleFavoritesClick" v-else>
               收藏本子
               <el-icon>
                 <Star></Star>
