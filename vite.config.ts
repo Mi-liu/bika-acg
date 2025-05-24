@@ -21,7 +21,12 @@ export default defineConfig({
       // Configuration options for unplugin-vue-router
       // https://github.com/posva/unplugin-vue-router
       routesFolder: 'src/views',
-      dts: 'src/types/typed-router.d.ts',
+      dts: 'typings/typed-router.d.ts',
+      async extendRoute(route) {
+        route.addToMeta({
+          layout: true,
+        })
+      },
     }),
     vue(),
     vueDevTools(),
@@ -32,11 +37,11 @@ export default defineConfig({
       imports: ['vue', 'pinia', VueRouterAutoImports, '@vueuse/core'],
       dirs: ['src/store/modules'],
       resolvers: [ElementPlusResolver(), VueHooksPlusResolver()],
-      dts: 'src/types/auto-imports.d.ts',
+      dts: 'typings/auto-imports.d.ts',
     }),
     Components({
       resolvers: [ElementPlusResolver()],
-      dts: 'src/types/components.d.ts',
+      dts: 'typings/components.d.ts',
     }),
   ],
   envDir: path.resolve(root, 'env'),
