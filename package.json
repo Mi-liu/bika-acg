@@ -19,9 +19,11 @@
     "check-node": "node scripts/check-node-version.js"
   },
   "dependencies": {
+    "@alova/adapter-axios": "^2.0.13",
     "@element-plus/icons-vue": "^2.3.1",
     "@vueuse/core": "^13.1.0",
-    "alova": "^3.2.10",
+    "alova": "^3.2.11",
+    "axios": "^1.9.0",
     "crypto-js": "4.1",
     "dayjs": "^1.11.13",
     "element-plus": "^2.9.9",
