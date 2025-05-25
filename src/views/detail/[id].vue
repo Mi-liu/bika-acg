@@ -52,6 +52,17 @@ function handleFavoritesClick() {
     })
 }
 
+function handleEpsClick(index: number) {
+  const url = router.resolve({
+    path: `/chapter/${index}`,
+    query: {
+      chapter: index,
+      maxChapter: epsData.value.docs.length,
+    }
+  }).href
+  window.open(url, '_blank');
+}
+
 </script>
 
 <template>
@@ -129,7 +140,7 @@ function handleFavoritesClick() {
 
       <!-- 章节信息 -->
       <div class="mt flex flex-wrap gap-10px">
-        <el-button class="ml-0!" v-for="item in epsData.docs.toReversed()">
+        <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" @click="handleEpsClick(index)">
           {{ item.title }}
         </el-button>
       </div>

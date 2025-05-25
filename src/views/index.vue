@@ -7,12 +7,13 @@ const router = useRouter()
 const { data: categories } = useRequest(getCategories)
 
 const handleCategoryClick = (title: string) => {
-  router.push({
+  const url = router.resolve({
     path: '/list',
     query: {
       title: title
     }
-  })
+  }).href
+  window.open(url, '_blank')
 }
 
 </script>
@@ -35,9 +36,6 @@ const handleCategoryClick = (title: string) => {
     display: grid;
     grid-template-columns: repeat(auto-fill, 100px);
     gap: 10px;
-
-    .category-item {}
   }
-
 }
 </style>
