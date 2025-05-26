@@ -7,7 +7,6 @@ import App from './App.vue'
 
 // 导入插件系统
 import plugins from './plugins'
-// 导入 Pinia 存储
 
 const app = createApp(App)
 

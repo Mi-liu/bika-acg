@@ -34,7 +34,11 @@ const router = createRouter({
   routes: cloneRoutes,
 })
 
+// 热更新时保持当前路由状态
 if (import.meta.hot) {
+  // 使用专门的热更新助手
+
+  // 执行原始的热更新处理
   handleHotUpdate(router)
 }
 

@@ -9,6 +9,7 @@ const props = defineProps<{
   maxChapter: string
 }>()
 
+
 const currentChapter = Number(props.chapter)
 
 const comics = ref<ComicOrderPage['pages']['docs']>([])
