@@ -22,11 +22,11 @@ export default defineConfig({
       // https://github.com/posva/unplugin-vue-router
       routesFolder: 'src/views',
       dts: 'typings/typed-router.d.ts',
-      async extendRoute(route) {
-        route.addToMeta({
-          layout: true,
-        })
-      },
+      // async extendRoute(route) {
+      //   route.addToMeta({
+      //     layout: true,
+      //   })
+      // },
     }),
     vue(),
     vueDevTools(),

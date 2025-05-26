@@ -56,7 +56,7 @@ function handleEpsClick(index: number) {
   const url = router.resolve({
     path: `/chapter/${index}`,
     query: {
-      chapter: index,
+      chapter: index + 1,
       maxChapter: epsData.value.docs.length,
     }
   }).href
@@ -117,7 +117,7 @@ function handleEpsClick(index: number) {
             </div>
           </div>
           <div class="flex mt">
-            <el-button type="primary">开始阅读</el-button>
+            <el-button type="primary" @click="handleEpsClick(0)">开始阅读</el-button>
             <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
               取消收藏
               <el-icon size="18" color="var(--el-color-warning-light-3)">

@@ -188,3 +188,36 @@ export function getComicEps(id: string, page: number) {
     }>(`comics/${id}/eps`, { params: { page } })
     .then((res) => res.eps)
 }
+
+/** 本子章节图片列表返回 */
+export interface ComicOrderPage {
+  ep: {
+    /** 章节标题 */
+    title: string
+    /** 章节id */
+    _id: string
+  }
+  /** 图片列表 */
+  pages: {
+    docs: {
+      id: string
+      media: {
+        /** 图片路径 */
+        path: string
+        /** 图片名称 */
+        originalName: string
+        /** 图片服务器 */
+        fileServer: string
+      }
+    }[]
+  } & PageData
+}
+
+/** 获取本子章节图片列表 */
+export function getComicPages(id: string, order: number, page: number) {
+  return alova
+    .Get<{
+      pages: ComicOrderPage
+    }>(`comics/${id}/order/${order}/pages`, { params: { page } })
+    .then((res) => res.pages)
+}
