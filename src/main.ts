@@ -1,6 +1,6 @@
 import './assets/css/main.css'
 // 导入 UnoCSS 样式
-import 'uno.css'
+import 'virtual:uno.css'
 
 import { createApp } from 'vue'
 import App from './App.vue'
