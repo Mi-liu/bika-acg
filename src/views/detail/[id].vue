@@ -54,7 +54,7 @@ function handleFavoritesClick() {
 
 function handleEpsClick(index: number) {
   const url = router.resolve({
-    path: `/chapter/${index}`,
+    path: `/chapter/${props.id}`,
     query: {
       chapter: index + 1,
       maxChapter: epsData.value.docs.length,

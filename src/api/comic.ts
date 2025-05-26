@@ -215,9 +215,5 @@ export interface ComicOrderPage {
 
 /** 获取本子章节图片列表 */
 export function getComicPages(id: string, order: number, page: number) {
-  return alova
-    .Get<{
-      pages: ComicOrderPage
-    }>(`comics/${id}/order/${order}/pages`, { params: { page } })
-    .then((res) => res.pages)
+  return alova.Get<ComicOrderPage>(`comics/${id}/order/${order}/pages`, { params: { page } })
 }
