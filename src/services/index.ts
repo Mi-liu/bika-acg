@@ -43,7 +43,7 @@ const alova = createAlova({
           reject(data)
         }
         if (data.code === ApiCode.Logout) {
-          router.replace('/login')
+          router.replace('/auth/login')
         }
         resolve(data.data)
       }).catch((err) => {
