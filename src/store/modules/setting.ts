@@ -14,6 +14,8 @@ const useSettingStore = defineStore(
       blockedCategories: [] as string[],
       /** 漫画图片宽度 */
       comicImageWidth: 800,
+      /** 去白边 */
+      cropImageWhiteBorders: false,
     })
 
     return { comic }
