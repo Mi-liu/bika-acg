@@ -50,8 +50,8 @@ export const pictureQuality = <const>[
 export const imageBaseUrl = <const>[
   {
     label: '线路一，无需VPN，速度略慢',
-    // value: 'https://s3.manhuabika.com/static/',
-    value: 'https://s3.picacomic.com/static/',
+    value: 'https://s3.manhuabika.com/static/',
+    // value: 'https://s3.picacomic.com/static/',
   },
   {
     label: '线路二，需要VPN，速度较快',
