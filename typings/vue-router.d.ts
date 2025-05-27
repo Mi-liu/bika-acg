@@ -7,7 +7,7 @@ declare module 'vue-router' {
     /** 标题 */
     title?: string
     /** 是否在 layout 中显示 默认为 true */
-    layout: boolean
+    layout?: boolean
   }
 }
 
