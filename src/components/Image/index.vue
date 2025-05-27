@@ -25,7 +25,7 @@ function handleRefreshImage() {
 
 <template>
   <div class="relative aspect-3/4 bg-[--el-fill-color]">
-    <el-image class="size-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
+    <el-image class="w-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
       @error="state = 'error'" v-if="uri.length">
       <template #error>
         <div class="size-full flex flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
@@ -42,11 +42,11 @@ function handleRefreshImage() {
         </template>
       </el-skeleton>
     </div>
-    <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
+    <!-- <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
       <el-icon>
         <Hide />
       </el-icon>
-    </div>
+    </div> -->
   </div>
 </template>
 
