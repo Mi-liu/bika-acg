@@ -1,4 +1,8 @@
-import type { RouteRecordRedirect, RouteMeta } from 'vue-router'
+import type {
+  RouteRecordSingleViewWithChildren,
+  RouteMeta,
+  RouteLocationNormalizedLoaded,
+} from 'vue-router'
 import { upperFirst } from '@/utils/string'
 import { merge } from 'lodash-es'
 
@@ -10,8 +14,8 @@ import { merge } from 'lodash-es'
  */
 export function createRouterModule(
   moduleName: string,
-  config: PartialSomeFields<RouteRecordRedirect, 'path' | 'name'>,
-): RouteRecordRedirect {
+  config: PartialSomeFields<RouteRecordSingleViewWithChildren, 'path' | 'name'>,
+) {
   const defaultMeta: RouteMeta = {
     layout: true,
   }
@@ -20,5 +24,13 @@ export function createRouterModule(
     name: upperFirst(moduleName),
     meta: merge(defaultMeta, config.meta),
     ...config,
+    children: config.children?.map((child) => ({
+      ...child,
+      props: (route: RouteLocationNormalizedLoaded) => ({
+        ...route.params,
+        ...route.query,
+      }),
+      meta: merge(defaultMeta, child.meta),
+    })),
   }
 }
