@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { getComicPages } from '@/api/comic'
-import { Setting } from '@element-plus/icons-vue'
+import { Setting, QuestionFilled } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
+import { pictureQuality } from '@/constants/options'
 import type { ComicOrderPage } from '@/api/comic'
+import { cropImageWhiteBorders } from '@/utils/image'
 
 /**
  * 章节阅读页面
@@ -18,10 +20,9 @@ const props = defineProps<{
   maxChapter: string
 }>()
 
-const route = useRoute()
-const router = useRouter()
-
 const settingStore = useSettingStoreHook()
+
+const maxWidth = window.innerWidth
 
 const currentChapter = Number(props.chapter)
 const maxChapterNum = Number(props.maxChapter)
@@ -36,7 +37,7 @@ const title = computed(() => {
   return titles.value.find(item => item._id === currentTitleId.value)
 })
 
-const drawer = ref(false)
+const drawer = ref(!false)
 
 const comics = reactive<ComicOrderPage['pages']['docs']>([])
 
@@ -57,38 +58,21 @@ async function getChapterPages() {
 }
 
 /**
- * 跳转到指定章节
- */
-function goToChapter(chapterNum: number) {
-  if (chapterNum < 1 || chapterNum > maxChapterNum) {
-    ElMessage.warning('章节号超出范围')
-    return
-  }
-
-  // 使用新的路由结构: /comic/chapter/:id/:chapter/:maxChapter
-  router.push(`/comic/chapter/${props.id}/${chapterNum}/${props.maxChapter}`)
-}
-
-/**
  * 上一章
  */
 function prevChapter() {
-  goToChapter(currentChapter - 1)
+
 }
 
 /**
  * 下一章
  */
 function nextChapter() {
-  goToChapter(currentChapter + 1)
+
 }
 
-// 计算属性
-const canGoPrev = computed(() => currentChapter > 1)
-const canGoNext = computed(() => currentChapter < maxChapterNum)
-
 // 初始化数据
-getChapterPages()
+// getChapterPages()
 </script>
 
 <template>
@@ -97,17 +81,17 @@ getChapterPages()
     <div class="h-50px flex justify-between items-center p-3 bg-[--el-color-black] color-[--el-color-white] border-b">
       <!-- 章节标题 -->
       <div class="flex items-center gap-3">
-        <div class="font-medium">{{ title?.title || `第${props.chapter}章` }}</div>
-        <div class="text-sm opacity-75">{{ currentChapter }}/{{ maxChapterNum }}</div>
+        <div class="font-medium">{{ title?.title }}</div>
+        <div class="text-sm opacity-75">共{{ maxChapterNum }}话</div>
       </div>
 
       <!-- 章节导航按钮 -->
       <div class="flex items-center gap-2">
-        <el-button size="small" type="primary" :disabled="!canGoPrev" @click="prevChapter">
-          ← 上一章
+        <el-button :disabled="currentChapter >= 1" text bg @click="prevChapter">
+          上一章
         </el-button>
-        <el-button size="small" type="primary" :disabled="!canGoNext" @click="nextChapter">
-          下一章 →
+        <el-button :disabled="currentChapter >= maxChapterNum" text bg @click="nextChapter">
+          下一章
         </el-button>
 
         <!-- 设置按钮 -->
@@ -127,81 +111,48 @@ getChapterPages()
       </el-scrollbar>
     </div>
 
-    <!-- 底部导航栏 -->
-    <div class="h-50px flex justify-center items-center bg-gray-100 border-t">
-      <div class="flex items-center gap-4">
-        <el-button type="primary" size="small" :disabled="!canGoPrev" @click="prevChapter">
-          ← 上一章
-        </el-button>
-
-        <span class="text-sm text-gray-600">
-          第 {{ currentChapter }} 章 / 共 {{ maxChapterNum }} 章
-        </span>
-
-        <el-button type="primary" size="small" :disabled="!canGoNext" @click="nextChapter">
-          下一章 →
-        </el-button>
-      </div>
-    </div>
-
     <!-- 设置抽屉 -->
-    <el-drawer v-model="drawer" direction="rtl" size="400px">
-      <template #header>
-        <h4>📚 阅读设置</h4>
-      </template>
-      <el-form label-width="100px">
-        <el-form-item label="漫画宽度">
-          <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="1200" :step="10" show-input />
-          <div class="text-sm text-gray-500 mt-1">
-            当前宽度: {{ settingStore.comic.comicImageWidth }}px
-          </div>
-        </el-form-item>
+    <el-drawer v-model="drawer" direction="rtl" size="400px" :with-header="false">
+      <div class="size-full">
 
-        <el-form-item label="章节信息">
-          <div class="text-sm">
-            <div>漫画ID: {{ props.id }}</div>
-            <div>当前章节: {{ props.chapter }}</div>
-            <div>总章节数: {{ props.maxChapter }}</div>
-            <div>完整路径: {{ route.fullPath }}</div>
-          </div>
-        </el-form-item>
-      </el-form>
+        <el-form label-width="100px" labelPosition="left">
+          <el-form-item label="宽度">
+            <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="maxWidth" :step="10" />
+          </el-form-item>
+          <el-form-item label="画质">
+            <el-select v-model="settingStore.comic.imageQuality" placeholder="请选择画质">
+              <el-option v-for="item in pictureQuality" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="去白边">
+            <template #label="{ label }">
+              <div class="flex items-center gap-1">
+                {{ label }}
+                <el-tooltip content="去除图片四周多余的白色背景，使图片排列更整齐" placement="top">
+                  <el-icon>
+                    <QuestionFilled />
+                  </el-icon>
+                </el-tooltip>
+              </div>
+            </template>
+            <el-switch v-model="settingStore.comic.cropImageWhiteBorders" />
+          </el-form-item>
+        </el-form>
+        111
+      </div>
     </el-drawer>
 
-    <!-- 热更新测试提示 -->
-    <div class="fixed bottom-4 right-4 bg-yellow-100 p-3 rounded shadow text-sm max-w-300px z-50">
-      <div class="font-bold text-yellow-800 mb-1">🔥 热更新测试</div>
-      <div class="text-yellow-700 text-xs">
-        修改此文件并保存，观察URL参数是否保持：<br>
-        <code class="text-xs break-all">/comic/chapter/{{ props.id }}/{{ props.chapter }}/{{ props.maxChapter }}</code>
-      </div>
-      <!-- 🔧 修改这个注释来触发热更新测试: 新的模块化路由配置 -->
-    </div>
   </div>
 </template>
 
-<style scoped>
-/* 章节阅读页面样式 */
-.chapter-reader {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+<style scoped lang="scss">
+:deep(.el-drawer) {
+  background-color: var(--el-color-black);
 }
 
-/* 🎨 修改这里的样式也会触发热更新 */
-.navigation-button {
-  transition: all 0.2s ease;
-}
-
-.navigation-button:hover {
-  transform: translateY(-1px);
-}
-
-/* 漫画图片样式 */
-.comic-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-bottom: 2px;
+.el-form-item {
+  :deep(.el-form-item__label) {
+    color: var(--el-color-white);
+  }
 }
 </style>
