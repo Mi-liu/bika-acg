@@ -13,7 +13,7 @@ const settingStore = useSettingStoreHook()
       <div class="truncate max-w-6em">
         {{ userStore.user?.name }}
       </div>
-      <el-avatar class="ml-2" :size="30" :src="settingStore.comic.imageBaseUrl + userStore.user?.avatar.path" />
+      <el-avatar class="ml-2" :size="30" :src="settingStore.imageBaseUrl + userStore.user?.avatar.path" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>

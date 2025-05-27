@@ -4,8 +4,6 @@ import Main from './components/Main/index.vue'
 import { useRoute } from 'vue-router'
 const userStore = useUserStoreHook()
 
-const settingStore = useSettingStoreHook()
-
 userStore.getUserProfile()
 
 </script>

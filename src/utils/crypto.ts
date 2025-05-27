@@ -81,7 +81,7 @@ export const createHeader = (pathname: string, method: MethodType) => {
     'Content-Type': 'application/json; charset=UTF-8',
     time: setTime,
     nonce: getNonce(),
-    'image-quality': settingStore.comic.imageQuality,
+    'image-quality': settingStore.imageQuality,
     signature: getsignature(pathname, setTime, method),
     authorization: userStroe.token,
   }

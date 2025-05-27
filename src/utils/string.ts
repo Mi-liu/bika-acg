@@ -1,5 +1,3 @@
-const settingStore = useSettingStoreHook()
-
 /** 首字母大写 */
 export function upperFirst(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1)
@@ -25,10 +23,10 @@ export function isExternal(path: string) {
  * getImageUrl('https://example.com/avatar.png') // https://example.com/avatar.png
  * getImageUrl('data:image/png;base64,...') // data:image/png;base64,...
  */
-export function getImageUrl(path?: string) {
-  if (!path) return undefined
+export function getImageUrl(path: string) {
   if (isExternal(path)) {
     return path
   }
+  const settingStore = useSettingStoreHook()
   return settingStore.comic.imageBaseUrl + path
 }
