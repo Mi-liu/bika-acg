@@ -73,7 +73,7 @@ async function handleCloseTag(tag: string) {
 const animation = cardAnimations.leftToRight
 
 function handleComicClick(item: Comic) {
-  const url = router.resolve(`/detail/${item.id}`).href
+  const url = router.resolve(`/comic/detail/${item.id}`).href
   window.open(url, '_blank');
 }
 
@@ -83,7 +83,7 @@ function handleAuthorClick(author: string) {
 
 function handleTagClick(tag: string) {
   const url = router.resolve({
-    path: '/list',
+    path: '/comic/list',
     query: {
       title: tag
     }
