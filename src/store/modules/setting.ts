@@ -12,6 +12,8 @@ const useSettingStore = defineStore(
       imageBaseUrl: imageBaseUrl[0].value,
       /** 屏蔽的分类 */
       blockedCategories: [] as string[],
+      /** 漫画图片宽度 */
+      comicImageWidth: 800,
     })
 
     return { comic }
