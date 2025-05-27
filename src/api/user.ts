@@ -83,4 +83,9 @@ export interface UserProfile {
 export const getUserProfile = () =>
   alova.Get<{
     user: UserProfile
-  }>('users/profile')
+  }>('users/profile', {
+    cacheFor: {
+      mode: 'restore',
+      expire: 60 * 10 * 1000,
+    },
+  })

@@ -43,6 +43,10 @@ export function weatherNow() {
       params: {
         location: 'ip',
       },
+      cacheFor: {
+        mode: 'restore',
+        expire: 60 * 10 * 1000,
+      },
     })
     .then((res) => {
       return res.results[0]
