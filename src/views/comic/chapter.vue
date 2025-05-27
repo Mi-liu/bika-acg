@@ -39,7 +39,11 @@ const title = computed(() => {
 
 const drawer = ref(!false)
 
-const comics = reactive<ComicOrderPage['pages']['docs']>([])
+/** 漫画图片列表 */
+const comics = reactive<{ id: string, path: string }[]>([])
+
+/** 漫画图片列表 裁剪后的图片 */
+const cropComics = reactive<{ id: string, path: string }[]>([])
 
 /**
  * 获取章节页面数据
@@ -49,13 +53,31 @@ async function getChapterPages() {
     const res = await getComicPages(props.id, currentChapter, 1)
     titles.value.push(res.ep)
     currentTitleId.value = res.ep._id
-    // res.pages.docs
-    comics.push(...res.pages.docs)
+    const formatData = res.pages.docs.map(item => ({
+      id: item.id,
+      path: getImageUrl(item.media.path),
+    }))
+    comics.push(...formatData)
+    cropImages(res.pages.docs)
     console.log('📖 章节数据加载完成:', res)
   } catch (error) {
     console.error('📖 章节数据加载失败:', error)
   }
 }
+
+
+function cropImages(images: ComicOrderPage['pages']['docs']) {
+  Promise.all(images.slice(0, 1).map(item => {
+    return cropImageWhiteBorders(getImageUrl(item.media.path)).then(res => ({ id: item.id, path: res }))
+  })).then(res => {
+    console.log(res)
+    // cropComics.push(res)
+  }).catch(err => {
+    console.error('失败了', err)
+  })
+}
+
+
 
 /**
  * 上一章
@@ -72,7 +94,7 @@ function nextChapter() {
 }
 
 // 初始化数据
-// getChapterPages()
+getChapterPages()
 </script>
 
 <template>
@@ -105,8 +127,7 @@ function nextChapter() {
     <div class="flex-1 overflow-hidden">
       <el-scrollbar class="h-full">
         <div class="mx-auto" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
-          <Image :src="getImageUrl(item.media.path)" v-for="(item, index) in comics" :key="item.id || index"
-            class="block w-full" />
+          <Image :src="item.path" v-for="(item, index) in comics" :key="item.id || index" class="block w-full" />
         </div>
       </el-scrollbar>
     </div>
