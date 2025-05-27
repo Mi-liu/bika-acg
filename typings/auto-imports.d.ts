@@ -253,6 +253,7 @@ declare global {
   const useScroll: typeof import('@vueuse/core')['useScroll']
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
   const useSessionStorage: typeof import('@vueuse/core')['useSessionStorage']
+  const useSettingStore: typeof import('../src/store/modules/setting')['useSettingStore']
   const useSettingStoreHook: typeof import('../src/store/modules/setting')['useSettingStoreHook']
   const useShare: typeof import('@vueuse/core')['useShare']
   const useSlots: typeof import('vue')['useSlots']
