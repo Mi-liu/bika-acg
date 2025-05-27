@@ -15,7 +15,7 @@ const useSettingStore = defineStore(
       /** 漫画图片宽度 */
       comicImageWidth: 800,
       /** 去白边 */
-      cropImageWhiteBorders: false,
+      cropImageWhiteBorders: true,
     })
 
     return { comic }
