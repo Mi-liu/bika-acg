@@ -11,20 +11,18 @@ export default createRouterModule(name, {
   children: [
     {
       path: 'list',
-      component: () => import('@/views/list/index.vue'),
+      component: () => import('@/views/comic/list.vue'),
     },
     {
       path: 'detail/:id',
-      component: () => import('@/views/detail/[id].vue'),
-      props: true,
+      component: () => import('@/views/comic/detail.vue'),
       meta: {
         title: '漫画详情',
       },
     },
     {
-      path: 'chapter/:id/:chapter/:maxChapter',
-      component: () => import('@/views/chapter.vue'),
-      props: true,
+      path: 'chapter/:id',
+      component: () => import('@/views/comic/chapter.vue'),
       meta: {
         title: '章节阅读',
         layout: false,

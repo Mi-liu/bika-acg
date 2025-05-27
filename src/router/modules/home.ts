@@ -6,7 +6,7 @@ import type { RouteRecordRaw } from 'vue-router'
 export default {
   path: '/',
   name: 'Home',
-  component: () => import('@/views/index.vue'),
+  component: () => import('@/views/home/index.vue'),
   meta: {
     title: '首页',
     layout: true,

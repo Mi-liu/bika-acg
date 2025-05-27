@@ -11,7 +11,7 @@ export default createRouterModule(name, {
       meta: {
         title: '登录',
       },
-      component: () => import('@/views/login/index.vue'),
+      component: () => import('@/views/auth/login.vue'),
     },
   ],
 })
