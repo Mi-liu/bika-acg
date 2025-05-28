@@ -70,7 +70,7 @@ function handleEpsClick(index: number) {
   <el-scrollbar>
     <div class="max-w-1400px mx-auto">
       <div class="h-400px flex">
-        <Image :src="getImageUrl(data?.thumb.path)"></Image>
+        <Image :src="getImageUrl(data?.thumb.path!)"></Image>
         <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
           <div class="flex-1 overflow-hidden flex flex-col">
             <!-- 标题和基本信息区域 -->
