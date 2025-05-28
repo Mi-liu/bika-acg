@@ -3,12 +3,8 @@ import { getComicPages } from '@/api/comic'
 import { Setting, QuestionFilled } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
 import { pictureQuality } from '@/constants/options'
+import debounce from 'lodash-es/debounce'
 
-/**
- * 章节阅读页面
- * 路由格式: /comic/chapter/:id/:chapter/:maxChapter
- * 例如: /comic/chapter/comic123/1/10
- */
 const props = defineProps<{
   /** 漫画ID */
   id: string
@@ -21,13 +17,13 @@ const props = defineProps<{
 const settingStore = useSettingStoreHook()
 
 const scrollbarRef = useTemplateRef('scrollbarRef')
-const imageContainerRef = useTemplateRef('imageContainerRef')
-const { width, height } = useElementSize(imageContainerRef)
 
 const maxWidth = window.innerWidth
 
 const currentChapter = Number(props.chapter)
 const maxChapterNum = Number(props.maxChapter)
+/** 自动阅读 */
+const autoRead = settingStore.comic.autoRead
 
 const currentTitleId = ref('')
 const titles = ref<{
@@ -44,9 +40,6 @@ const drawer = ref(false)
 /** 漫画图片列表 */
 const comics = reactive<{ id: string, path: string }[]>([])
 
-/** 漫画图片列表 裁剪后的图片 */
-const cropComics = reactive<{ id: string, path: string }[]>([])
-
 /**
  * 获取章节页面数据
  */
@@ -60,25 +53,56 @@ async function getChapterPages() {
       path: getImageUrl(item.media.path),
     }))
     comics.push(...formatData)
+    if (autoRead) {
+      handleAutoRead()
+    }
     console.log('📖 章节数据加载完成:', res)
   } catch (error) {
     console.error('📖 章节数据加载失败:', error)
   }
 }
 
-onMounted(() => {
-  console.log(scrollbarRef.value)
-})
+const handleScroll = debounce((e: { scrollTop: number; scrollLeft: number }) => {
+  const scrollElement = scrollbarRef.value?.wrapRef
+  if (!scrollElement) return
 
-function handleScroll(e: { scrollTop: number; scrollLeft: number }) {
-  // 向上取整
+  const { scrollTop } = e
+  const { scrollHeight, clientHeight } = scrollElement
 
-  // if(Math.ceil((width)) )
-  console.log(e.scrollTop);
-  console.log(scrollbarRef.value?.wrapRef?.scrollHeight);
-  // console.log(Math.ceil(height.value));
+  // 检查是否到达底部（距离底部小于10px时认为到底）
+  const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+
+  // 如果到达底部，触发加载更多
+  if (distanceFromBottom <= 10) {
+    console.log('🎯 已到达底部！')
+    handleInfiniteScroll()
+  }
+}, 200)
 
 
+async function handleAutoRead() {
+  if (!scrollbarRef.value?.wrapRef) return
+  await nextTick()
+  const scrollElement = scrollbarRef.value?.wrapRef
+
+  console.log(scrollElement.scrollHeight);
+  console.log(scrollElement.clientHeight);
+  console.log(scrollElement.scrollTop);
+
+  function handleAutoRead() {
+    requestAnimationFrame(() => {
+      scrollbarRef.value?.wrapRef?.scrollTo({
+        top: scrollElement.scrollTop + settingStore.comic.autoReadSpeed,
+        behavior: 'smooth'
+      })
+      if (scrollElement.scrollTop + settingStore.comic.autoReadSpeed < scrollElement.scrollHeight) {
+        handleAutoRead()
+      }
+    })
+  }
+  handleAutoRead()
+
+  console.log('🚀 触发自动阅读')
 }
 
 
@@ -97,7 +121,10 @@ function nextChapter() {
 }
 
 function handleInfiniteScroll() {
-  console.log('infinite scroll')
+  console.log('🚀 触发无限滚动加载')
+  // 这里可以加载下一章或更多图片
+  // 例如：自动跳转到下一章
+  // nextChapter()
 }
 
 
@@ -113,8 +140,6 @@ getChapterPages()
       <div class="flex items-center gap-3">
         <div class="font-medium">{{ title?.title }}</div>
         <div class="text-sm opacity-75">共{{ maxChapterNum }}话</div>
-        <div class="text-sm opacity-75"> width: {{ width }}px</div>
-        <div class="text-sm opacity-75"> height: {{ height }}px</div>
       </div>
 
       <!-- 章节导航按钮 -->
@@ -136,7 +161,7 @@ getChapterPages()
     <!-- 内容区域 -->
     <div class="flex-1 overflow-hidden">
       <el-scrollbar class="h-full" ref="scrollbarRef" @scroll="handleScroll">
-        <div class="mx-auto" ref="imageContainerRef" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
+        <div class="mx-auto" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
           <Image :src="item.path" aspect="auto" v-for="(item, index) in comics" :key="item.id || index" />
         </div>
       </el-scrollbar>
@@ -155,6 +180,25 @@ getChapterPages()
               <el-option v-for="item in pictureQuality" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
+          <el-form-item label="自动阅读">
+            <template #label="{ label }">
+              {{ label }}
+              <el-tooltip placement="top">
+                <template #content>
+                  自动下滑阅读，解放双手，且当前章节完成后会默认阅读下一章
+                  <br />建议网速较好的情况下使用
+                  <br />无忧无虑的冲吧~少年/女
+                </template>
+                <el-icon class="ml-1 cursor-pointer">
+                  <QuestionFilled />
+                </el-icon>
+              </el-tooltip>
+            </template>
+            <el-switch v-model="settingStore.comic.autoRead" />
+          </el-form-item>
+          <el-form-item label="自动阅读速度">
+            <el-input-number v-model="settingStore.comic.autoReadSpeed" :min="1" :max="100" :step="1" />
+          </el-form-item>
         </el-form>
       </div>
     </el-drawer>
@@ -170,6 +214,8 @@ getChapterPages()
 .el-form-item {
   :deep(.el-form-item__label) {
     color: var(--el-color-white);
+    display: flex;
+    align-items: center;
   }
 }
 </style>
