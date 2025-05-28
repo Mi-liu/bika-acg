@@ -133,7 +133,8 @@ function handleTagClick(tag: string) {
             </div>
             <!-- 章节信息 -->
             <div class="text-13px mt-1 text-[--el-text-color-secondary]">
-              <el-text class="mx-1" type="primary" v-if="item.finished">[完结]</el-text> 共 {{ item.epsCount }}P
+              <el-text class="mx-1" type="primary" v-if="item.finished">[完结]</el-text> {{ item.epsCount }}章 共 {{
+                item.pagesCount }}P
             </div>
             <!-- 作者 -->
             <div class="text-14px text-[--el-text-color-secondary] flex">

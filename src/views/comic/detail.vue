@@ -91,7 +91,9 @@ function handleEpsClick(index: number) {
               </div>
               <!-- 章节信息 -->
               <div class="text-20px mt-1 text-[--el-text-color-secondary]">
-                <el-text class="mx-1 text-20px!" type="primary" v-if="data?.finished">[完结]</el-text> 共 {{ data?.epsCount
+                <el-text class="mx-1 text-20px!" type="primary" v-if="data?.finished">[完结]</el-text> {{ data?.epsCount
+                }}章 共 {{
+                  data?.pagesCount
                 }}P
               </div>
               <!-- 分类 -->
