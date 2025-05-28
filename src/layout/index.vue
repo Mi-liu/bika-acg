@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import Header from './components/Header/index.vue'
 import Main from './components/Main/index.vue'
-import { useRoute } from 'vue-router'
-
 
 </script>
 
