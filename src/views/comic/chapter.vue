@@ -5,6 +5,7 @@ import { getImageUrl } from '@/utils/string'
 import { pictureQuality } from '@/constants/options'
 import debounce from 'lodash-es/debounce'
 import { proxy } from '@/services/config'
+import { omit } from 'lodash-es'
 
 const props = defineProps<{
   /** 漫画ID */
@@ -19,24 +20,22 @@ const settingStore = useSettingStoreHook()
 
 const scrollbarRef = useTemplateRef('scrollbarRef')
 
-const maxWidth = window.innerWidth
+const windowInnerWidth = window.innerWidth
+const windowInnerHeight = window.innerHeight
 
 const currentChapter = Number(props.chapter)
 const maxChapterNum = Number(props.maxChapter)
 
-const currentTitleId = ref('')
-const titles = ref<{
+const eq = reactive<Partial<{
   title: string
   _id: string
-}[]>([])
+}>>({})
 
-const title = computed(() => {
-  return titles.value.find(item => item._id === currentTitleId.value)
-})
-
-const page = reactive({
-  page: 0,
+const pages = reactive({
+  page: 1,
   pages: 1,
+  total: 1,
+  limit: 40,
 })
 
 const drawer = ref(false)
@@ -44,25 +43,26 @@ const drawer = ref(false)
 /** 漫画图片列表 */
 const comics = reactive<{ id: string, path: string }[]>([])
 
+/** 是否加载下一页 */
+const isLoadingNextPage = ref(false)
+
 /**
  * 获取章节页面数据
  */
-async function getChapterPages() {
+async function getChapterPages(page?: number) {
   try {
-    const res = await getComicPages(props.id, currentChapter, page.page + 1)
-    page.page = res.pages.page
-    page.pages = res.pages.pages
-    titles.value.push(res.ep)
-    currentTitleId.value = res.ep._id
+    const res = await getComicPages(props.id, currentChapter, page || pages.page + 1)
+    Object.assign(eq, res.ep)
+    Object.assign(pages, omit(res.pages, 'docs'))
+
     const formatData = res.pages.docs.map(item => ({
       id: item.id,
       path: getImageUrl(item.media.path),
     }))
     comics.push(...formatData)
-
-    console.log('📖 章节数据加载完成:', res)
   } catch (error) {
-    console.error('📖 章节数据加载失败:', error)
+    console.error(error)
+    ElMessage.error('章节数据加载失败')
   }
 }
 
@@ -73,12 +73,21 @@ const handleScroll = debounce((e: { scrollTop: number; scrollLeft: number }) => 
   const { scrollTop } = e
   const { scrollHeight, clientHeight } = scrollElement
 
-  // 检查是否到达底部（距离底部小于10px时认为到底）
   const distanceFromBottom = scrollHeight - scrollTop - clientHeight
-  if (distanceFromBottom <= 10) {
-    console.log('🎯 已到达底部！')
-    handleInfiniteScroll()
+
+  // 请求下一页的数据
+  if (distanceFromBottom <= (windowInnerHeight * 2) && pages.page < pages.pages && !isLoadingNextPage.value) {
+    isLoadingNextPage.value = true
+    getChapterPages()
   }
+
+
+  // 检查是否到达底部（距离底部小于10px时认为到底）
+  // const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+  // if (distanceFromBottom <= 10) {
+  //   console.log('🎯 已到达底部！')
+  //   handleInfiniteScroll()
+  // }
 }, 50)
 
 /**
@@ -95,15 +104,8 @@ function nextChapter() {
 
 }
 
-function handleInfiniteScroll() {
-  console.log('🚀 触发无限滚动加载')
-  // 这里可以加载下一章或更多图片
-  // 例如：自动跳转到下一章
-  // nextChapter()
-}
-
 // 初始化数据
-getChapterPages()
+getChapterPages(1)
 </script>
 
 <template>
@@ -112,7 +114,7 @@ getChapterPages()
     <div class="h-50px flex justify-between items-center p-3 bg-[--el-color-black] color-[--el-color-white] border-b">
       <!-- 章节标题 -->
       <div class="flex items-center gap-3">
-        <div class="font-medium">{{ title?.title }}</div>
+        <div class="font-medium">{{ eq.title }}</div>
         <div class="text-sm opacity-75">共{{ maxChapterNum }}话</div>
       </div>
 
@@ -147,7 +149,7 @@ getChapterPages()
 
         <el-form label-width="100px" labelPosition="left">
           <el-form-item label="宽度">
-            <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="maxWidth" :step="10" />
+            <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth" :step="10" />
           </el-form-item>
           <el-form-item label="画质">
             <el-select v-model="settingStore.comic.imageQuality" placeholder="请选择画质">
