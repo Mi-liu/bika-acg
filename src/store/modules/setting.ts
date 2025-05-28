@@ -14,6 +14,10 @@ const useSettingStore = defineStore(
       blockedCategories: [] as string[],
       /** 漫画图片宽度 */
       comicImageWidth: 800,
+      /** 自动阅读 */
+      autoRead: false,
+      /** 自动阅读速度 */
+      autoReadSpeed: 10,
     })
 
     return { comic }
