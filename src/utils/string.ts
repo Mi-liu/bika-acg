@@ -28,5 +28,5 @@ export function getImageUrl(path: string) {
     return path
   }
   const settingStore = useSettingStoreHook()
-  return settingStore.comic.imageBaseUrl + path
+  return settingStore.comic.proxy.file + path
 }
