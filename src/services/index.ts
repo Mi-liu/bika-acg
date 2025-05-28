@@ -19,9 +19,11 @@ const defaultAlovaMeta: AlovaCustomTypes['meta'] = {
 }
 
 const alova = createAlova({
-  baseURL: import.meta.env.VITE_APP_API_URL,
+  // baseURL: 'https://api.go2778.com/',
   requestAdapter: adapterFetch(),
   beforeRequest(method) {
+    const settingStore = useSettingStoreHook()
+    method.baseURL = settingStore.comic.proxy.api
     // 设置请求头
     Object.assign(
       method.config.headers,

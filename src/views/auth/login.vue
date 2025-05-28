@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { login } from '@/api/user'
 import CommonButton from '@common/components/CommonButton/index.vue'
+
+const props = defineProps<{
+  redirect?: string
+}>()
+
+
 const userStore = useUserStoreHook()
 
 const router = useRouter()
@@ -10,10 +16,18 @@ const form = reactive({
   password: 'a17608921776',
 })
 
+console.log(props.redirect);
+
+
 const handleLogin = () => {
   login(form).then((res) => {
     userStore.token = res.token
-    router.push('/')
+
+    if (props.redirect) {
+      router.push(decodeURIComponent(props.redirect))
+    } else {
+      router.push('/')
+    }
   })
 }
 </script>

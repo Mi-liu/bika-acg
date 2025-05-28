@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Star, Setting, ChatLineSquare, Link, SwitchButton, Timer } from '@element-plus/icons-vue'
+import { getImageUrl } from '@/utils/string'
+
 const layoutStore = useLayoutStoreHook()
 
 const userStore = useUserStoreHook()
-
+userStore.getUserProfile()
 const settingStore = useSettingStoreHook()
 </script>
 
@@ -14,7 +16,7 @@ const settingStore = useSettingStoreHook()
       <div class="truncate max-w-6em">
         {{ userStore.user?.name }}
       </div>
-      <el-avatar class="ml-2" :size="30" :src="settingStore.comic.imageBaseUrl + userStore.user?.avatar.path" />
+      <el-avatar class="ml-2" :size="30" :src="getImageUrl(userStore.user?.avatar.path)" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
