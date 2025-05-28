@@ -4,6 +4,7 @@ import { Setting, QuestionFilled } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
 import { pictureQuality } from '@/constants/options'
 import debounce from 'lodash-es/debounce'
+import { proxy } from '@/services/config'
 
 const props = defineProps<{
   /** 漫画ID */
@@ -22,8 +23,14 @@ const maxWidth = window.innerWidth
 
 const currentChapter = Number(props.chapter)
 const maxChapterNum = Number(props.maxChapter)
-/** 自动阅读 */
-const autoRead = settingStore.comic.autoRead
+
+// 自动阅读状态管理
+const autoReadState = reactive({
+  isActive: false,
+  intervalId: null as number | null,
+  isUserScrolling: false,
+  lastUserScrollTime: 0
+})
 
 const currentTitleId = ref('')
 const titles = ref<{
@@ -35,7 +42,7 @@ const title = computed(() => {
   return titles.value.find(item => item._id === currentTitleId.value)
 })
 
-const drawer = ref(false)
+const drawer = ref(!false)
 
 /** 漫画图片列表 */
 const comics = reactive<{ id: string, path: string }[]>([])
@@ -53,9 +60,14 @@ async function getChapterPages() {
       path: getImageUrl(item.media.path),
     }))
     comics.push(...formatData)
-    if (autoRead) {
-      handleAutoRead()
+
+    // 如果启用了自动阅读，延迟启动
+    if (settingStore.comic.autoRead) {
+      setTimeout(() => {
+        startAutoRead()
+      }, 1000) // 延迟1秒启动，确保图片加载完成
     }
+
     console.log('📖 章节数据加载完成:', res)
   } catch (error) {
     console.error('📖 章节数据加载失败:', error)
@@ -69,40 +81,88 @@ const handleScroll = debounce((e: { scrollTop: number; scrollLeft: number }) => 
   const { scrollTop } = e
   const { scrollHeight, clientHeight } = scrollElement
 
+  // 记录用户手动滚动
+  const now = Date.now()
+  autoReadState.lastUserScrollTime = now
+  autoReadState.isUserScrolling = true
+
+  // 如果正在自动阅读，暂停一段时间
+  if (autoReadState.isActive) {
+    stopAutoRead()
+    setTimeout(() => {
+      if (settingStore.comic.autoRead && now === autoReadState.lastUserScrollTime) {
+        startAutoRead()
+      }
+    }, 2000) // 用户停止滚动2秒后恢复自动阅读
+  }
+
   // 检查是否到达底部（距离底部小于10px时认为到底）
   const distanceFromBottom = scrollHeight - scrollTop - clientHeight
-
-  // 如果到达底部，触发加载更多
   if (distanceFromBottom <= 10) {
     console.log('🎯 已到达底部！')
+    stopAutoRead() // 到达底部时停止自动阅读
     handleInfiniteScroll()
   }
-}, 200)
+
+  // 500ms后重置用户滚动状态
+  setTimeout(() => {
+    if (Date.now() - autoReadState.lastUserScrollTime >= 500) {
+      autoReadState.isUserScrolling = false
+    }
+  }, 500)
+}, 100) // 减少防抖时间，提高响应性
 
 
-async function handleAutoRead() {
-  if (!scrollbarRef.value?.wrapRef) return
-  await nextTick()
-  const scrollElement = scrollbarRef.value?.wrapRef
+/**
+ * 启动自动阅读
+ */
+function startAutoRead() {
+  if (autoReadState.isActive || !scrollbarRef.value?.wrapRef) return
 
-  console.log(scrollElement.scrollHeight);
-  console.log(scrollElement.clientHeight);
-  console.log(scrollElement.scrollTop);
+  autoReadState.isActive = true
+  console.log('🚀 启动自动阅读')
 
-  function handleAutoRead() {
-    requestAnimationFrame(() => {
-      scrollbarRef.value?.wrapRef?.scrollTo({
-        top: scrollElement.scrollTop + settingStore.comic.autoReadSpeed,
-        behavior: 'smooth'
-      })
-      if (scrollElement.scrollTop + settingStore.comic.autoReadSpeed < scrollElement.scrollHeight) {
-        handleAutoRead()
-      }
+  const scroll = () => {
+    if (!autoReadState.isActive || !scrollbarRef.value?.wrapRef) return
+
+    const scrollElement = scrollbarRef.value.wrapRef
+    const { scrollTop, scrollHeight, clientHeight } = scrollElement
+
+    // 检查是否到达底部
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      console.log('📖 自动阅读完成 - 到达底部')
+      stopAutoRead()
+      return
+    }
+
+    // 如果用户正在手动滚动，暂停自动阅读
+    if (autoReadState.isUserScrolling) {
+      return
+    }
+
+    // 平滑滚动
+    scrollElement.scrollTo({
+      top: scrollTop + settingStore.comic.autoReadSpeed,
+      behavior: 'smooth'
     })
   }
-  handleAutoRead()
 
-  console.log('🚀 触发自动阅读')
+  // 使用定时器而不是递归，避免卡顿
+  autoReadState.intervalId = setInterval(scroll, 100) // 每100ms滚动一次
+}
+
+/**
+ * 停止自动阅读
+ */
+function stopAutoRead() {
+  if (!autoReadState.isActive) return
+
+  autoReadState.isActive = false
+  if (autoReadState.intervalId) {
+    clearInterval(autoReadState.intervalId)
+    autoReadState.intervalId = null
+  }
+  console.log('⏹️ 停止自动阅读')
 }
 
 
@@ -127,6 +187,19 @@ function handleInfiniteScroll() {
   // nextChapter()
 }
 
+// 监听自动阅读开关变化
+watch(() => settingStore.comic.autoRead, (newValue) => {
+  if (newValue) {
+    startAutoRead()
+  } else {
+    stopAutoRead()
+  }
+})
+
+// 组件卸载时清理
+onUnmounted(() => {
+  stopAutoRead()
+})
 
 // 初始化数据
 getChapterPages()
@@ -140,6 +213,10 @@ getChapterPages()
       <div class="flex items-center gap-3">
         <div class="font-medium">{{ title?.title }}</div>
         <div class="text-sm opacity-75">共{{ maxChapterNum }}话</div>
+        <div v-if="autoReadState.isActive" class="text-sm text-green-400 flex items-center gap-1">
+          <span class="animate-pulse">🤖</span>
+          自动阅读中
+        </div>
       </div>
 
       <!-- 章节导航按钮 -->
@@ -197,8 +274,15 @@ getChapterPages()
             <el-switch v-model="settingStore.comic.autoRead" />
           </el-form-item>
           <el-form-item label="自动阅读速度">
-            <el-input-number v-model="settingStore.comic.autoReadSpeed" :min="1" :max="100" :step="1" />
+            <el-input-number v-model="settingStore.comic.autoReadSpeed" :min="1" :max="1000" :step="1" />
           </el-form-item>
+
+          <el-form-item label="线路代理">
+            <el-select v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理">
+              <el-option v-for="item in proxy" :key="item.label" :label="item.label" :value="item.value" />
+            </el-select>
+          </el-form-item>
+
         </el-form>
       </div>
     </el-drawer>
