@@ -4,6 +4,7 @@ import { Hide } from '@element-plus/icons-vue'
 
 const props = withDefaults(defineProps<ImageProps>(), {
   src: '',
+  aspect: '3/4',
 })
 
 const uri = ref('');
@@ -16,6 +17,16 @@ watchEffect(() => {
 /** 图片加载状态 */
 const state = ref<'loading' | 'load' | 'error'>('loading')
 
+const aspect = computed(() => {
+  if (state.value === 'load') {
+    return `aspect-${props.aspect}`
+  }
+  else {
+    return 'aspect-3/4'
+  }
+})
+
+
 function handleRefreshImage() {
   state.value = 'loading'
   uri.value = `${uri.value}?t=${Date.now()}`
@@ -24,7 +35,7 @@ function handleRefreshImage() {
 </script>
 
 <template>
-  <div class="relative aspect-3/4 bg-[--el-fill-color]">
+  <div class="relative bg-[--el-fill-color]" :class="[aspect]">
     <el-image class="w-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
       @error="state = 'error'" v-if="uri.length">
       <template #error>

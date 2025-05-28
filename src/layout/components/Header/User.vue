@@ -8,12 +8,13 @@ const settingStore = useSettingStoreHook()
 </script>
 
 <template>
-  <el-dropdown class="h-full ml-auto" placement="bottom-end" trigger="hover" :show-timeout="100" :hide-timeout="100">
+  <el-dropdown class="h-full ml-auto" placement="bottom-end" trigger="hover" :show-timeout="100" :hide-timeout="100"
+    v-if="userStore.user">
     <el-button class="h-full! outline-none!" text>
       <div class="truncate max-w-6em">
         {{ userStore.user?.name }}
       </div>
-      <el-avatar class="ml-2" :size="30" :src="settingStore.imageBaseUrl + userStore.user?.avatar.path" />
+      <el-avatar class="ml-2" :size="30" :src="settingStore.comic.imageBaseUrl + userStore.user?.avatar.path" />
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>

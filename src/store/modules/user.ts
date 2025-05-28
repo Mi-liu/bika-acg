@@ -17,7 +17,13 @@ const useUserStore = defineStore(
       })
     }
 
-    return { token, getUserProfile, user }
+    /** 清空用户信息 */
+    function clearUserProfile() {
+      user.value = undefined
+      token.value = ''
+    }
+
+    return { token, getUserProfile, user, clearUserProfile }
   },
   {
     persist: true,

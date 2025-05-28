@@ -10,6 +10,7 @@ export default createRouterModule(name, {
       path: 'login',
       meta: {
         title: '登录',
+        layout: false,
       },
       component: () => import('@/views/auth/login.vue'),
     },

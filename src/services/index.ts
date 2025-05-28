@@ -43,7 +43,13 @@ const alova = createAlova({
           reject(data)
         }
         if (data.code === ApiCode.Logout) {
-          router.replace('/auth/login')
+          useUserStoreHook().clearUserProfile()
+          router.replace({
+            path: '/auth/login',
+            query: {
+              redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+            },
+          })
         }
         resolve(data.data)
       }).catch((err) => {
