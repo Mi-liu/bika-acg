@@ -18,7 +18,7 @@ const useSettingStore = defineStore(
       /** 自动阅读 */
       autoRead: false,
       /** 自动阅读速度 */
-      autoReadSpeed: 10,
+      autoReadSpeed: 20,
     })
 
     return { comic }
