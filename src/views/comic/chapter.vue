@@ -20,6 +20,10 @@ const props = defineProps<{
 
 const settingStore = useSettingStoreHook()
 
+const scrollbarRef = useTemplateRef('scrollbarRef')
+const imageContainerRef = useTemplateRef('imageContainerRef')
+const { width, height } = useElementSize(imageContainerRef)
+
 const maxWidth = window.innerWidth
 
 const currentChapter = Number(props.chapter)
@@ -35,7 +39,7 @@ const title = computed(() => {
   return titles.value.find(item => item._id === currentTitleId.value)
 })
 
-const drawer = ref(!false)
+const drawer = ref(false)
 
 /** 漫画图片列表 */
 const comics = reactive<{ id: string, path: string }[]>([])
@@ -62,6 +66,21 @@ async function getChapterPages() {
   }
 }
 
+onMounted(() => {
+  console.log(scrollbarRef.value)
+})
+
+function handleScroll(e: { scrollTop: number; scrollLeft: number }) {
+  // 向上取整
+
+  // if(Math.ceil((width)) )
+  console.log(e.scrollTop);
+  console.log(scrollbarRef.value?.wrapRef?.scrollHeight);
+  // console.log(Math.ceil(height.value));
+
+
+}
+
 
 /**
  * 上一章
@@ -77,6 +96,11 @@ function nextChapter() {
 
 }
 
+function handleInfiniteScroll() {
+  console.log('infinite scroll')
+}
+
+
 // 初始化数据
 getChapterPages()
 </script>
@@ -89,6 +113,8 @@ getChapterPages()
       <div class="flex items-center gap-3">
         <div class="font-medium">{{ title?.title }}</div>
         <div class="text-sm opacity-75">共{{ maxChapterNum }}话</div>
+        <div class="text-sm opacity-75"> width: {{ width }}px</div>
+        <div class="text-sm opacity-75"> height: {{ height }}px</div>
       </div>
 
       <!-- 章节导航按钮 -->
@@ -109,8 +135,8 @@ getChapterPages()
 
     <!-- 内容区域 -->
     <div class="flex-1 overflow-hidden">
-      <el-scrollbar class="h-full">
-        <div class="mx-auto" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
+      <el-scrollbar class="h-full" ref="scrollbarRef" @scroll="handleScroll">
+        <div class="mx-auto" ref="imageContainerRef" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
           <Image :src="item.path" aspect="auto" v-for="(item, index) in comics" :key="item.id || index" />
         </div>
       </el-scrollbar>
