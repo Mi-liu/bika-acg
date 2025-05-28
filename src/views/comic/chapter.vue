@@ -3,8 +3,6 @@ import { getComicPages } from '@/api/comic'
 import { Setting, QuestionFilled } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
 import { pictureQuality } from '@/constants/options'
-import type { ComicOrderPage } from '@/api/comic'
-import { cropImageWhiteBorders } from '@/utils/image'
 
 /**
  * 章节阅读页面
@@ -58,25 +56,11 @@ async function getChapterPages() {
       path: getImageUrl(item.media.path),
     }))
     comics.push(...formatData)
-    cropImages(res.pages.docs)
     console.log('📖 章节数据加载完成:', res)
   } catch (error) {
     console.error('📖 章节数据加载失败:', error)
   }
 }
-
-
-function cropImages(images: ComicOrderPage['pages']['docs']) {
-  Promise.all(images.slice(0, 1).map(item => {
-    return cropImageWhiteBorders(getImageUrl(item.media.path)).then(res => ({ id: item.id, path: res }))
-  })).then(res => {
-    console.log(res)
-    // cropComics.push(res)
-  }).catch(err => {
-    console.error('失败了', err)
-  })
-}
-
 
 
 /**
@@ -127,7 +111,7 @@ getChapterPages()
     <div class="flex-1 overflow-hidden">
       <el-scrollbar class="h-full">
         <div class="mx-auto" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
-          <Image :src="item.path" v-for="(item, index) in comics" :key="item.id || index" class="block w-full" />
+          <Image :src="item.path" aspect="auto" v-for="(item, index) in comics" :key="item.id || index" />
         </div>
       </el-scrollbar>
     </div>
@@ -145,21 +129,7 @@ getChapterPages()
               <el-option v-for="item in pictureQuality" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
           </el-form-item>
-          <el-form-item label="去白边">
-            <template #label="{ label }">
-              <div class="flex items-center gap-1">
-                {{ label }}
-                <el-tooltip content="去除图片四周多余的白色背景，使图片排列更整齐" placement="top">
-                  <el-icon>
-                    <QuestionFilled />
-                  </el-icon>
-                </el-tooltip>
-              </div>
-            </template>
-            <el-switch v-model="settingStore.comic.cropImageWhiteBorders" />
-          </el-form-item>
         </el-form>
-        111
       </div>
     </el-drawer>
 
