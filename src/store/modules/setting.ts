@@ -1,5 +1,6 @@
 import { store } from '@/store'
-import { pictureQuality, imageBaseUrl } from '@/constants/options'
+import { proxy } from '@/services/config'
+import { pictureQuality } from '@/constants/options'
 
 const useSettingStore = defineStore(
   'setting',
@@ -8,8 +9,8 @@ const useSettingStore = defineStore(
     const comic = reactive({
       /** 图片质量 */
       imageQuality: pictureQuality[2].value,
-      /** 图片代理链接 */
-      imageBaseUrl: imageBaseUrl[0].value,
+      /** 请求代理 */
+      proxy: proxy[0].value,
       /** 屏蔽的分类 */
       blockedCategories: [] as string[],
       /** 漫画图片宽度 */
