@@ -6,6 +6,10 @@ import type {
 import { upperFirst } from '@/utils/string'
 import { merge } from 'lodash-es'
 
+const defaultMeta: RouteMeta = {
+  layout: true,
+}
+
 /**
  * 创建路由模块
  * @param moduleName 模块名称，用于生成路径和名称
@@ -16,9 +20,6 @@ export function createRouterModule(
   moduleName: string,
   config: PartialSomeFields<RouteRecordSingleViewWithChildren, 'path' | 'name'>,
 ) {
-  const defaultMeta: RouteMeta = {
-    layout: true,
-  }
   return {
     path: `/${moduleName}`,
     name: upperFirst(moduleName),
@@ -30,7 +31,7 @@ export function createRouterModule(
         ...route.params,
         ...route.query,
       }),
-      meta: merge(defaultMeta, child.meta),
+      meta: merge({ ...defaultMeta }, child.meta),
     })),
   }
 }
