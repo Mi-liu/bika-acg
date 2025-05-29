@@ -1,9 +1,32 @@
 import alova from '@/services'
 
+/**
+ * 登录
+ * @param params 登录参数
+ * @returns 登录结果
+ */
 export const login = (params: { email: string; password: string }) =>
   alova.Post<{
     token: string
   }>('auth/sign-in', params)
+
+interface RegisterParams {
+  name: string
+  email: string
+  password: string
+  gender: string
+  birthday: string
+}
+
+/**
+ * 注册
+ * @param params 注册参数
+ * @returns 注册结果
+ */
+export const register = (params: RegisterParams) =>
+  alova.Post<{
+    token: string
+  }>('auth/register', params)
 
 /**
  * 头像
