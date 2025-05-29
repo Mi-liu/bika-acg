@@ -7,7 +7,7 @@ localStore.initStorage();
 </script>
 
 <template>
-  <el-config-provider :locale="zhCn" size="default">
+  <el-config-provider :locale="zhCn" size="large">
     <layout />
   </el-config-provider>
 </template>
