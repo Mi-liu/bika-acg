@@ -16,7 +16,7 @@ const nowWeather = computed(() => data.value)
 </script>
 
 <template>
-  <div v-if="!isEmpty(nowWeather)" class="flex items-center">
+  <div v-if="!isEmpty(nowWeather)" class="flex items-center select-none">
     {{ nowWeather.location.name }}
     {{ nowWeather.now.text }}
     {{ nowWeather.now.temperature }}°C
