@@ -16,9 +16,6 @@ const form = reactive({
   password: 'a17608921776',
 })
 
-console.log(props.redirect);
-
-
 const handleLogin = () => {
   login(form).then((res) => {
     userStore.token = res.token

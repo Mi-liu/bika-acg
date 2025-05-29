@@ -3,16 +3,18 @@ import { createRouterModule } from '../utils'
 
 const name = getFileName(import.meta.url).baseName
 
+/**
+ * 登录路由模块
+ */
 export default createRouterModule(name, {
-  redirect: '/login',
   children: [
     {
-      path: 'login',
+      path: 'index',
       meta: {
         title: '登录',
         layout: false,
       },
-      component: () => import('@/views/auth/login.vue'),
+      component: () => import('@/views/login/index.vue'),
     },
   ],
 })
