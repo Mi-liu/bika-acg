@@ -64,8 +64,9 @@ const loadingState = reactive({
 /**
  * 获取章节页面数据
  * @param page 指定页码，不传则获取下一页
+ * @param forceRefresh 是否强制刷新，忽略缓存
  */
-async function getChapterPages(page?: number) {
+async function getChapterPages(page?: number, forceRefresh = false) {
   // 防止重复请求
   if (loadingState.isLoadingNextPage) return
 
@@ -74,7 +75,7 @@ async function getChapterPages(page?: number) {
     loadingState.hasError = false
 
     const targetPage = page || pageInfo.page + 1
-    const res = await getComicPages(props.id, currentChapter.value, targetPage)
+    const res = await getComicPages(props.id, currentChapter.value, targetPage, forceRefresh)
 
     // 更新章节信息
     Object.assign(chapterInfo, res.ep)
@@ -194,11 +195,47 @@ function retryLoad() {
   getChapterPages(1)
 }
 
+/**
+ * 重新加载当前章节数据
+ * 用于画质变化等需要重新获取数据的场景
+ * @param forceRefresh 是否强制刷新，忽略缓存
+ */
+function reloadCurrentChapter(forceRefresh = false) {
+  // 清空当前图片列表
+  comicImages.length = 0
+
+  // 重置分页信息
+  Object.assign(pageInfo, {
+    page: 1,
+    pages: 1,
+    total: 1,
+    limit: 40,
+  })
+
+  // 清空错误状态
+  loadingState.hasError = false
+  loadingState.errorMessage = ''
+
+  // 重新加载第一页数据，使用强制刷新
+  getChapterPages(1, forceRefresh)
+}
+
 // 计算属性：是否可以跳转到上一章
 const canGoPrevChapter = computed(() => currentChapter.value > 1)
 
 // 计算属性：是否可以跳转到下一章
 const canGoNextChapter = computed(() => currentChapter.value < maxChapterNum)
+
+/**
+ * 处理画质变化事件
+ * @param newQuality 新的画质设置
+ */
+function handleQualityChange(newQuality: string) {
+  console.log(`画质已更改为 ${newQuality}，强制重新加载章节数据`)
+
+  // 使用强制刷新模式，忽略缓存
+  reloadCurrentChapter(true)
+}
 
 // 初始化数据
 getChapterPages(1)
@@ -271,9 +308,13 @@ getChapterPages(1)
             <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth" :step="10" />
           </el-form-item>
           <el-form-item label="画质">
-            <el-select v-model="settingStore.comic.imageQuality" placeholder="请选择画质">
+            <el-select v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
+              :loading="loadingState.isLoadingNextPage" @change="handleQualityChange">
               <el-option v-for="item in pictureQuality" :key="item.value" :label="item.label" :value="item.value" />
             </el-select>
+            <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
+              正在切换画质，重新加载图片...
+            </div>
           </el-form-item>
           <el-form-item label="自动阅读">
             <template #label="{ label }">
