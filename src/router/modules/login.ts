@@ -16,5 +16,13 @@ export default createRouterModule(name, {
       },
       component: () => import('@/views/login/index.vue'),
     },
+    {
+      path: 'register',
+      meta: {
+        title: '注册',
+        layout: false,
+      },
+      component: () => import('@/views/login/register.vue'),
+    },
   ],
 })
