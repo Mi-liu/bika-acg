@@ -7,7 +7,6 @@ const name = getFileName(import.meta.url).baseName
  * 漫画相关路由模块
  */
 export default createRouterModule(name, {
-  redirect: '/list',
   children: [
     {
       path: 'list',

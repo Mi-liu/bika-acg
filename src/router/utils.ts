@@ -24,6 +24,7 @@ export function createRouterModule(
     path: `/${moduleName}`,
     name: upperFirst(moduleName),
     meta: merge(defaultMeta, config.meta),
+    redirect: config.redirect || `/${moduleName}/${config.children?.[0]?.path}`,
     ...config,
     children: config.children?.map((child) => ({
       ...child,
