@@ -51,7 +51,7 @@ function handleRefreshImage() {
     </div>
 
     <div class="absolute inset-0 flex flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
-      @click="handleRefreshImage" v-if="state === 'error'">
+      @click.stop="handleRefreshImage" v-if="state === 'error'">
       <div>加载失败</div>
       <div>点击重新加载</div>
     </div>

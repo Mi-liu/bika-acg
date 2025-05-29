@@ -67,7 +67,7 @@ function handleEpsClick(index: number) {
 </script>
 
 <template>
-  <el-scrollbar>
+  <el-scrollbar class="bg-[--el-bg-color-page]">
     <div class="max-w-1400px mx-auto">
       <div class="h-400px flex">
         <Image :src="getImageUrl(data?.thumb.path!)"></Image>
