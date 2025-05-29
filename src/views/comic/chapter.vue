@@ -349,7 +349,7 @@ getChapterPages(1)
 
           <el-form-item label="线路代理">
             <el-select v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
-              :loading="loadingState.isLoadingNextPage" @change="handleProxyChange">
+              @change="handleProxyChange">
               <el-option v-for="item in proxy" :key="item.label" :label="item.label" :value="item.value" />
             </el-select>
             <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">

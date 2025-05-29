@@ -1,6 +1,7 @@
 import { store } from '@/store'
 import { proxy } from '@/services/config'
 import { pictureQuality } from '@/constants/options'
+import { cloneDeep } from 'lodash-es'
 
 const useSettingStore = defineStore(
   'setting',
@@ -10,7 +11,7 @@ const useSettingStore = defineStore(
       /** 图片质量 */
       imageQuality: pictureQuality[2].value,
       /** 请求代理 */
-      proxy: proxy[0].value,
+      proxy: cloneDeep(proxy[0].value),
       /** 屏蔽的分类 */
       blockedCategories: [] as string[],
       /** 漫画图片宽度 */
