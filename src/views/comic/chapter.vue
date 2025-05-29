@@ -237,6 +237,17 @@ function handleQualityChange(newQuality: string) {
   reloadCurrentChapter(true)
 }
 
+/**
+ * 处理线路代理变化事件
+ * @param newProxy 新的线路代理设置
+ */
+function handleProxyChange(newProxy: any) {
+  console.log(`线路代理已更改为 ${newProxy?.label || newProxy}，强制重新加载章节数据`)
+
+  // 使用强制刷新模式，忽略缓存
+  reloadCurrentChapter(true)
+}
+
 // 初始化数据
 getChapterPages(1)
 </script>
@@ -321,7 +332,7 @@ getChapterPages(1)
               {{ label }}
               <el-tooltip placement="top">
                 <template #content>
-                  自动下滑阅读，解放双手，且当前章节完成后会默认阅读下一章
+                  [开发中]自动下滑阅读，解放双手，且当前章节完成后会默认阅读下一章
                   <br />建议网速较好的情况下使用
                   <br />无忧无虑的冲吧~少年/女
                 </template>
@@ -337,9 +348,13 @@ getChapterPages(1)
           </el-form-item>
 
           <el-form-item label="线路代理">
-            <el-select v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理">
+            <el-select v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
+              :loading="loadingState.isLoadingNextPage" @change="handleProxyChange">
               <el-option v-for="item in proxy" :key="item.label" :label="item.label" :value="item.value" />
             </el-select>
+            <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
+              正在切换线路，重新加载图片...
+            </div>
           </el-form-item>
 
         </el-form>
