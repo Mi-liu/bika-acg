@@ -1,4 +1,4 @@
-import { CATEGORIES, WATCH_LATER_LIST, ACCOUNT_INFO } from './key'
+import { CATEGORIES, WATCH_LATER_LIST, ACCOUNT_INFO, FOLLOW_AUTHOR_LIST } from './key'
 import type { Categories, Comic } from '@/api/comic'
 
 /**
@@ -21,4 +21,5 @@ export interface Local {
   [CATEGORIES]: Categories['categories']
   [WATCH_LATER_LIST]: WatchLaterList
   [ACCOUNT_INFO]: AccountInfo
+  [FOLLOW_AUTHOR_LIST]: string[]
 }
