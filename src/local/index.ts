@@ -18,6 +18,19 @@ export const storage = {
   setItem<K extends keyof Local>(key: K, value: Local[K]) {
     return localforage.setItem(key, value)
   },
+  /** 给存储的数组添加元素 */
+  pushItempushItem<K extends keyof Local, Local[K] extends any[]>(
+    key: K,
+    value: Local[K][number]  // 使用数组元素类型而不是整个数组类型
+  ) {
+    // return storage.getItem(key, []).then((res) => {
+    //   // if (res === null) {
+    //   //   return [value]
+    //   // }
+    //   // return [...res, value]
+    // })
+  },
+
   /**
    * 删除存储项
    */
