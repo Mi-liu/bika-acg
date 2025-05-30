@@ -120,6 +120,10 @@ export interface ComicDetail extends Omit<Comic, 'id'> {
   allowComment: boolean
   /** 评论数量  */
   totalComments: number
+  /** 喜欢的人数 */
+  totalLikes: number
+  /** 观看数 */
+  totalViews: number
   /** 是否已收藏  */
   isFavourite: boolean
   /** 是否已喜欢  */
