@@ -100,7 +100,7 @@ function handleEpsClick(index: number) {
                 <el-tag type="info" round>{{ data?.epsCount }}章</el-tag>
                 <el-tag type="info" round>{{ data?.pagesCount }}P</el-tag>
                 <el-tag type="info" round>{{ data?.finished ? '已完结' : '连载中' }}</el-tag>
-                <el-tag type="info" round>{{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }}更新</el-tag>
+                <el-tag type="info" round>{{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }} 更新</el-tag>
               </div>
 
               <!-- 作者 -->
@@ -146,7 +146,7 @@ function handleEpsClick(index: number) {
               <el-icon class="mr-1">
                 <Star></Star>
               </el-icon>
-              收藏本子
+              收藏漫画
             </CommonButton>
 
             <div class="ml-auto">
@@ -156,6 +156,7 @@ function handleEpsClick(index: number) {
         </div>
       </div>
 
+      <!-- 统计 -->
       <div class="h-90px flex mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
         <div class="flex-1 flex flex-col items-center justify-center" v-for="item in toolList" :key="item.prop">
           <div>
@@ -168,11 +169,20 @@ function handleEpsClick(index: number) {
         </div> -->
       </div>
 
+      <!-- 简介 -->
+      <div class="p4 mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+        <div class="text-18px font-bold">作品简介</div>
+        <div class="mt2 text-[--el-text-color-secondary] whitespace-pre-wrap break-words">{{ data?.description }}</div>
+      </div>
+
       <!-- 章节信息 -->
-      <div class="mt flex flex-wrap gap-10px">
-        <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" @click="handleEpsClick(index)">
-          {{ item.title }}
-        </el-button>
+      <div class="p4 mt-4  rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+        <div class="text-18px font-bold">章节列表</div>
+        <div class="mt3 flex flex-wrap gap-10px">
+          <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" @click="handleEpsClick(index)">
+            {{ item.title }}
+          </el-button>
+        </div>
       </div>
 
     </div>
