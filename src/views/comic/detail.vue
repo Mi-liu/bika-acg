@@ -3,9 +3,10 @@ import Image from '@/components/Image/index.vue'
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { getImageUrl } from '@/utils/string'
 import { getComicDetail, favorites, getComicEps } from '@/api/comic'
-import { Star, StarFilled } from '@element-plus/icons-vue'
+import { Star, StarFilled, Reading } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { loopRequestList } from '@/utils/fetch'
+import type { ComicDetail } from '@/api/comic'
 
 const router = useRouter()
 
@@ -14,6 +15,22 @@ const props = defineProps<{ id: string }>()
 const { data } = useRequest(getComicDetail, {
   defaultParams: [props.id],
 })
+
+const toolList = <const>[
+  {
+    label: '点赞',
+    prop: 'totalLikes',
+  },
+  {
+    label: '阅读',
+    prop: 'totalViews',
+  },
+  {
+    label: '评论',
+    prop: 'totalComments',
+  },
+]
+
 
 const { data: epsData } = loopRequestList((page) => getComicEps(props.id, page), {
   key: 'docs',
@@ -54,7 +71,6 @@ function handleFavoritesClick() {
 function handleEpsClick(index: number) {
   const chapterNum = index + 1
   const maxChapter = epsData.value.docs.length
-  // 使用新的路由结构: /comic/chapter/:id/:chapter/:maxChapter
   const url = router.resolve({
     path: `/comic/chapter/${props.id}`,
     query: {
@@ -69,36 +85,35 @@ function handleEpsClick(index: number) {
 <template>
   <el-scrollbar class="bg-[--el-bg-color-page]">
     <div class="max-w-1400px mx-auto">
-      <div class="h-400px flex">
+      <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
         <Image :src="getImageUrl(data?.thumb.path!)"></Image>
         <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
           <div class="flex-1 overflow-hidden flex flex-col">
             <!-- 标题和基本信息区域 -->
-            <div>
+            <div class="flex flex-col space-y-3">
               <!-- 标题 -->
               <div class="text-26px">
                 {{ data?.title }}
               </div>
 
+              <div class="flex gap-2">
+                <el-tag type="info" round>{{ data?.epsCount }}章</el-tag>
+                <el-tag type="info" round>{{ data?.pagesCount }}P</el-tag>
+                <el-tag type="info" round>{{ data?.finished ? '已完结' : '连载中' }}</el-tag>
+                <el-tag type="info" round>{{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }}更新</el-tag>
+              </div>
+
               <!-- 作者 -->
-              <div class="text-20px text-[--el-text-color-secondary] flex mt">
+              <!-- <div class="text-20px text-[--el-text-color-secondary] flex mt">
                 作者:
                 <div class="flex-1 flex gap-2 ml-2 flex-wrap">
                   <el-link class="text-20px!" type="primary" underline="always"
                     v-for="author in data?.author.split(/[、,，]\s*/)" @click.stop="handleAuthorClick(author)">{{ author
                     }}</el-link>
                 </div>
-              </div>
-              <!-- 章节信息 -->
-              <div class="text-20px mt-1 text-[--el-text-color-secondary]">
-                <el-text class="mx-1 text-20px!" type="primary" v-if="data?.finished">[完结]</el-text> {{ data?.epsCount
-                }}章 共 {{
-                  data?.pagesCount
-                }}P
-              </div>
+              </div> -->
               <!-- 分类 -->
               <div class="mt-2 flex flex-wrap gap-2">
-                分类:
                 <el-tag class="cursor-pointer" v-for="tag in data?.categories" :key="tag" type="primary" effect="plain"
                   @click="handleTagClick(tag)">
                   {{ tag }}
@@ -113,32 +128,44 @@ function handleEpsClick(index: number) {
             </div>
 
             <!-- 滚动区域 - 使用flex-1自动撑开 -->
-            <div class="flex-1 min-h-0 mt-2 flex flex-col mt">
+            <!-- <div class="flex-1 min-h-0 mt-2 flex flex-col mt">
               <el-scrollbar class="h-full w-full text-[--el-text-color-secondary]">
                 <div class="whitespace-pre-wrap break-words">{{ data?.description }}</div>
               </el-scrollbar>
-            </div>
+            </div> -->
           </div>
           <div class="flex mt">
-            <el-button type="primary" @click="handleEpsClick(0)">开始阅读</el-button>
+            <el-button type="primary" :icon="Reading" @click="handleEpsClick(0)">开始阅读</el-button>
             <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
-              取消收藏
-              <el-icon size="18" color="var(--el-color-warning-light-3)">
+              <el-icon class="mr-1" size="18" color="var(--el-color-warning-light-3)">
                 <StarFilled></StarFilled>
               </el-icon>
+              取消收藏
             </CommonButton>
             <CommonButton @click="handleFavoritesClick" v-else>
-              收藏本子
-              <el-icon>
+              <el-icon class="mr-1">
                 <Star></Star>
               </el-icon>
+              收藏本子
             </CommonButton>
 
             <div class="ml-auto">
-              {{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }} 更新
+              作者
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="h-90px flex mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+        <div class="flex-1 flex flex-col items-center justify-center" v-for="item in toolList" :key="item.prop">
+          <div>
+            <el-statistic :value="data?.[item.prop]" />
+          </div>
+          <div>{{ item.label }}</div>
+        </div>
+        <!-- <div class="flex-1 flex flex-col items-center justify-center">
+          爱心
+        </div> -->
       </div>
 
       <!-- 章节信息 -->
@@ -152,4 +179,12 @@ function handleEpsClick(index: number) {
   </el-scrollbar>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.el-statistic {
+  :deep(.el-statistic__number) {
+    font-size: 24px !important;
+    font-weight: bold !important;
+    color: var(--el-color-primary) !important;
+  }
+}
+</style>
