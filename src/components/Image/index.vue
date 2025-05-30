@@ -39,7 +39,11 @@ function handleRefreshImage() {
     <el-image class="w-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
       @error="state = 'error'" v-if="uri.length">
       <template #error>
-        <div />
+        <div class="aspect-3/4 flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
+          @click.stop="handleRefreshImage">
+          <div>加载失败</div>
+          <div>点击重新加载</div>
+        </div>
       </template>
     </el-image>
     <div class="absolute inset-0 flex-center" v-if="state === 'loading'">
@@ -50,11 +54,7 @@ function handleRefreshImage() {
       </el-skeleton>
     </div>
 
-    <div class="absolute inset-0 flex flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
-      @click.stop="handleRefreshImage" v-if="state === 'error'">
-      <div>加载失败</div>
-      <div>点击重新加载</div>
-    </div>
+
 
     <!-- <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
       <el-icon>
