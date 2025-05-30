@@ -3,7 +3,7 @@ import Image from '@/components/Image/index.vue'
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { getImageUrl } from '@/utils/string'
 import { getComicDetail, favorites, getComicEps } from '@/api/comic'
-import { Star, StarFilled, Reading } from '@element-plus/icons-vue'
+import { Star, StarFilled, Reading, Document, Memo, Plus } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { loopRequestList } from '@/utils/fetch'
 import type { ComicDetail } from '@/api/comic'
@@ -42,8 +42,28 @@ const { data: epsData } = loopRequestList((page) => getComicEps(props.id, page),
   },
 })
 
+// 关注状态管理
+const isFollowingAuthor = ref(false)
+
+/**
+ * 处理作者点击事件
+ * @param author 作者名称
+ */
 function handleAuthorClick(author: string) {
-  console.log('作者的点击', author);
+  const url = router.resolve({
+    path: '/comic/list',
+    query: {
+      title: author
+    }
+  }).href
+  window.open(url, '_blank');
+}
+
+/**
+ * 处理关注作者事件
+ */
+function handleFollowAuthor(author: string) {
+
 }
 
 function handleTagClick(tag: string) {
@@ -84,7 +104,7 @@ function handleEpsClick(index: number) {
 
 <template>
   <el-scrollbar class="bg-[--el-bg-color-page]">
-    <div class="max-w-1400px mx-auto">
+    <div class="max-w-1100px mx-auto">
       <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
         <Image :src="getImageUrl(data?.thumb.path!)"></Image>
         <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
@@ -103,15 +123,6 @@ function handleEpsClick(index: number) {
                 <el-tag type="info" round>{{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }} 更新</el-tag>
               </div>
 
-              <!-- 作者 -->
-              <!-- <div class="text-20px text-[--el-text-color-secondary] flex mt">
-                作者:
-                <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                  <el-link class="text-20px!" type="primary" underline="always"
-                    v-for="author in data?.author.split(/[、,，]\s*/)" @click.stop="handleAuthorClick(author)">{{ author
-                    }}</el-link>
-                </div>
-              </div> -->
               <!-- 分类 -->
               <div class="mt-2 flex flex-wrap gap-2">
                 <el-tag class="cursor-pointer" v-for="tag in data?.categories" :key="tag" type="primary" effect="plain"
@@ -120,19 +131,13 @@ function handleEpsClick(index: number) {
                 </el-tag>
               </div>
               <!-- 标签 -->
-              <div class="flex gap-10px cursor-pointer mt">
+              <div class="flex flex-wrap gap-10px cursor-pointer mt">
                 <el-tag v-for="item in data?.tags">
                   {{ item }}
                 </el-tag>
               </div>
             </div>
 
-            <!-- 滚动区域 - 使用flex-1自动撑开 -->
-            <!-- <div class="flex-1 min-h-0 mt-2 flex flex-col mt">
-              <el-scrollbar class="h-full w-full text-[--el-text-color-secondary]">
-                <div class="whitespace-pre-wrap break-words">{{ data?.description }}</div>
-              </el-scrollbar>
-            </div> -->
           </div>
           <div class="flex mt">
             <el-button type="primary" :icon="Reading" @click="handleEpsClick(0)">开始阅读</el-button>
@@ -149,8 +154,21 @@ function handleEpsClick(index: number) {
               收藏漫画
             </CommonButton>
 
-            <div class="ml-auto">
-              作者
+            <div class="ml-auto flex items-center gap-2">
+              <div v-for="author in data?.author.split(/[、,，]\s*/)" :key="author">
+                <el-link class="text-16px!" type="primary" underline="always" @click.stop="handleAuthorClick(author)">
+                  {{ author }}
+                </el-link>
+                <el-tooltip placement="top">
+                  <template #content>
+                    关注作者
+                  </template>
+                  <el-button type="primary" size="small" plain :icon="Plus"
+                    @click="handleFollowAuthor(author)"></el-button>
+                </el-tooltip>
+              </div>
+
+
             </div>
           </div>
         </div>
@@ -171,13 +189,23 @@ function handleEpsClick(index: number) {
 
       <!-- 简介 -->
       <div class="p4 mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <div class="text-18px font-bold">作品简介</div>
+        <div class="flex items-center gap-1 text-18px font-bold">
+          <el-icon>
+            <Document />
+          </el-icon>
+          作品简介
+        </div>
         <div class="mt2 text-[--el-text-color-secondary] whitespace-pre-wrap break-words">{{ data?.description }}</div>
       </div>
 
       <!-- 章节信息 -->
       <div class="p4 mt-4  rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <div class="text-18px font-bold">章节列表</div>
+        <div class="flex items-center gap-1 text-18px font-bold">
+          <el-icon>
+            <Memo />
+          </el-icon>
+          章节列表
+        </div>
         <div class="mt3 flex flex-wrap gap-10px">
           <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" @click="handleEpsClick(index)">
             {{ item.title }}
