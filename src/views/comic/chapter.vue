@@ -248,6 +248,23 @@ function handleProxyChange(newProxy: any) {
   reloadCurrentChapter(true)
 }
 
+// useEventListener('dialog', () => {
+//   drawer.value = false
+// })
+
+function handleContextMenu(e: MouseEvent) {
+  e.stopPropagation()
+  e.preventDefault()
+  // 展开/收起 设置抽屉
+  drawer.value = !drawer.value
+}
+
+onMounted(() => {
+  useEventListener(document.querySelector('.chapter-drawer-modal'), 'contextmenu', handleContextMenu)
+})
+
+// chapter-drawer-modal
+
 // 初始化数据
 getChapterPages(1)
 </script>
@@ -290,7 +307,7 @@ getChapterPages(1)
     </div>
 
     <!-- 内容区域 -->
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden" @contextmenu.prevent="handleContextMenu">
       <el-scrollbar class="h-full" ref="scrollbarRef" @scroll="handleScroll">
         <div class="mx-auto" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
           <!-- 图片列表 -->
@@ -311,7 +328,7 @@ getChapterPages(1)
     </div>
 
     <!-- 设置抽屉 -->
-    <el-drawer v-model="drawer" direction="rtl" size="400px" :with-header="false">
+    <el-drawer v-model="drawer" modal-class="chapter-drawer-modal" direction="rtl" size="400px" :with-header="false">
       <div class="size-full">
 
         <el-form label-width="100px" labelPosition="left">
