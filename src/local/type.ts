@@ -23,3 +23,10 @@ export interface Local {
   [ACCOUNT_INFO]: AccountInfo
   [FOLLOW_AUTHOR_LIST]: string[]
 }
+
+/**
+ * 提取 Local 接口中数组类型的键
+ */
+export type LocalArrayKeys = {
+  [K in keyof Local]: Local[K] extends Array<any> ? K : never
+}[keyof Local]

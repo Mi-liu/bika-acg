@@ -6,6 +6,13 @@ declare global {
    */
   type PartialSomeFields<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
 
+  /**
+   * 提取 T 类型中数组类型的键
+   */
+  export type ArrayKeys<T> = {
+    [K in keyof T]: T[K] extends Array<any> ? K : never
+  }[keyof T]
+
   // 添加 ES2023 数组方法的类型声明
   interface Array<T> {
     /**
