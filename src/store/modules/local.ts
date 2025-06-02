@@ -1,7 +1,35 @@
 import { store } from '@/store'
 import { storage } from '@/local'
-import type { Local } from '@/local/type'
-import { CATEGORIES, WATCH_LATER_LIST } from '@/local/key'
+import localforage from 'localforage'
+
+import { cloneDeep, uniq, isEqual } from 'lodash-es'
+
+import type { Categories, Comic } from '@/api/comic'
+
+/**
+ * 本地存储类型
+ */
+export interface Local {
+  /**
+   * 分类
+   */
+  CATEGORIES: Categories['categories']
+  /**
+   * 稍后观看列表
+   */
+  WATCH_LATER_LIST: Comic[]
+  /**
+   * 账号密码信息
+   */
+  ACCOUNT_INFO: {
+    email: string
+    password: string
+  }
+  /**
+   * 关注作者列表
+   */
+  FOLLOW_AUTHOR_LIST: string[]
+}
 
 /**
  * 本地存储 Store
@@ -9,30 +37,74 @@ import { CATEGORIES, WATCH_LATER_LIST } from '@/local/key'
  */
 const useLocalStore = defineStore('local', () => {
   const local = reactive<Local>({
-    [CATEGORIES]: [],
-    [WATCH_LATER_LIST]: [],
+    /**
+     * 分类
+     */
+    CATEGORIES: [],
+    /**
+     * 稍后观看列表
+     */
+    WATCH_LATER_LIST: [],
+    /**
+     * 关注作者列表
+     */
+    FOLLOW_AUTHOR_LIST: [],
+    /**
+     * 账号密码信息
+     */
+    ACCOUNT_INFO: {
+      email: '',
+      password: '',
+    },
   })
 
-  /** 初始化本地local数据，将其同步到 useLocalStore.local中  */
+  /** 将本地local数据，同步到 useLocalStore.local中  */
   async function initStorage() {
-    const keys = await storage.keys()
+    for (const key in local) {
+      if (Object.prototype.hasOwnProperty.call(local, key)) {
+        await localforage.getItem<Local[keyof Local]>(key).then((res) => {
+          // @ts-ignore
+          local[key] = res || local[key]
+        })
+      }
+    }
+    watch(local, (newVal) => {
+      for (const key in newVal) {
+        if (Object.prototype.hasOwnProperty.call(newVal, key)) {
+          // @ts-ignore
+          localforage.setItem(key, cloneDeep(newVal[key]))
+        }
+      }
+    })
+  }
 
-    for (const element of keys) {
-      const store = await storage.getItem(element, local[element])
+  /**
+   * 向存储的数组添加元素
+   * @param key 存储键名（必须是数组类型的键）
+   * @param value 要添加的元素
+   */
+  function pushItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(key: K, value: V) {
+    // @ts-ignore
+    local[key].push(value)
+    // @ts-ignore
+    return storage.setItem<K>(key, cloneDeep(uniq(local[key])))
+  }
+  /**
+   * 从存储的数组中移除元素
+   * @param key 存储键名（必须是数组类型的键）
+   * @param value 要移除的元素
+   */
+  function removeItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(key: K, value: V) {
+    // @ts-ignore
+    const index = local[key].findIndex((item) => isEqual(item, value))
+    if (index !== -1) {
+      local[key].splice(index, 1)
       // @ts-ignore
-      local[element] = store
+      storage.setItem<K>(key, cloneDeep(uniq(local[key])))
     }
   }
-  function getLocalItem<K extends keyof Local>(key: K) {
-    return local[key]
-  }
 
-  function setLocalItem<K extends keyof Local>(key: K, value: Local[K]) {
-    local[key] = value
-    storage.setItem(key, value)
-  }
-
-  return { initStorage, getLocalItem, setLocalItem }
+  return { local, initStorage, pushItem, removeItem }
 })
 
 /**
