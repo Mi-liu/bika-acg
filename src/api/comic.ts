@@ -1,6 +1,4 @@
 import alova from '@/services'
-import { CATEGORIES } from '@/local/key'
-import { storage } from '@/local'
 import { HIDDEN_CATEGORIES } from '@/config/categories'
 import type { SortOptionValue } from '@/constants/options'
 
@@ -26,7 +24,8 @@ export interface Categories {
  * 获取漫画分类
  */
 export async function getCategories() {
-  const res = await storage.getItem(CATEGORIES, [])
+  const localStore = useLocalStoreHook()
+  const res = localStore.local.CATEGORIES
   if (res.length) {
     return res
   } else {
@@ -34,7 +33,7 @@ export async function getCategories() {
       const categories = res.categories.filter(
         (category) => !HIDDEN_CATEGORIES.includes(category.title),
       )
-      storage.setItem(CATEGORIES, categories)
+      localStore.local.CATEGORIES = categories
       return categories
     })
   }
