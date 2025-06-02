@@ -1,5 +1,4 @@
 import { store } from '@/store'
-import { storage } from '@/local'
 import localforage from 'localforage'
 
 import { cloneDeep, uniq, isEqual } from 'lodash-es'
@@ -87,7 +86,7 @@ const useLocalStore = defineStore('local', () => {
     // @ts-ignore
     local[key].push(value)
     // @ts-ignore
-    return storage.setItem<K>(key, cloneDeep(uniq(local[key])))
+    return localforage.setItem(key, cloneDeep(uniq(local[key])))
   }
   /**
    * 从存储的数组中移除元素
@@ -100,7 +99,7 @@ const useLocalStore = defineStore('local', () => {
     if (index !== -1) {
       local[key].splice(index, 1)
       // @ts-ignore
-      storage.setItem<K>(key, cloneDeep(uniq(local[key])))
+      localforage.setItem(key, cloneDeep(uniq(local[key])))
     }
   }
 
