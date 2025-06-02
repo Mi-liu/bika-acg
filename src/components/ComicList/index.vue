@@ -17,6 +17,8 @@ const router = useRouter()
 
 const settingStore = useSettingStoreHook()
 
+const localStore = useLocalStoreHook()
+
 const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
 
 const loading = ref(false)
@@ -81,6 +83,15 @@ function handleAuthorClick(author: string) {
   console.log('作者的点击', author);
 }
 
+function handleFollowAuthor(author: string) {
+  localStore.pushItem('FOLLOW_AUTHOR_LIST', author)
+}
+
+function handleUnfollowAuthor(author: string) {
+  localStore.removeItem('FOLLOW_AUTHOR_LIST', author)
+}
+
+
 function handleTagClick(tag: string) {
   const url = router.resolve({
     path: '/comic/list',
@@ -140,9 +151,27 @@ function handleTagClick(tag: string) {
             <div class="text-14px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-link type="primary" underline="always" v-for="author in item.author.split(/[、,，]\s*/)"
-                  @click.stop="handleAuthorClick(author)">{{ author
-                  }}</el-link>
+                <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)"
+                  @click.stop="handleAuthorClick(author)">
+                  <template #reference>
+                    <el-link type="primary" underline="always">{{ author
+                      }}</el-link>
+                  </template>
+                  <div class="w-full flex flex-col">
+                    <el-button class="w-full" type="danger" size="default"
+                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)"
+                      @click.stop="handleUnfollowAuthor(author)">
+                      取消关注
+                    </el-button>
+                    <el-button v-else class="w-full" type="primary" size="default"
+                      @click.stop="handleFollowAuthor(author)">
+                      关注
+                    </el-button>
+                  </div>
+
+
+                </el-popover>
+
               </div>
 
             </div>
