@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { login } from '@/api/user'
-import { storage } from '@/local'
-import { ACCOUNT_INFO } from '@/local/key'
 import CommonButton from '@common/components/CommonButton/index.vue'
 
 const props = defineProps<{
@@ -10,6 +8,7 @@ const props = defineProps<{
 
 
 const userStore = useUserStoreHook()
+const localStore = useLocalStoreHook()
 
 const router = useRouter()
 
@@ -19,21 +18,17 @@ const form = reactive({
 })
 const remember = ref(true)
 
-storage.getItem(ACCOUNT_INFO, {
-  email: '',
-  password: '',
-}).then((res) => {
-  form.email = res.email
-  form.password = res.password
-})
+// 从 localStore 获取账号信息
+form.email = localStore.local.ACCOUNT_INFO.email
+form.password = localStore.local.ACCOUNT_INFO.password
 
 const handleLogin = () => {
   login(form).then((res) => {
     userStore.token = res.token
     if (remember.value) {
-      storage.setItem(ACCOUNT_INFO, { ...form })
+      localStore.local.ACCOUNT_INFO = { ...form }
     } else {
-      storage.removeItem(ACCOUNT_INFO)
+      localStore.local.ACCOUNT_INFO = { email: '', password: '' }
     }
     if (props.redirect) {
       router.push(decodeURIComponent(props.redirect))

@@ -2,10 +2,9 @@
 import { register } from '@/api/user'
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { merge } from 'lodash-es'
-import { storage } from '@/local'
-import { ACCOUNT_INFO } from '@/local/key'
 
 const router = useRouter()
+const localStore = useLocalStoreHook()
 
 const formRef = useTemplateRef('formRef')
 
@@ -68,10 +67,10 @@ const handleRegister = async () => {
     showCancelButton: true,
     showClose: false,
   })
-  storage.setItem(ACCOUNT_INFO, {
+  localStore.local.ACCOUNT_INFO = {
     email: form.email,
     password: form.password,
-  })
+  }
   router.push('/login/index')
 }
 
