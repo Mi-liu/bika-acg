@@ -7,12 +7,14 @@ const props = defineProps<{
   title?: string
   /** 作者 */
   author?: string
+  /** 都在搜索的关键词 */
+  keywords?: string
 }>()
 </script>
 
 <template>
   <div>
-    <ComicList :title="props.title" :author="props.author" :fetch="getComics"></ComicList>
+    <ComicList :title="props.title" :author="props.author" :keywords="props.keywords" :fetch="getComics"></ComicList>
   </div>
 </template>
 
