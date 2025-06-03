@@ -9,5 +9,6 @@ export default {
   component: () => import('@/views/home/index.vue'),
   meta: {
     title: '首页',
+    layout: true,
   },
 } as RouteRecordRaw

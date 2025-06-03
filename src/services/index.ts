@@ -3,7 +3,7 @@ import { createAlova } from 'alova'
 
 import adapterFetch from 'alova/fetch'
 import { createHeader } from '@/utils/crypto'
-import { objectToUrlParams } from '@/utils/object'
+import { objectToUrlParams, filterUndefined } from '@/utils/object'
 import { ApiCode } from '@/enum/apiCode'
 import router from '@/router'
 export interface Response<T = unknown> {
@@ -19,7 +19,6 @@ const defaultAlovaMeta: AlovaCustomTypes['meta'] = {
 }
 
 const alova = createAlova({
-  // baseURL: 'https://api.go2778.com/',
   requestAdapter: adapterFetch(),
   beforeRequest(method) {
     const settingStore = useSettingStoreHook()
@@ -28,7 +27,9 @@ const alova = createAlova({
     Object.assign(
       method.config.headers,
       createHeader(
-        method.type === 'GET' ? objectToUrlParams(method.config.params, method.url) : method.url,
+        method.type === 'GET'
+          ? objectToUrlParams(filterUndefined(method.config.params), method.url)
+          : method.url,
         method.type,
       ),
     )
