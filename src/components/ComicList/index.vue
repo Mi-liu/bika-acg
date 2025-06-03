@@ -24,11 +24,18 @@ const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
 const loading = ref(false)
 
 const listTitle = computed(() => {
+  console.log(props);
   if (props.title) {
     return props.title
   }
-  if (props.author) {
+  else if (props.author) {
     return `作者：${props.author}`
+  }
+  else if (props.keywords) {
+    return `关键词：${props.keywords}`
+  }
+  else if (props.keyword) {
+    return `搜索：${props.keyword}`
   }
   return ''
 })
@@ -56,6 +63,8 @@ async function handlePageChange(event: { currentPage: number }) {
       page: event.currentPage,
       c: props.title ? encodeURIComponent(props.title) : undefined,
       a: props.author ? encodeURIComponent(props.author) : undefined,
+      t: props.keywords ? encodeURIComponent(props.keywords) : undefined,
+      keyword: props.keyword,
       s: s.value,
     })
     data.value = result
