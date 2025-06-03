@@ -2,11 +2,8 @@
 import { Star, Setting, ChatLineSquare, Link, SwitchButton, Timer } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
 
-const layoutStore = useLayoutStoreHook()
-
 const userStore = useUserStoreHook()
 userStore.getUserProfile()
-const settingStore = useSettingStoreHook()
 
 const router = useRouter()
 

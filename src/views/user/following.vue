@@ -35,7 +35,7 @@ const handleUnfollow = async (authorName: string) => {
     cancelButtonText: '取消',
     type: 'warning'
   })
-  await localStore.removeItem('FOLLOW_AUTHOR_LIST', authorName)
+  localStore.removeItem('FOLLOW_AUTHOR_LIST', authorName)
   ElMessage.success(`已取消关注 ${authorName}`)
 }
 </script>

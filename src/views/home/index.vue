@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { getCategories } from '@/api/comic'
+import { getKeywords } from '@/api/keywords'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
 const { data: categories } = useRequest(getCategories)
+
+const { data: keywords } = useRequest(getKeywords)
+
 
 const handleCategoryClick = (title: string) => {
   const url = router.resolve({
@@ -25,6 +29,7 @@ const handleCategoryClick = (title: string) => {
           {{ category.title }}
         </el-button>
       </div>
+      {{ keywords }}
     </div>
   </div>
 </template>

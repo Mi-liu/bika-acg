@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import User from './User.vue'
 import Logo from './Logo.vue'
-import Weather from './Weather.vue'
+import Weather from './weather.vue'
 const layoutStore = useLayoutStoreHook()
 
 </script>
