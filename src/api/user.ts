@@ -1,4 +1,6 @@
 import alova from '@/services'
+import type { Comics, ComicsParams } from './comic'
+import type { SortOptionValue } from '@/constants/options'
 
 /**
  * 登录
@@ -112,3 +114,17 @@ export const getUserProfile = () =>
       expire: 60 * 10 * 1000,
     },
   })
+
+/**
+ * 获取用户收藏
+ * @returns 用户收藏
+ */
+export function getUserFavourite(params: ComicsParams) {
+  return alova
+    .Get<Comics>('users/favourite', {
+      params: params,
+    })
+    .then((res) => {
+      return res.comics
+    })
+}

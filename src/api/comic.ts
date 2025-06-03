@@ -99,7 +99,7 @@ export interface Comic {
   /** 观看数 */
   totalViews: number
   /** id */
-  id: string
+  _id: string
 }
 
 /**
