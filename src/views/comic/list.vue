@@ -10,11 +10,29 @@ const props = defineProps<{
   /** 都在搜索的关键词 */
   keywords?: string
 }>()
+
+const listTitle = computed(() => {
+  if (props.title) {
+    return props.title
+  }
+  else if (props.author) {
+    return `作者：${props.author}`
+  }
+  else if (props.keywords) {
+    return `关键词：${props.keywords}`
+  }
+  return '漫画列表'
+})
+
 </script>
 
 <template>
   <div>
-    <ComicList :title="props.title" :author="props.author" :keywords="props.keywords" :fetch="getComics"></ComicList>
+    <ComicList :title="listTitle" :params="{
+      c: props.title ? encodeURIComponent(props.title) : undefined,
+      a: props.author ? encodeURIComponent(props.author) : undefined,
+      t: props.keywords ? encodeURIComponent(props.keywords) : undefined
+    }" :fetch="getComics"></ComicList>
   </div>
 </template>
 

@@ -10,7 +10,7 @@ const props = defineProps<{
 
 <template>
   <div>
-    <ComicList :keyword="props.keyword" :fetch="searchComics"></ComicList>
+    <ComicList :title="`搜索结果: ${props.keyword}`" :params="{ keyword: props.keyword }" :fetch="searchComics"></ComicList>
   </div>
 </template>
 
