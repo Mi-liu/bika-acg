@@ -36,7 +36,7 @@ function handleRefreshImage() {
 
 <template>
   <div class="relative bg-[--el-fill-color]" :class="[aspect]">
-    <el-image class="w-full vertical-top" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
+    <el-image class="w-full vertical-top" :class="[aspect]" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
       @error="state = 'error'" v-if="uri.length">
       <template #error>
         <div class="aspect-3/4 flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
@@ -54,13 +54,11 @@ function handleRefreshImage() {
       </el-skeleton>
     </div>
 
-
-
-    <!-- <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
+    <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
       <el-icon>
         <Hide />
       </el-icon>
-    </div> -->
+    </div>
   </div>
 </template>
 

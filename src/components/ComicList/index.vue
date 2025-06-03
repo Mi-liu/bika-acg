@@ -23,6 +23,18 @@ const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
 
 const loading = ref(false)
 
+const listTitle = computed(() => {
+  if (props.title) {
+    return props.title
+  }
+  if (props.author) {
+    return `作者：${props.author}`
+  }
+  return ''
+})
+
+
+
 const data = ref<Comics['comics']>({
   docs: [],
   total: 0,
@@ -42,7 +54,8 @@ async function handlePageChange(event: { currentPage: number }) {
     loading.value = true
     const result = await props.fetch({
       page: event.currentPage,
-      c: encodeURIComponent(props.title),
+      c: props.title ? encodeURIComponent(props.title) : undefined,
+      a: props.author ? encodeURIComponent(props.author) : undefined,
       s: s.value,
     })
     data.value = result
@@ -75,12 +88,18 @@ async function handleCloseTag(tag: string) {
 const animation = cardAnimations.leftToRight
 
 function handleComicClick(item: Comic) {
-  const url = router.resolve(`/comic/detail/${item.id}`).href
+  const url = router.resolve(`/comic/detail/${item._id}`).href
   window.open(url, '_blank');
 }
 
 function handleAuthorClick(author: string) {
-  console.log('作者的点击', author);
+  const url = router.resolve({
+    path: '/comic/list',
+    query: {
+      author: author
+    }
+  }).href
+  window.open(url, '_blank')
 }
 
 function handleFollowAuthor(author: string) {
@@ -104,13 +123,14 @@ function handleTagClick(tag: string) {
 
 
 
+
 </script>
 
 <template>
   <div class="comic-list size-full flex-1 flex flex-col">
     <div class="flex px py">
       <div class="size-full flex justify-between">
-        <div class="text-18px">{{ title }}</div>
+        <div class="text-18px">{{ listTitle }}</div>
         <el-select class="w-110px!" v-model="s" @change="handleSelectChange">
           <el-option v-for="item in sort" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -126,7 +146,7 @@ function handleTagClick(tag: string) {
           @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
           @move="animation.onMove">
           <div class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]" v-for="item in comics"
-            :key="item.id" @click="handleComicClick(item)">
+            :key="item._id" @click="handleComicClick(item)">
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)"></Image>
@@ -151,10 +171,9 @@ function handleTagClick(tag: string) {
             <div class="text-14px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)"
-                  @click.stop="handleAuthorClick(author)">
+                <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)">
                   <template #reference>
-                    <el-link type="primary" underline="always">{{ author
+                    <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
                       }}</el-link>
                   </template>
                   <div class="w-full flex flex-col">
@@ -168,8 +187,6 @@ function handleTagClick(tag: string) {
                       关注
                     </el-button>
                   </div>
-
-
                 </el-popover>
 
               </div>
