@@ -1,7 +1,6 @@
 import alova from '@/services'
 import { HIDDEN_CATEGORIES } from '@/config/categories'
 import type { SortOptionValue } from '@/constants/options'
-
 /** 分页返回的数据 */
 export interface PageData {
   /** 页码 */
@@ -53,6 +52,14 @@ export interface ComicsParams {
    * 作者
    */
   a?: string
+  /**
+   * 都在搜索的关键词
+   */
+  t?: string
+  /**
+   * 搜索的关键词
+   */
+  keyword?: string
   /**
    * 排序选项
    */
@@ -226,4 +233,16 @@ export function getComicPages(id: string, order: number, page: number, forceRefr
       settingStore: settingStore.comic.imageQuality,
     },
   })
+}
+
+/** 输入框关键词搜索漫画 */
+export function searchComics(params: ComicsParams) {
+  return alova
+    .Post<Comics>(`comics/advanced-search?page=${params.page}&s=${params.s}`, {
+      keyword: params.keyword,
+      sort: params.s,
+    })
+    .then((res) => {
+      return res.comics
+    })
 }
