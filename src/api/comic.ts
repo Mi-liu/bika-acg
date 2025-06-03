@@ -148,7 +148,7 @@ export interface ComicDetail extends Omit<Comic, 'id'> {
 /**
  * 获取漫画列表
  */
-export function getComics(params: ComicsParams) {
+export function getComics(params: Omit<ComicsParams, 'keyword'>) {
   return alova
     .Get<Comics>('comics', {
       params: params,
@@ -236,7 +236,7 @@ export function getComicPages(id: string, order: number, page: number, forceRefr
 }
 
 /** 输入框关键词搜索漫画 */
-export function searchComics(params: ComicsParams) {
+export function searchComics(params: Pick<ComicsParams, 'page' | 's' | 'keyword'>) {
   return alova
     .Post<Comics>(`comics/advanced-search?page=${params.page}&s=${params.s}`, {
       keyword: params.keyword,
