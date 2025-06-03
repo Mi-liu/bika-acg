@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends Partial<ComicsParams>">
 import type { ComicsListProps } from './type'
 import CommonPagination from '@common/components/CommonPagination/index.vue'
 import Image from '@/components/Image/index.vue'
@@ -6,12 +6,13 @@ import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
 import { sort, defaultSort } from '@/constants/options'
 import { getImageUrl } from '@/utils/string'
 import type { SortOptionValue } from '@/constants/options'
-import type { Comics, Comic } from '@/api/comic'
+import type { ComicsParams, Comics, Comic } from '@/api/comic'
 import { Timer } from '@element-plus/icons-vue'
 import { cardAnimations } from '@/animations/cardAnimation'
 import '@/animations/cardAnimation.scss'
 
-const props = defineProps<ComicsListProps>()
+
+const props = defineProps<ComicsListProps<T>>()
 
 const router = useRouter()
 
@@ -22,25 +23,6 @@ const localStore = useLocalStoreHook()
 const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
 
 const loading = ref(false)
-
-const listTitle = computed(() => {
-  console.log(props);
-  if (props.title) {
-    return props.title
-  }
-  else if (props.author) {
-    return `作者：${props.author}`
-  }
-  else if (props.keywords) {
-    return `关键词：${props.keywords}`
-  }
-  else if (props.keyword) {
-    return `搜索：${props.keyword}`
-  }
-  return ''
-})
-
-
 
 const data = ref<Comics['comics']>({
   docs: [],
@@ -61,12 +43,9 @@ async function handlePageChange(event: { currentPage: number }) {
     loading.value = true
     const result = await props.fetch({
       page: event.currentPage,
-      c: props.title ? encodeURIComponent(props.title) : undefined,
-      a: props.author ? encodeURIComponent(props.author) : undefined,
-      t: props.keywords ? encodeURIComponent(props.keywords) : undefined,
-      keyword: props.keyword,
       s: s.value,
-    })
+      ...props.params,
+    } as T & { page: number; s: string })
     data.value = result
   } finally {
     await nextTick()
@@ -139,7 +118,7 @@ function handleTagClick(tag: string) {
   <div class="comic-list size-full flex-1 flex flex-col">
     <div class="flex px py">
       <div class="size-full flex justify-between">
-        <div class="text-18px">{{ listTitle }}</div>
+        <div class="text-18px">{{ props.title || '漫画列表' }}</div>
         <el-select class="w-110px!" v-model="s" @change="handleSelectChange">
           <el-option v-for="item in sort" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
@@ -183,7 +162,7 @@ function handleTagClick(tag: string) {
                 <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)">
                   <template #reference>
                     <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                      }}</el-link>
+                    }}</el-link>
                   </template>
                   <div class="w-full flex flex-col">
                     <el-button class="w-full" type="danger" size="default"
