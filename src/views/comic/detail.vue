@@ -12,6 +12,8 @@ const router = useRouter()
 
 const props = defineProps<{ id: string }>()
 
+const localStore = useLocalStoreHook()
+
 const { data } = useRequest(getComicDetail, {
   defaultParams: [props.id],
 })
@@ -53,18 +55,20 @@ function handleAuthorClick(author: string) {
   const url = router.resolve({
     path: '/comic/list',
     query: {
-      title: author
+      author: author
     }
   }).href
   window.open(url, '_blank');
 }
 
-/**
- * 处理关注作者事件
- */
 function handleFollowAuthor(author: string) {
-
+  localStore.pushItem('FOLLOW_AUTHOR_LIST', author)
 }
+
+function handleUnfollowAuthor(author: string) {
+  localStore.removeItem('FOLLOW_AUTHOR_LIST', author)
+}
+
 
 function handleTagClick(tag: string) {
   const url = router.resolve({
@@ -155,18 +159,23 @@ function handleEpsClick(index: number) {
             </CommonButton>
 
             <div class="ml-auto flex items-center gap-2">
-              <div v-for="author in data?.author.split(/[、,，]\s*/)" :key="author">
-                <el-link class="text-16px!" type="primary" underline="always" @click.stop="handleAuthorClick(author)">
-                  {{ author }}
-                </el-link>
-                <el-tooltip placement="top">
-                  <template #content>
-                    关注作者
-                  </template>
-                  <el-button type="primary" size="small" plain :icon="Plus"
-                    @click="handleFollowAuthor(author)"></el-button>
-                </el-tooltip>
-              </div>
+              <el-popover width="70px" v-for="author in data?.author.split(/[、,，]\s*/)">
+                <template #reference>
+                  <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
+                  }}</el-link>
+                </template>
+                <div class="w-full flex flex-col">
+                  <el-button class="w-full" type="danger" size="default"
+                    v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)"
+                    @click.stop="handleUnfollowAuthor(author)">
+                    取消关注
+                  </el-button>
+                  <el-button v-else class="w-full" type="primary" size="default"
+                    @click.stop="handleFollowAuthor(author)">
+                    关注
+                  </el-button>
+                </div>
+              </el-popover>
 
 
             </div>
