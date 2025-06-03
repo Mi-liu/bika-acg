@@ -7,6 +7,22 @@ const layoutStore = useLayoutStoreHook()
 const userStore = useUserStoreHook()
 userStore.getUserProfile()
 const settingStore = useSettingStoreHook()
+
+const router = useRouter()
+
+function handleFavourite() {
+  const url = router.resolve({
+    path: '/user/favorites',
+  }).href
+  window.open(url, '_blank')
+}
+
+function handleFollowing() {
+  const url = router.resolve({
+    path: '/user/following',
+  }).href
+  window.open(url, '_blank')
+}
 </script>
 
 <template>
@@ -20,8 +36,8 @@ const settingStore = useSettingStoreHook()
     </el-button>
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item :icon="Link">我的关注</el-dropdown-item>
-        <el-dropdown-item :icon="Star">我的收藏</el-dropdown-item>
+        <el-dropdown-item :icon="Link" @click="handleFollowing">我的关注</el-dropdown-item>
+        <el-dropdown-item :icon="Star" @click="handleFavourite">我的收藏</el-dropdown-item>
         <el-dropdown-item :icon="ChatLineSquare">我的评论</el-dropdown-item>
         <el-dropdown-item :icon="Timer">稍后再看</el-dropdown-item>
         <el-dropdown-item :icon="Setting">设置</el-dropdown-item>
