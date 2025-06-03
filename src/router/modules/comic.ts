@@ -13,6 +13,10 @@ export default createRouterModule(name, {
       component: () => import('@/views/comic/list.vue'),
     },
     {
+      path: 'search',
+      component: () => import('@/views/comic/search.vue'),
+    },
+    {
       path: 'detail/:id',
       component: () => import('@/views/comic/detail.vue'),
       meta: {
