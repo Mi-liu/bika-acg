@@ -57,7 +57,7 @@ const gender = [
 
 const handleRegister = async () => {
   await formRef.value?.validate()
-  const res = await register({
+  await register({
     ...form,
     ...answer,
     birthday: '2000-01-01',
