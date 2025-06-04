@@ -155,8 +155,6 @@ function handleTagClick(tag: string) {
     <div class="h-full flex-1 overflow-hidden">
       <el-scrollbar height="100%">
         <div class="w-full h-6px"></div>
-        {{ comics.length }}
-
         <!-- 加载状态骨架屏 -->
         <div v-if="loading" class="card-animation-grid card-grid-custom"
           style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;">

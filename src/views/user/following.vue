@@ -40,23 +40,18 @@ async function handleUnfollow(authorName: string) {
 <template>
   <div class="flex flex-col bg-[--el-bg-color-page]">
     <div>
-      我的收藏
+      我的关注
     </div>
     <el-scrollbar>
       <div class="flex gap-2">
         <ElButton v-for="item in localStore.local.FOLLOW_AUTHOR_LIST" :key="item" class="ml-0! h-fit!">
           <el-avatar size="small" :icon="UserFilled" />
-          <el-link
-            class="ml-auto ml-2!" type="primary" underline="always"
-            @click="handleAuthorClick(item)"
-          >
+          <el-link class="ml-auto ml-2!" type="primary" underline="always" @click="handleAuthorClick(item)">
             {{ item }}
           </el-link>
 
-          <div
-            class="size-20px rounded-50% flex-center ml-2 hover:text-[--el-color-danger]"
-            @click="handleUnfollow(item)"
-          >
+          <div class="size-20px rounded-50% flex-center ml-2 hover:text-[--el-color-danger]"
+            @click="handleUnfollow(item)">
             <ElIcon size="18">
               <Close />
             </ElIcon>

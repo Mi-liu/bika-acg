@@ -1,5 +1,6 @@
 import type { Comics, ComicsParams } from './comic'
 import alova from '@/services'
+import type { PageData } from './comic'
 
 /**
  * 登录
@@ -8,7 +9,7 @@ import alova from '@/services'
  * @param params.password 密码
  * @returns 登录结果
  */
-export function login(params: { email: string, password: string }) {
+export function login(params: { email: string; password: string }) {
   return alova.Post<{
     token: string
   }>('auth/sign-in', params)
@@ -130,5 +131,39 @@ export function getUserFavourite(params: ComicsParams) {
     })
     .then((res) => {
       return res.comics
+    })
+}
+
+interface Comments {
+  comments: {
+    docs: {
+      /** 评论id */
+      _id: string
+      /** 评论内容 */
+      content: string
+      /** 评论时间 */
+      created_at: string
+      /** 评论的漫画 */
+      _comic: {
+        /** 漫画id */
+        _id: string
+        /** 漫画标题 */
+        title: string
+      }
+    }[]
+  } & PageData
+}
+
+/**
+ * 获取用户评论历史
+ * @returns 评论历史
+ */
+export function getMyComments(params: { page: number }) {
+  return alova
+    .Get<Comments>('users/my-comments', {
+      params,
+    })
+    .then((res) => {
+      return res.comments
     })
 }

@@ -20,5 +20,9 @@ export default createRouterModule(name, {
       path: 'watch-later',
       component: () => import('@/views/user/watch-later.vue'),
     },
+    {
+      path: 'comments',
+      component: () => import('@/views/user/comments.vue'),
+    },
   ],
 })
