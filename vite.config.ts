@@ -37,4 +37,11 @@ export default defineConfig({
       '@common': `${root}/common`,
     },
   },
+  base: '/', // 确保基础路径正确
+  build: {
+    outDir: 'dist', // 确认输出目录
+    emptyOutDir: true, // 构建前清空目录
+    assetsDir: 'assets', // 静态资源目录
+    manifest: true, // 生成manifest文件
+  },
 })
