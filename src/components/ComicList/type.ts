@@ -1,4 +1,4 @@
-import type { ComicsParams, Comics } from '@/api/comic'
+import type { Comics, ComicsParams } from '@/api/comic'
 
 export interface ComicsListProps<T extends Partial<ComicsParams> = Partial<ComicsParams>> {
   /** 标题 */
@@ -8,5 +8,5 @@ export interface ComicsListProps<T extends Partial<ComicsParams> = Partial<Comic
   /** 请求参数 */
   params?: Omit<T, 'page' | 's'>
   /** 请求接口 */
-  fetch: (params: T & { page: number; s: string }) => Promise<Comics['comics']>
+  fetch: (params: T & { page: number, s: string }) => Promise<Comics['comics']>
 }

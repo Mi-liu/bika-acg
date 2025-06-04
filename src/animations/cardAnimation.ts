@@ -42,7 +42,7 @@ export interface AnimationHooks {
  * @param itemWidth 每个项目的宽度（像素）
  * @returns 行、列和每行项目数
  */
-export const calculateGridPosition = (index: number, itemWidth: number = 240) => {
+export function calculateGridPosition(index: number, itemWidth: number = 240) {
   // 估计每行显示的卡片数量，根据窗口宽度动态计算
   const itemsPerRow = Math.floor(window.innerWidth / itemWidth) || 4
   const row = Math.floor(index / itemsPerRow)
@@ -55,7 +55,7 @@ export const calculateGridPosition = (index: number, itemWidth: number = 240) =>
  * @param options 动画配置选项
  * @returns 动画钩子函数
  */
-export const createCardAnimation = (options: CardAnimationOptions = {}): AnimationHooks => {
+export function createCardAnimation(options: CardAnimationOptions = {}): AnimationHooks {
   // 默认配置
   const config = {
     direction: 'left-to-right',
@@ -115,7 +115,8 @@ export const createCardAnimation = (options: CardAnimationOptions = {}): Animati
       const { itemsPerRow } = calculateGridPosition(index, config.itemWidth)
       const reversedCol = itemsPerRow - col - 1
       delay = row * config.rowDelay + reversedCol * config.colDelay
-    } else {
+    }
+    else {
       // 默认从左到右
       delay = row * config.rowDelay + col * config.colDelay
     }
@@ -128,7 +129,7 @@ export const createCardAnimation = (options: CardAnimationOptions = {}): Animati
       y: 0,
       rotateZ: 0,
       duration: config.duration,
-      delay: delay,
+      delay,
       ease: config.ease,
       onComplete: done,
     })
@@ -234,14 +235,11 @@ export const cardAnimations = {
  * @param selector CSS选择器或元素
  * @param options 样式选项
  */
-export const applyCardStyles = (
-  selector: string | HTMLElement,
-  options: {
-    gridColumns?: string
-    gridGap?: string
-    itemHoverTransform?: string
-  } = {},
-) => {
+export function applyCardStyles(selector: string | HTMLElement, options: {
+  gridColumns?: string
+  gridGap?: string
+  itemHoverTransform?: string
+} = {}) {
   const defaultOptions = {
     gridColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
     gridGap: '20px',
@@ -253,7 +251,8 @@ export const applyCardStyles = (
   // 获取元素
   const container = typeof selector === 'string' ? document.querySelector(selector) : selector
 
-  if (!container) return
+  if (!container)
+    return
 
   // 应用网格容器样式
   if (container instanceof HTMLElement) {

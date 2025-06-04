@@ -1,18 +1,17 @@
 <script setup lang="ts" generic="T extends Partial<ComicsParams>">
 import type { ComicsListProps } from './type'
+import type { Comic, Comics, ComicsParams } from '@/api/comic'
+import type { SortOptionValue } from '@/constants/options'
 import CommonPagination from '@common/components/CommonPagination/index.vue'
+import { Minus, Timer } from '@element-plus/icons-vue'
+import { cloneDeep } from 'lodash-es'
+import { cardAnimations } from '@/animations/cardAnimation'
 import Image from '@/components/Image/index.vue'
 import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
-import { sort, defaultSort } from '@/constants/options'
-import { getImageUrl } from '@/utils/string'
-import type { SortOptionValue } from '@/constants/options'
-import type { ComicsParams, Comics, Comic } from '@/api/comic'
-import { Timer, Minus } from '@element-plus/icons-vue'
-import { cardAnimations } from '@/animations/cardAnimation'
-import '@/animations/cardAnimation.scss'
+import { defaultSort, sort } from '@/constants/options'
 import { arrayContains } from '@/utils/array'
-import { cloneDeep } from 'lodash-es'
-
+import { getImageUrl } from '@/utils/string'
+import '@/animations/cardAnimation.scss'
 
 const props = withDefaults(defineProps<ComicsListProps<T>>(), {
   isBlockedCategories: true,
@@ -36,10 +35,10 @@ const data = ref<Comics['comics']>({
   limit: DEFAULT_PAGE_SIZE,
 })
 
-const s = ref<SortOptionValue>(defaultSort);
+const s = ref<SortOptionValue>(defaultSort)
 
 function handleSelectChange(_event: SortOptionValue) {
-  CommonPaginationRef.value?.reset();
+  CommonPaginationRef.value?.reset()
 }
 
 async function handlePageChange(event: { currentPage: number }) {
@@ -49,9 +48,10 @@ async function handlePageChange(event: { currentPage: number }) {
       page: event.currentPage,
       s: s.value,
       ...props.params,
-    } as T & { page: number; s: string })
+    } as T & { page: number, s: string })
     data.value = result
-  } finally {
+  }
+  finally {
     await nextTick()
     loading.value = false
   }
@@ -62,21 +62,23 @@ handlePageChange({
 
 const comics = computed(() => {
   if (props.isBlockedCategories) {
-    return data.value.docs.filter(item => {
+    return data.value.docs.filter((item) => {
       return !item.categories.some(tag => settingStore.comic.blockedCategories.includes(tag))
     })
-  } else {
+  }
+  else {
     return data.value.docs
   }
 })
 
 async function handleCloseTag(tag: string) {
-  await ElMessageBox.alert('是否屏蔽分类：' + tag, '提示', {
+  await ElMessageBox.alert(`是否屏蔽分类：${tag}`, '提示', {
     showCancelButton: true,
   })
   if (settingStore.comic.blockedCategories.includes(tag)) {
     ElMessage.warning('分类已被屏蔽，请勿重复添加')
-  } else {
+  }
+  else {
     settingStore.comic.blockedCategories.push(tag)
     ElMessage.success('分类已被屏蔽')
   }
@@ -87,15 +89,15 @@ const animation = cardAnimations.leftToRight
 
 function handleComicClick(item: Comic) {
   const url = router.resolve(`/comic/detail/${item._id}`).href
-  window.open(url, '_blank');
+  window.open(url, '_blank')
 }
 
 function handleAuthorClick(author: string) {
   const url = router.resolve({
     path: '/comic/list',
     query: {
-      author: author
-    }
+      author,
+    },
   }).href
   window.open(url, '_blank')
 }
@@ -116,20 +118,15 @@ function handleRemoveFromLater(item: Comic) {
   localStore.removeItem('WATCH_LATER_LIST', item, '_id')
 }
 
-
 function handleTagClick(tag: string) {
   const url = router.resolve({
     path: '/comic/list',
     query: {
-      title: tag
-    }
+      title: tag,
+    },
   }).href
-  window.open(url, '_blank');
+  window.open(url, '_blank')
 }
-
-
-
-
 </script>
 
 <template>
@@ -137,39 +134,53 @@ function handleTagClick(tag: string) {
     <div class="flex px py">
       <div class="size-full flex justify-between">
         <div class="text-18px">{{ props.title || '漫画列表' }}</div>
-        <el-select class="w-110px!" v-model="s" @change="handleSelectChange">
-          <el-option v-for="item in sort" :key="item.value" :label="item.label" :value="item.value" />
+        <el-select v-model="s" class="w-110px!" @change="handleSelectChange">
+          <el-option
+            v-for="item in sort" :key="item.value" :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </div>
-      <CommonPagination ref="CommonPaginationRef" :total="data.total"
-        layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" @change="handlePageChange">
-      </CommonPagination>
+      <CommonPagination
+        ref="CommonPaginationRef" :total="data.total"
+        layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" @change="handlePageChange"
+      />
     </div>
     <div class="h-full flex-1 overflow-hidden">
       <el-scrollbar height="100%">
-        <TransitionGroup tag="div" class="card-animation-grid card-grid-custom"
+        <TransitionGroup
+          tag="div" class="card-animation-grid card-grid-custom"
           style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;" :css="false"
           @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
-          @move="animation.onMove">
-          <div class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]" v-for="item in comics"
-            :key="item._id" @click="handleComicClick(item)">
+          @move="animation.onMove"
+        >
+          <div
+            v-for="item in comics" :key="item._id"
+            class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]" @click="handleComicClick(item)"
+          >
             <!-- 封面图 -->
             <div class="relative">
-              <Image :src="getImageUrl(item.thumb.path)"></Image>
-              <el-tooltip class="box-item" effect="dark"
+              <Image :src="getImageUrl(item.thumb.path)" />
+              <el-tooltip
+                class="box-item" effect="dark"
                 :content="arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id') ? '从稍后再看中移除' : '添加到稍后再看'"
-                placement="top-start">
-                <div class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                placement="top-start"
+              >
+                <div
                   v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
-                  @click.stop="handleAddToLater(item)">
+                  class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                  @click.stop="handleAddToLater(item)"
+                >
                   <el-icon class="text-[--el-color-white]!">
-                    <Timer></Timer>
+                    <Timer />
                   </el-icon>
                 </div>
-                <div class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center" v-else
-                  @click.stop="handleRemoveFromLater(item)">
+                <div
+                  v-else class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                  @click.stop="handleRemoveFromLater(item)"
+                >
                   <el-icon class="text-[--el-color-white]!">
-                    <Minus></Minus>
+                    <Minus />
                   </el-icon>
                 </div>
               </el-tooltip>
@@ -180,38 +191,46 @@ function handleTagClick(tag: string) {
             </div>
             <!-- 章节信息 -->
             <div class="text-13px mt-1 text-[--el-text-color-secondary]">
-              <el-text class="mx-1" type="primary" v-if="item.finished">[完结]</el-text> {{ item.epsCount }}章 共 {{
+              <el-text v-if="item.finished" class="mx-1" type="primary">[完结]</el-text> {{ item.epsCount }}章 共 {{
                 item.pagesCount }}P
             </div>
             <!-- 作者 -->
             <div class="text-14px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)">
+                <el-popover v-for="author in item.author.split(/[、,，]\s*/)" width="70px">
                   <template #reference>
-                    <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                      }}</el-link>
+                    <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
+                      {{ author
+                      }}
+                    </el-link>
                   </template>
                   <div class="w-full flex flex-col">
-                    <el-button class="w-full" type="danger" size="default"
-                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)"
-                      @click.stop="handleUnfollowAuthor(author)">
+                    <el-button
+                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
+                      size="default"
+                      @click.stop="handleUnfollowAuthor(author)"
+                    >
                       取消关注
                     </el-button>
-                    <el-button v-else class="w-full" type="primary" size="default"
-                      @click.stop="handleFollowAuthor(author)">
+                    <el-button
+                      v-else class="w-full" type="primary"
+                      size="default"
+                      @click.stop="handleFollowAuthor(author)"
+                    >
                       关注
                     </el-button>
                   </div>
                 </el-popover>
-
               </div>
-
             </div>
             <!-- 分类 -->
             <div class="mt-2 flex flex-wrap gap-2">
-              <el-tag v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
-                @close="handleCloseTag(tag)" @click.stop="handleTagClick(tag)">
+              <el-tag
+                v-for="tag in item.categories" :key="tag" closable
+                type="primary" effect="plain"
+                @close="handleCloseTag(tag)" @click.stop="handleTagClick(tag)"
+              >
                 {{ tag }}
               </el-tag>
             </div>

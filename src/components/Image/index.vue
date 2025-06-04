@@ -7,12 +7,10 @@ const props = withDefaults(defineProps<ImageProps>(), {
   aspect: '3/4',
 })
 
-const uri = ref('');
+const uri = ref('')
 watchEffect(() => {
   uri.value = props.src
 })
-
-
 
 /** 图片加载状态 */
 const state = ref<'loading' | 'load' | 'error'>('loading')
@@ -26,27 +24,30 @@ const aspect = computed(() => {
   }
 })
 
-
 function handleRefreshImage() {
   state.value = 'loading'
   uri.value = `${uri.value}?t=${Date.now()}`
 }
-
 </script>
 
 <template>
   <div class="relative bg-[--el-fill-color]" :class="[aspect]">
-    <el-image class="w-full vertical-top" :class="[aspect]" :src="uri" fit="cover" loading="lazy" @load="state = 'load'"
-      @error="state = 'error'" v-if="uri.length">
+    <el-image
+      v-if="uri.length" class="w-full vertical-top" :class="[aspect]"
+      :src="uri" fit="cover" loading="lazy"
+      @load="state = 'load'" @error="state = 'error'"
+    >
       <template #error>
-        <div class="aspect-3/4 flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
-          @click.stop="handleRefreshImage">
+        <div
+          class="aspect-3/4 flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
+          @click.stop="handleRefreshImage"
+        >
           <div>加载失败</div>
           <div>点击重新加载</div>
         </div>
       </template>
     </el-image>
-    <div class="absolute inset-0 flex-center" v-if="state === 'loading'">
+    <div v-if="state === 'loading'" class="absolute inset-0 flex-center">
       <el-skeleton class="size-full" :loading="true" animated>
         <template #template>
           <el-skeleton-item class="size-full!" variant="image" />

@@ -13,7 +13,7 @@ const buttonProps = omit(props, 'onClick')
 const loading = ref(false)
 
 // 移除调试日志
-const handleClick = (evt: MouseEvent) => {
+function handleClick(evt: MouseEvent) {
   if (props.onClick) {
     loading.value = true
     Promise.resolve(props.onClick(evt)).finally(() => {

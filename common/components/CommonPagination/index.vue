@@ -8,7 +8,7 @@ defineOptions({
 
 const props = withDefaults(defineProps<CommonPaginationProps & {
   /** 当前页码 */
-  currentPage?: number,
+  currentPage?: number
   /** 每页条数 */
   pageSize?: number
 }>(), {
@@ -25,16 +25,16 @@ const props = withDefaults(defineProps<CommonPaginationProps & {
   /** 当前页码 */
   currentPage: CommonPaginationConfig.defaultCurrentPage,
   /** 每页条数 */
-  pageSize: CommonPaginationConfig.defaultPageSize
+  pageSize: CommonPaginationConfig.defaultPageSize,
 })
 
 const emit = defineEmits<{
   /** 页码变化 */
-  'update:currentPage': [number],
+  'update:currentPage': [number]
   /** 每页条数变化 */
-  'update:pageSize': [number],
+  'update:pageSize': [number]
   /** 分页变化 */
-  change: [{
+  'change': [{
     currentPage: number
     pageSize: number
   }]
@@ -92,7 +92,7 @@ function handlePageSizeChange(size: number) {
 function emitChange() {
   emit('change', {
     currentPage: innerCurrentPage.value,
-    pageSize: innerPageSize.value
+    pageSize: innerPageSize.value,
   })
 }
 
@@ -109,14 +109,15 @@ function reset() {
 
 // 暴露方法
 defineExpose({
-  reset
+  reset,
 })
-
 </script>
 
 <template>
-  <el-pagination v-bind="props" :page-size="innerPageSize" :current-page="innerCurrentPage"
-    @update:current-page="handleCurrentPageChange" @update:page-size="handlePageSizeChange">
+  <el-pagination
+    v-bind="props" :page-size="innerPageSize" :current-page="innerCurrentPage"
+    @update:current-page="handleCurrentPageChange" @update:page-size="handlePageSizeChange"
+  >
     <slot />
   </el-pagination>
 </template>
