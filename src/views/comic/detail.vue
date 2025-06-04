@@ -6,7 +6,6 @@ import { getComicDetail, favorites, getComicEps } from '@/api/comic'
 import { Star, StarFilled, Reading, Document, Memo, Plus } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { loopRequestList } from '@/utils/fetch'
-import type { ComicDetail } from '@/api/comic'
 
 const router = useRouter()
 
@@ -16,6 +15,12 @@ const localStore = useLocalStoreHook()
 
 const { data } = useRequest(getComicDetail, {
   defaultParams: [props.id],
+})
+
+watch(data, (newVal) => {
+  if (newVal) {
+    localStore.removeItem('WATCH_LATER_LIST', newVal, '_id')
+  }
 })
 
 const toolList = <const>[
@@ -162,7 +167,7 @@ function handleEpsClick(index: number) {
               <el-popover width="70px" v-for="author in data?.author.split(/[、,，]\s*/)">
                 <template #reference>
                   <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                  }}</el-link>
+                    }}</el-link>
                 </template>
                 <div class="w-full flex flex-col">
                   <el-button class="w-full" type="danger" size="default"

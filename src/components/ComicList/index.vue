@@ -7,9 +7,11 @@ import { sort, defaultSort } from '@/constants/options'
 import { getImageUrl } from '@/utils/string'
 import type { SortOptionValue } from '@/constants/options'
 import type { ComicsParams, Comics, Comic } from '@/api/comic'
-import { Timer } from '@element-plus/icons-vue'
+import { Timer, Minus } from '@element-plus/icons-vue'
 import { cardAnimations } from '@/animations/cardAnimation'
 import '@/animations/cardAnimation.scss'
+import { arrayContains } from '@/utils/array'
+import { cloneDeep } from 'lodash-es'
 
 
 const props = defineProps<ComicsListProps<T>>()
@@ -98,6 +100,16 @@ function handleUnfollowAuthor(author: string) {
   localStore.removeItem('FOLLOW_AUTHOR_LIST', author)
 }
 
+function handleAddToLater(item: Comic) {
+  localStore.pushItem('WATCH_LATER_LIST', cloneDeep(item))
+}
+
+function handleRemoveFromLater(item: Comic) {
+  console.log(localStore.local.WATCH_LATER_LIST);
+  console.log(item);
+  localStore.removeItem('WATCH_LATER_LIST', item, '_id')
+}
+
 
 function handleTagClick(tag: string) {
   const url = router.resolve({
@@ -138,10 +150,20 @@ function handleTagClick(tag: string) {
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)"></Image>
-              <el-tooltip class="box-item" effect="dark" content="添加到稍后再看" placement="top-start">
-                <div class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center">
+              <el-tooltip class="box-item" effect="dark"
+                :content="arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id') ? '从稍后再看中移除' : '添加到稍后再看'"
+                placement="top-start">
+                <div class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                  v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
+                  @click.stop="handleAddToLater(item)">
                   <el-icon class="text-[--el-color-white]!">
                     <Timer></Timer>
+                  </el-icon>
+                </div>
+                <div class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center" v-else
+                  @click.stop="handleRemoveFromLater(item)">
+                  <el-icon class="text-[--el-color-white]!">
+                    <Minus></Minus>
                   </el-icon>
                 </div>
               </el-tooltip>
@@ -162,7 +184,7 @@ function handleTagClick(tag: string) {
                 <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)">
                   <template #reference>
                     <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                    }}</el-link>
+                      }}</el-link>
                   </template>
                   <div class="w-full flex flex-col">
                     <el-button class="w-full" type="danger" size="default"
