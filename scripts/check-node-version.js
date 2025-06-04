@@ -5,10 +5,10 @@
  * 如果没有安装该版本，则安装它
  */
 
-import { execSync } from 'child_process'
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import { execSync } from 'node:child_process'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 // 获取当前文件的目录
 const __filename = fileURLToPath(import.meta.url)
@@ -35,7 +35,8 @@ function isVersionInstalled(version) {
     // 尝试直接使用 nvm 切换到该版本，如果成功则说明已安装
     execSync(`nvm use ${version} > nul 2>&1`, { shell: true })
     return true
-  } catch (error) {
+  }
+  catch (error) {
     // 如果切换失败，则说明未安装
     return false
   }
@@ -46,7 +47,8 @@ function isUsingVersion(version) {
   try {
     const currentVersion = execSync('node -v', { shell: true }).toString().trim().replace('v', '')
     return currentVersion === version
-  } catch (error) {
+  }
+  catch (error) {
     console.error('检查当前 Node.js 版本失败:', error.message)
     return false
   }
@@ -65,7 +67,8 @@ if (isInstalled && !isUsing) {
   console.log(`切换到 Node.js v${requiredNodeVersion}`)
   try {
     execSync(`nvm use ${requiredNodeVersion}`, { stdio: 'inherit', shell: true })
-  } catch (error) {
+  }
+  catch (error) {
     console.error('切换 Node.js 版本失败:', error.message)
     process.exit(1)
   }
@@ -76,7 +79,8 @@ else if (!isInstalled) {
   try {
     execSync(`nvm install ${requiredNodeVersion}`, { stdio: 'inherit', shell: true })
     execSync(`nvm use ${requiredNodeVersion}`, { stdio: 'inherit', shell: true })
-  } catch (error) {
+  }
+  catch (error) {
     console.error('安装或切换 Node.js 版本失败:', error.message)
     process.exit(1)
   }

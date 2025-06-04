@@ -22,7 +22,7 @@ import { isEqual } from 'lodash-es'
 export function arrayContains<T>(arr: T[], value: unknown, key?: keyof T | number): boolean {
   // 参数验证
   if (!Array.isArray(arr)) {
-    throw new Error('第一个参数必须是数组')
+    throw new TypeError('第一个参数必须是数组')
   }
 
   // 如果没有指定key，直接在数组中查找值
@@ -66,7 +66,7 @@ export function arrayContains<T>(arr: T[], value: unknown, key?: keyof T | numbe
  */
 export function arrayIndexOf<T>(arr: T[], value: unknown, key?: keyof T | number): number {
   if (!Array.isArray(arr)) {
-    throw new Error('第一个参数必须是数组')
+    throw new TypeError('第一个参数必须是数组')
   }
 
   if (key === undefined) {
@@ -103,11 +103,11 @@ export function arrayIndexOf<T>(arr: T[], value: unknown, key?: keyof T | number
  */
 export function arrayRemove<T>(arr: T[], value: unknown, key?: keyof T | number): T[] {
   if (!Array.isArray(arr)) {
-    throw new Error('第一个参数必须是数组')
+    throw new TypeError('第一个参数必须是数组')
   }
 
   if (key === undefined) {
-    return arr.filter((item) => item !== value)
+    return arr.filter(item => item !== value)
   }
 
   return arr.filter((item) => {
@@ -139,7 +139,7 @@ export function arrayRemove<T>(arr: T[], value: unknown, key?: keyof T | number)
  */
 export function smartIndexOf<T>(arr: T[], value: T, uniqueKey?: keyof T): number {
   if (!Array.isArray(arr)) {
-    throw new Error('第一个参数必须是数组')
+    throw new TypeError('第一个参数必须是数组')
   }
 
   // 如果指定了唯一标识符，优先使用
@@ -161,5 +161,5 @@ export function smartIndexOf<T>(arr: T[], value: T, uniqueKey?: keyof T): number
   }
 
   // 对于复杂对象，使用深度比较作为后备方案
-  return arr.findIndex((item) => isEqual(item, value))
+  return arr.findIndex(item => isEqual(item, value))
 }

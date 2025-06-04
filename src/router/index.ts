@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 
 // 使用 Vite 的 import.meta.globEager 一键导入所有路由模块
 const modules = import.meta.glob<{ default: RouteRecordRaw }>('./modules/*.ts', { eager: true })

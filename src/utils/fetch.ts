@@ -46,7 +46,7 @@ function fetchPageData(page: number) {
   return Promise.resolve({
     items: [page, page + 1, page + 2],
     total: 100,
-    page: page,
+    page,
     pageSize: 10,
     hasMore: page < 10,
     metadata: { lastUpdated: new Date() },
@@ -56,7 +56,7 @@ function fetchPageData(page: number) {
 // 使用loopRequestList获取所有数据
 const { data } = loopRequestList(fetchPageData, {
   key: 'items',
-  beforeRequest: (page) => page < 3, // 只请求前3页
+  beforeRequest: page => page < 3, // 只请求前3页
 })
 
 /**

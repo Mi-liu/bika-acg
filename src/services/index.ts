@@ -2,10 +2,11 @@ import type { AlovaCustomTypes } from 'alova'
 import { createAlova } from 'alova'
 
 import adapterFetch from 'alova/fetch'
-import { createHeader } from '@/utils/crypto'
-import { objectToUrlParams, filterUndefined } from '@/utils/object'
 import { ApiCode } from '@/enum/apiCode'
 import router from '@/router'
+import { createHeader } from '@/utils/crypto'
+import { filterUndefined, objectToUrlParams } from '@/utils/object'
+
 export interface Response<T = unknown> {
   code: number
   data: T

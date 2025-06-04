@@ -1,6 +1,6 @@
 import type { App } from 'vue'
-import router from '@/router'
 import { Priority } from '@/enum/priority'
+import router from '@/router'
 
 export default {
   index: Priority.Highest,

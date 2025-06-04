@@ -1,6 +1,5 @@
-import type { AlovaCustomTypes } from 'alova'
-import { createAlova } from 'alova'
 import { axiosRequestAdapter } from '@alova/adapter-axios'
+import { createAlova } from 'alova'
 
 const KEY = 'SjC_GJyODUxKoskYl'
 
@@ -16,7 +15,8 @@ const seniverseAlova = createAlova({
     onSuccess: async (response) => {
       if (response.status === 200) {
         return response.data
-      } else {
+      }
+      else {
         return Promise.reject(response)
       }
     },

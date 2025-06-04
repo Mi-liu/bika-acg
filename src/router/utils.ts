@@ -1,10 +1,10 @@
 import type {
-  RouteRecordSingleViewWithChildren,
-  RouteMeta,
   RouteLocationNormalizedLoaded,
+  RouteMeta,
+  RouteRecordSingleViewWithChildren,
 } from 'vue-router'
-import { upperFirst } from '@/utils/string'
 import { merge } from 'lodash-es'
+import { upperFirst } from '@/utils/string'
 
 const defaultMeta: RouteMeta = {
   layout: true,
@@ -26,7 +26,7 @@ export function createRouterModule(
     meta: merge(defaultMeta, config.meta),
     redirect: config.redirect || `/${moduleName}/${config.children?.[0]?.path}`,
     ...config,
-    children: config.children?.map((child) => ({
+    children: config.children?.map(child => ({
       ...child,
       props: (route: RouteLocationNormalizedLoaded) => ({
         ...route.params,

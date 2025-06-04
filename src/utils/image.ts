@@ -265,11 +265,13 @@ export async function batchDetectSolidColor(
       let result: SolidColorResult
       if (typeof image === 'string') {
         result = await isSolidColorImage(image, options)
-      } else {
+      }
+      else {
         result = await isSolidColorFile(image, options)
       }
       results.push(result)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('检测图片失败:', error)
       results.push({
         isSolid: false,
@@ -476,7 +478,8 @@ export function canvasToBlob(
       (blob) => {
         if (blob) {
           resolve(blob)
-        } else {
+        }
+        else {
           reject(new Error('Canvas转换为Blob失败'))
         }
       },

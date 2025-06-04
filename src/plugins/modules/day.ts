@@ -1,7 +1,7 @@
 import type { App } from 'vue'
-import { Priority } from '@/enum/priority'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
+import { Priority } from '@/enum/priority'
 
 export default {
   index: Priority.Low,

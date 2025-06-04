@@ -31,12 +31,14 @@ export function objectToUrlParams(obj: Record<string, any>, url = ''): string {
       for (const key in value) {
         processValue(`${prefix}[${key}]`, value[key])
       }
-    } else if (Array.isArray(value)) {
+    }
+    else if (Array.isArray(value)) {
       // 如果是数组，遍历数组
       value.forEach((item, index) => {
         processValue(`${prefix}[${index}]`, item)
       })
-    } else {
+    }
+    else {
       // 如果是基本类型，直接添加到 params 数组
       params.push(`${prefix}=${value}`)
     }

@@ -10,8 +10,8 @@ export default function (app: App) {
         install: (app: App) => void
       }
     }>('./modules/**/*.ts', {
-      eager: true,
-    }),
+            eager: true,
+          }),
   )
     .map(([, value]) => value.default)
     .sort((a, b) => a.index - b.index)
