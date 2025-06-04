@@ -6,7 +6,7 @@ import { getUserFavourite } from '@/api/user'
 
 <template>
   <div>
-    <ComicList title="我的收藏" :params="{}" :fetch="getUserFavourite"></ComicList>
+    <ComicList title="我的收藏" :params="{}" :fetch="getUserFavourite" :isBlockedCategories="false"></ComicList>
   </div>
 </template>
 

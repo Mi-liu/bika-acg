@@ -14,7 +14,9 @@ import { arrayContains } from '@/utils/array'
 import { cloneDeep } from 'lodash-es'
 
 
-const props = defineProps<ComicsListProps<T>>()
+const props = withDefaults(defineProps<ComicsListProps<T>>(), {
+  isBlockedCategories: true,
+})
 
 const router = useRouter()
 
@@ -58,9 +60,15 @@ handlePageChange({
   currentPage: 1,
 })
 
-const comics = computed(() => data.value.docs.filter(item => {
-  return !item.categories.some(tag => settingStore.comic.blockedCategories.includes(tag))
-}))
+const comics = computed(() => {
+  if (props.isBlockedCategories) {
+    return data.value.docs.filter(item => {
+      return !item.categories.some(tag => settingStore.comic.blockedCategories.includes(tag))
+    })
+  } else {
+    return data.value.docs
+  }
+})
 
 async function handleCloseTag(tag: string) {
   await ElMessageBox.alert('是否屏蔽分类：' + tag, '提示', {
@@ -182,7 +190,7 @@ function handleTagClick(tag: string) {
                 <el-popover width="70px" v-for="author in item.author.split(/[、,，]\s*/)">
                   <template #reference>
                     <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                    }}</el-link>
+                      }}</el-link>
                   </template>
                   <div class="w-full flex flex-col">
                     <el-button class="w-full" type="danger" size="default"
