@@ -14,6 +14,13 @@ function handleFavourite() {
   window.open(url, '_blank')
 }
 
+function handleComments() {
+  const url = router.resolve({
+    path: '/user/comments',
+  }).href
+  window.open(url, '_blank')
+}
+
 function handleFollowing() {
   const url = router.resolve({
     path: '/user/following',
@@ -30,11 +37,8 @@ function handleWatchLater() {
 </script>
 
 <template>
-  <el-dropdown
-    v-if="userStore.user" class="h-full ml-auto" placement="bottom-end"
-    trigger="hover" :show-timeout="100"
-    :hide-timeout="100"
-  >
+  <el-dropdown v-if="userStore.user" class="h-full ml-auto" placement="bottom-end" trigger="hover" :show-timeout="100"
+    :hide-timeout="100">
     <el-button class="h-full! outline-none!" text>
       <div class="truncate max-w-6em">
         {{ userStore.user?.name }}
@@ -45,7 +49,7 @@ function handleWatchLater() {
       <el-dropdown-menu>
         <el-dropdown-item :icon="Link" @click="handleFollowing">我的关注</el-dropdown-item>
         <el-dropdown-item :icon="Star" @click="handleFavourite">我的收藏</el-dropdown-item>
-        <el-dropdown-item :icon="ChatLineSquare">我的评论</el-dropdown-item>
+        <el-dropdown-item :icon="ChatLineSquare" @click="handleComments">我的评论</el-dropdown-item>
         <el-dropdown-item :icon="Timer" @click="handleWatchLater">稍后再看</el-dropdown-item>
         <el-dropdown-item :icon="Setting">设置</el-dropdown-item>
         <el-dropdown-item :icon="SwitchButton" divided>退出登录</el-dropdown-item>
