@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Star, Setting, ChatLineSquare, Link, SwitchButton, Timer } from '@element-plus/icons-vue'
+import { ChatLineSquare, Link, Setting, Star, SwitchButton, Timer } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
 
 const userStore = useUserStoreHook()
@@ -27,13 +27,14 @@ function handleWatchLater() {
   }).href
   window.open(url, '_blank')
 }
-
-
 </script>
 
 <template>
-  <el-dropdown class="h-full ml-auto" placement="bottom-end" trigger="hover" :show-timeout="100" :hide-timeout="100"
-    v-if="userStore.user">
+  <el-dropdown
+    v-if="userStore.user" class="h-full ml-auto" placement="bottom-end"
+    trigger="hover" :show-timeout="100"
+    :hide-timeout="100"
+  >
     <el-button class="h-full! outline-none!" text>
       <div class="truncate max-w-6em">
         {{ userStore.user?.name }}

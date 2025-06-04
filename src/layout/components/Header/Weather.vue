@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { weatherNow } from '@/api/seniverse'
 import { isEmpty } from 'lodash-es'
+import { weatherNow } from '@/api/seniverse'
 import { getFileName } from '@/utils/file'
 
 const { data } = useRequest(weatherNow)

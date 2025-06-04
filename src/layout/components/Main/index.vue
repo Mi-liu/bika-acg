@@ -7,7 +7,7 @@
     <router-view v-slot="{ Component }">
       <transition>
         <!-- <keep-alive> -->
-        <component class="size-full" :is="Component" />
+        <component :is="Component" class="size-full" />
         <!-- </keep-alive> -->
       </transition>
     </router-view>
