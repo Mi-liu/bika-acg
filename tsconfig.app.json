@@ -1,21 +1,13 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": [
-    "src/**/*",
-    "src/**/*.vue",
-    "typings/**/*.d.ts"
-  ],
-  "exclude": [
-    "src/**/__tests__/*"
-  ],
   "compilerOptions": {
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-    "moduleResolution": "Bundler",
     "lib": [
       "ESNext",
       "DOM",
       "DOM.Iterable"
     ],
+    "moduleResolution": "Bundler",
     "paths": {
       "@/*": [
         "./src/*"
@@ -24,5 +16,13 @@
         "./common/*"
       ]
     }
-  }
+  },
+  "include": [
+    "src/**/*",
+    "src/**/*.vue",
+    "typings/**/*.d.ts"
+  ],
+  "exclude": [
+    "src/**/__tests__/*"
+  ]
 }

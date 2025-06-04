@@ -1,34 +1,46 @@
-import { globalIgnores } from 'eslint/config'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import pluginVue from 'eslint-plugin-vue'
-import pluginOxlint from 'eslint-plugin-oxlint'
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import antfu from '@antfu/eslint-config'
 
-// To allow more languages other than `ts` in `.vue` files, uncomment the following lines:
-// import { configureVueProject } from '@vue/eslint-config-typescript'
-// configureVueProject({ scriptLangs: ['ts', 'tsx'] })
-// More info at https://github.com/vuejs/eslint-config-typescript/#advanced-setup
-
-export default defineConfigWithVueTs(
+console.log('开始检查代码格式问题')
+export default antfu(
   {
-    name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'],
+    ignores: ['node_modules', 'dist'],
   },
-
-  globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
-
-  pluginVue.configs['flat/essential'],
-  vueTsConfigs.recommended,
-  ...pluginOxlint.configs['flat/recommended'],
-  skipFormatting,
-
-  // 自定义规则
   {
     rules: {
-      // 将组件名必须是多词的规则降级为警告
-      'vue/multi-word-component-names': 'warn', // 或者使用数字 1
-      '@typescript-eslint/no-unused-expressions': 'off',
-      'eslint-disable-next-line @typescript-eslint/no-unused-vars': 'warn',
+      // 禁止使用未定义的变量
+      'no-unused-vars': 'warn',
+      // 禁止使用console
+      'no-console': 'off',
+      // 禁止使用async-promise-executor
+      'no-async-promise-executor': 'off',
+      // 禁止使用未定义的变量
+      'ts/no-unused-vars': 'warn',
+      // 禁止使用未定义的变量
+      'unused-imports/no-unused-vars': 'warn',
+      // 组件名必须为多单词
+      'vue/multi-word-component-names': 'off',
+      // 禁止使用未定义的模板
+      'vue/no-lone-template': 'error',
+      // 禁止使用未定义的变量
+      'vue/no-unused-vars': 'warn',
+      // 禁止使用保留的组件名
+      'vue/no-reserved-component-names': 'off',
+      // 单行标签时，内容必须换行
+      'vue/singleline-html-element-content-newline': 'off',
+      // 单行标签时，最多3个属性
+      'vue/max-attributes-per-line': [
+        'warn',
+        {
+          // 单行标签时
+          singleline: {
+            max: 3,
+          },
+          // 多行标签时
+          multiline: {
+            max: 3,
+          },
+        },
+      ],
     },
   },
 )
