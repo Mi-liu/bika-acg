@@ -225,7 +225,7 @@ export interface ComicOrderPage {
 }
 
 /** 获取本子章节图片列表 */
-export function getComicPages(id: string, order: number, page: number, forceRefresh = false) {
+export function getComicPages(id: string, order: number, page: number, _forceRefresh = false) {
   const settingStore = useSettingStoreHook()
   return alova.Get<ComicOrderPage>(`comics/${id}/order/${order}/pages`, {
     params: {

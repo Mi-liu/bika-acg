@@ -141,7 +141,7 @@ function handleEpsClick(index: number) {
               </div>
               <!-- 标签 -->
               <div class="flex flex-wrap gap-10px cursor-pointer mt">
-                <el-tag v-for="item in data?.tags">
+                <el-tag v-for="item in data?.tags" :key="item">
                   {{ item }}
                 </el-tag>
               </div>
@@ -164,10 +164,10 @@ function handleEpsClick(index: number) {
             </CommonButton>
 
             <div class="ml-auto flex items-center gap-2">
-              <el-popover width="70px" v-for="author in data?.author.split(/[、,，]\s*/)">
+              <el-popover width="70px" v-for="author in data?.author.split(/[、,，]\s*/)" :key="author">
                 <template #reference>
                   <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                    }}</el-link>
+                  }}</el-link>
                 </template>
                 <div class="w-full flex flex-col">
                   <el-button class="w-full" type="danger" size="default"
@@ -221,7 +221,8 @@ function handleEpsClick(index: number) {
           章节列表
         </div>
         <div class="mt3 flex flex-wrap gap-10px">
-          <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" @click="handleEpsClick(index)">
+          <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index"
+            @click="handleEpsClick(index)">
             {{ item.title }}
           </el-button>
         </div>

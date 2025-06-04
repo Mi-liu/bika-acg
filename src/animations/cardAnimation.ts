@@ -234,12 +234,18 @@ export const cardAnimations = {
  * 应用卡片动画样式
  * @param selector CSS选择器或元素
  * @param options 样式选项
+ * @param options.gridColumns 网格列配置
+ * @param options.gridGap 网格间距
+ * @param options.itemHoverTransform 悬停变换效果
  */
-export function applyCardStyles(selector: string | HTMLElement, options: {
-  gridColumns?: string
-  gridGap?: string
-  itemHoverTransform?: string
-} = {}) {
+export function applyCardStyles(
+  selector: string | HTMLElement,
+  options: {
+    gridColumns?: string
+    gridGap?: string
+    itemHoverTransform?: string
+  } = {},
+) {
   const defaultOptions = {
     gridColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
     gridGap: '20px',

@@ -33,7 +33,7 @@ export function randomString(e: number = 32) {
  * 随机字符串 并转成小写
  */
 export function getNonce() {
-  // 	useronce = randomString(32).toLowerCase();
+  //   useronce = randomString(32).toLowerCase();
   // const useronce = randomString(32).toLowerCase()
   // return useronce
   return 'gcgm5z3szpykjjxiihaxyahfjbt7w2mp'

@@ -4,7 +4,7 @@ import { Priority } from '@/enum/priority'
 export default {
   index: Priority.Low,
   name: 'document',
-  install(app: App) {
+  install(_app: App) {
     document.addEventListener(
       'click',
       (event) => {

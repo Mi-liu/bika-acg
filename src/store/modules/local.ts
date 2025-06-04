@@ -63,7 +63,7 @@ const useLocalStore = defineStore('local', () => {
     for (const key in local) {
       if (Object.prototype.hasOwnProperty.call(local, key)) {
         await localforage.getItem<Local[keyof Local]>(key).then((res) => {
-          // @ts-ignore
+          // @ts-expect-error - 动态键访问需要忽略类型检查
           local[key] = res || local[key]
         })
       }
@@ -71,7 +71,7 @@ const useLocalStore = defineStore('local', () => {
     watch(local, (newVal) => {
       for (const key in newVal) {
         if (Object.prototype.hasOwnProperty.call(newVal, key)) {
-          // @ts-ignore
+          // @ts-expect-error - 动态键访问需要忽略类型检查
           localforage.setItem(key, cloneDeep(newVal[key]))
         }
       }
@@ -84,9 +84,9 @@ const useLocalStore = defineStore('local', () => {
    * @param value 要添加的元素
    */
   function pushItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(key: K, value: V) {
-    // @ts-ignore
+    // @ts-expect-error - 数组类型操作需要忽略类型检查
     local[key].push(value)
-    // @ts-ignore
+    // @ts-expect-error - 动态键访问需要忽略类型检查
     return localforage.setItem(key, cloneDeep(uniq(local[key])))
   }
 
@@ -101,16 +101,13 @@ const useLocalStore = defineStore('local', () => {
     value: V,
     uniqueKey?: keyof V,
   ) {
-    // @ts-ignore
     const array = local[key] as V[]
 
     // 使用智能查找策略
     const index = smartIndexOf(array, value, uniqueKey)
 
     if (index !== -1) {
-      // @ts-ignore
       local[key].splice(index, 1)
-      // @ts-ignore
       return localforage.setItem(key, cloneDeep(local[key]))
     }
   }

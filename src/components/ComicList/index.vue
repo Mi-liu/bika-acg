@@ -37,7 +37,7 @@ const data = ref<Comics['comics']>({
 
 const s = ref<SortOptionValue>(defaultSort)
 
-function handleSelectChange(_event: SortOptionValue) {
+function handleSelectChange() {
   CommonPaginationRef.value?.reset()
 }
 
@@ -156,7 +156,8 @@ function handleTagClick(tag: string) {
         >
           <div
             v-for="item in comics" :key="item._id"
-            class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]" @click="handleComicClick(item)"
+            class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]"
+            @click="handleComicClick(item)"
           >
             <!-- 封面图 -->
             <div class="relative">
@@ -198,7 +199,7 @@ function handleTagClick(tag: string) {
             <div class="text-14px text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-popover v-for="author in item.author.split(/[、,，]\s*/)" width="70px">
+                <el-popover v-for="author in item.author.split(/[、,，]\s*/)" :key="author" width="70px">
                   <template #reference>
                     <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
                       {{ author
@@ -208,8 +209,7 @@ function handleTagClick(tag: string) {
                   <div class="w-full flex flex-col">
                     <el-button
                       v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
-                      size="default"
-                      @click.stop="handleUnfollowAuthor(author)"
+                      size="default" @click.stop="handleUnfollowAuthor(author)"
                     >
                       取消关注
                     </el-button>

@@ -8,6 +8,7 @@
 import { execSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 
 // 获取当前文件的目录
@@ -36,7 +37,7 @@ function isVersionInstalled(version) {
     execSync(`nvm use ${version} > nul 2>&1`, { shell: true })
     return true
   }
-  catch (error) {
+  catch {
     // 如果切换失败，则说明未安装
     return false
   }

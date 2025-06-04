@@ -156,6 +156,12 @@ function clearCurrentData() {
   loadingState.isLoadingNextPage = false
 }
 
+// 计算属性：是否可以跳转到上一章
+const canGoPrevChapter = computed(() => currentChapter.value > 1)
+
+// 计算属性：是否可以跳转到下一章
+const canGoNextChapter = computed(() => currentChapter.value < maxChapterNum)
+
 /**
  * 上一章
  */
@@ -223,12 +229,6 @@ function reloadCurrentChapter(forceRefresh = false) {
   // 重新加载第一页数据，使用强制刷新
   getChapterPages(1, forceRefresh)
 }
-
-// 计算属性：是否可以跳转到上一章
-const canGoPrevChapter = computed(() => currentChapter.value > 1)
-
-// 计算属性：是否可以跳转到下一章
-const canGoNextChapter = computed(() => currentChapter.value < maxChapterNum)
 
 /**
  * 处理画质变化事件

@@ -6,7 +6,7 @@ import { Priority } from '@/enum/priority'
 export default {
   index: Priority.Low,
   name: 'day',
-  install(app: App) {
+  install(_app: App) {
     dayjs.extend(utc)
   },
 }

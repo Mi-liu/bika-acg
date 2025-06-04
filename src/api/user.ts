@@ -4,6 +4,8 @@ import alova from '@/services'
 /**
  * 登录
  * @param params 登录参数
+ * @param params.email 邮箱
+ * @param params.password 密码
  * @returns 登录结果
  */
 export function login(params: { email: string, password: string }) {

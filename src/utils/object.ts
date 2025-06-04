@@ -61,6 +61,6 @@ export function objectToUrlParams(obj: Record<string, any>, url = ''): string {
 /** 过滤掉对象中value为 undefined 或 null 的键 */
 export function filterUndefined(obj: Record<string, any>) {
   return Object.fromEntries(
-    Object.entries(obj).filter(([_, value]) => value !== undefined && value !== null),
+    Object.entries(obj).filter(([, value]) => value !== undefined && value !== null),
   )
 }

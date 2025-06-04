@@ -19,25 +19,25 @@ declare global {
      * 返回数组的反转副本，不修改原数组
      * ES2023 新增方法
      */
-    toReversed(): T[]
+    toReversed: () => T[]
 
     /**
      * 返回数组的排序副本，不修改原数组
      * ES2023 新增方法
      */
-    toSorted(compareFn?: (a: T, b: T) => number): T[]
+    toSorted: (compareFn?: (a: T, b: T) => number) => T[]
 
     /**
      * 返回数组的副本，其中指定位置的元素被替换为新值，不修改原数组
      * ES2023 新增方法
      */
-    with(index: number, value: T): T[]
+    with: (index: number, value: T) => T[]
 
     /**
      * 返回数组的副本，其中指定范围的元素被删除和/或替换，不修改原数组
      * ES2023 新增方法
      */
-    toSpliced(start: number, deleteCount?: number, ...items: T[]): T[]
+    toSpliced: (start: number, deleteCount?: number, ...items: T[]) => T[]
   }
 }
 

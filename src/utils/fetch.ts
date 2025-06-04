@@ -4,6 +4,8 @@ import { ref } from 'vue'
  * 循环请求列表数据，并按照指定的键名返回结果，同时保留其他属性
  * @param callback 请求函数，接收页码参数
  * @param options 配置选项
+ * @param options.key 要合并的数组键名
+ * @param options.beforeRequest 请求前的判断函数
  * @returns 返回包含所有属性的响应式对象，其中指定键名对应的数组会被合并
  */
 export function loopRequestList<K extends string, Item, R extends Record<K, Item[]>>(
@@ -41,23 +43,6 @@ export function loopRequestList<K extends string, Item, R extends Record<K, Item
     data,
   }
 }
-
-function fetchPageData(page: number) {
-  return Promise.resolve({
-    items: [page, page + 1, page + 2],
-    total: 100,
-    page,
-    pageSize: 10,
-    hasMore: page < 10,
-    metadata: { lastUpdated: new Date() },
-  })
-}
-
-// 使用loopRequestList获取所有数据
-const { data } = loopRequestList(fetchPageData, {
-  key: 'items',
-  beforeRequest: page => page < 3, // 只请求前3页
-})
 
 /**
  * 使用示例:

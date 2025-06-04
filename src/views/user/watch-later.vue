@@ -56,33 +56,6 @@ async function getWatchLaterList(params: Partial<ComicsParams> & { page: number,
     limit: pageSize,
   }
 }
-
-/**
- * 清空稍后再看列表
- */
-async function handleClearAll() {
-  if (localStore.local.WATCH_LATER_LIST.length === 0) {
-    ElMessage.info('稍后再看列表已经是空的')
-    return
-  }
-
-  await ElMessageBox.confirm(
-    `确定要清空所有稍后再看的漫画吗？共 ${localStore.local.WATCH_LATER_LIST.length} 部漫画`,
-    '确认清空',
-    {
-      confirmButtonText: '确定清空',
-      cancelButtonText: '取消',
-      type: 'warning',
-    },
-  )
-
-  // 清空本地存储
-  localStore.local.WATCH_LATER_LIST = []
-  ElMessage.success('已清空稍后再看列表')
-
-  // 刷新页面数据
-  location.reload()
-}
 </script>
 
 <template>
