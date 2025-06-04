@@ -1,5 +1,5 @@
-import { store } from '@/store'
 import { getUserProfile as getUserProfileApi } from '@/api/user'
+import { store } from '@/store'
 
 const useUserStore = defineStore(
   'user',

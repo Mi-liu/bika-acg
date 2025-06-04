@@ -1,7 +1,7 @@
-import { store } from '@/store'
-import { proxy } from '@/services/config'
-import { pictureQuality } from '@/constants/options'
 import { cloneDeep } from 'lodash-es'
+import { pictureQuality } from '@/constants/options'
+import { proxy } from '@/services/config'
+import { store } from '@/store'
 
 const useSettingStore = defineStore(
   'setting',

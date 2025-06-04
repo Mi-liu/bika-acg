@@ -1,6 +1,6 @@
-import alova from '@/services'
-import { HIDDEN_CATEGORIES } from '@/config/categories'
 import type { SortOptionValue } from '@/constants/options'
+import { HIDDEN_CATEGORIES } from '@/config/categories'
+import alova from '@/services'
 /** 分页返回的数据 */
 export interface PageData {
   /** 页码 */
@@ -27,10 +27,11 @@ export async function getCategories() {
   const res = localStore.local.CATEGORIES
   if (res.length) {
     return res
-  } else {
+  }
+  else {
     return alova.Get<Categories>('categories').then((res) => {
       const categories = res.categories.filter(
-        (category) => !HIDDEN_CATEGORIES.includes(category.title),
+        category => !HIDDEN_CATEGORIES.includes(category.title),
       )
       localStore.local.CATEGORIES = categories
       return categories
@@ -78,7 +79,7 @@ export interface Comics {
 
 /**
  *  本子基本信息
- * */
+ */
 export interface Comic {
   /** 作者 */
   author: string
@@ -151,7 +152,7 @@ export interface ComicDetail extends Omit<Comic, 'id'> {
 export function getComics(params: Omit<ComicsParams, 'keyword'>) {
   return alova
     .Get<Comics>('comics', {
-      params: params,
+      params,
     })
     .then((res) => {
       return res.comics
@@ -162,18 +163,18 @@ export function getComics(params: Omit<ComicsParams, 'keyword'>) {
 export function getComicDetail(id: string) {
   return alova
     .Get<{
-      comic: ComicDetail
-    }>(`comics/${id}`)
-    .then((res) => res.comic)
+    comic: ComicDetail
+  }>(`comics/${id}`)
+    .then(res => res.comic)
 }
 
 /** 收藏 or 取消收藏本子 */
 export function favorites(id: string) {
   return alova
     .Post<{
-      action: 'favourite' | 'un_favourite'
-    }>(`comics/${id}/favourite`)
-    .then((res) => res.action)
+    action: 'favourite' | 'un_favourite'
+  }>(`comics/${id}/favourite`)
+    .then(res => res.action)
 }
 
 /** 本子章节列表返回 */
@@ -194,9 +195,9 @@ export interface ComicEpsItem {
 export function getComicEps(id: string, page: number) {
   return alova
     .Get<{
-      eps: ComicEps
-    }>(`comics/${id}/eps`, { params: { page } })
-    .then((res) => res.eps)
+    eps: ComicEps
+  }>(`comics/${id}/eps`, { params: { page } })
+    .then(res => res.eps)
 }
 
 /** 本子章节图片列表返回 */
@@ -245,4 +246,18 @@ export function searchComics(params: Pick<ComicsParams, 'page' | 's' | 'keyword'
     .then((res) => {
       return res.comics
     })
+}
+
+/** 获取随机漫画列表 */
+export function getRandomComic() {
+  // 禁用缓存，确保每次请求都获取最新数据
+  return alova
+    .Get<{
+    comics: Comic[]
+  }>('comics/random', {
+      cacheFor: {
+        expire: 0,
+      },
+    })
+    .then(res => res.comics)
 }

@@ -1,10 +1,10 @@
-import { store } from '@/store'
+import type { Categories, Comic } from '@/api/comic'
 import localforage from 'localforage'
 
 import { cloneDeep, uniq } from 'lodash-es'
-import { smartIndexOf } from '@/utils/array'
+import { store } from '@/store'
 
-import type { Categories, Comic } from '@/api/comic'
+import { smartIndexOf } from '@/utils/array'
 
 /**
  * 本地存储类型

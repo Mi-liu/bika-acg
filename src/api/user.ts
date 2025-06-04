@@ -1,16 +1,16 @@
-import alova from '@/services'
 import type { Comics, ComicsParams } from './comic'
-import type { SortOptionValue } from '@/constants/options'
+import alova from '@/services'
 
 /**
  * 登录
  * @param params 登录参数
  * @returns 登录结果
  */
-export const login = (params: { email: string; password: string }) =>
-  alova.Post<{
+export function login(params: { email: string, password: string }) {
+  return alova.Post<{
     token: string
   }>('auth/sign-in', params)
+}
 
 interface RegisterParams {
   name: string
@@ -25,10 +25,11 @@ interface RegisterParams {
  * @param params 注册参数
  * @returns 注册结果
  */
-export const register = (params: RegisterParams) =>
-  alova.Post<{
+export function register(params: RegisterParams) {
+  return alova.Post<{
     token: string
   }>('auth/register', params)
+}
 
 /**
  * 头像
@@ -105,8 +106,8 @@ export interface UserProfile {
  * 获取用户信息
  * @returns 用户信息
  */
-export const getUserProfile = () =>
-  alova.Get<{
+export function getUserProfile() {
+  return alova.Get<{
     user: UserProfile
   }>('users/profile', {
     cacheFor: {
@@ -114,6 +115,7 @@ export const getUserProfile = () =>
       expire: 60 * 10 * 1000,
     },
   })
+}
 
 /**
  * 获取用户收藏
@@ -122,7 +124,7 @@ export const getUserProfile = () =>
 export function getUserFavourite(params: ComicsParams) {
   return alova
     .Get<Comics>('users/favourite', {
-      params: params,
+      params,
     })
     .then((res) => {
       return res.comics
