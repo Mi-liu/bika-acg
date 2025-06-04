@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import { login } from '@/api/user'
 import CommonButton from '@common/components/CommonButton/index.vue'
+import { login } from '@/api/user'
 
 const props = defineProps<{
   redirect?: string
 }>()
-
 
 const userStore = useUserStoreHook()
 const localStore = useLocalStoreHook()
@@ -22,17 +21,19 @@ const remember = ref(true)
 form.email = localStore.local.ACCOUNT_INFO.email
 form.password = localStore.local.ACCOUNT_INFO.password
 
-const handleLogin = () => {
+function handleLogin() {
   login(form).then((res) => {
     userStore.token = res.token
     if (remember.value) {
       localStore.local.ACCOUNT_INFO = { ...form }
-    } else {
+    }
+    else {
       localStore.local.ACCOUNT_INFO = { email: '', password: '' }
     }
     if (props.redirect) {
       router.push(decodeURIComponent(props.redirect))
-    } else {
+    }
+    else {
       router.push('/')
     }
   })
@@ -41,7 +42,7 @@ const handleLogin = () => {
 
 <template>
   <div class="login relative size-full flex-center">
-    <div class="login-bg absolute inset-0"></div>
+    <div class="login-bg absolute inset-0" />
     <div class="container relative size-full flex-center">
       <div class="w-700px bg-white rounded-lg flex p-10 items-center">
         <img class="w-200px" src="@/assets/image/login/logo.png" alt="">
@@ -51,7 +52,10 @@ const handleLogin = () => {
               <el-input v-model="form.email" placeholder="账号" />
             </el-form-item>
             <el-form-item>
-              <el-input v-model="form.password" placeholder="密码" type="password" show-password />
+              <el-input
+                v-model="form.password" placeholder="密码" type="password"
+                show-password
+              />
             </el-form-item>
             <el-form-item>
               <div class="w-full select-none flex justify-between">
@@ -59,10 +63,13 @@ const handleLogin = () => {
                   记住密码
                 </el-checkbox>
                 <div class="flex">
-                  还没有账号？<el-link type="primary" underline="never"
-                    @click="router.replace('/login/register')">点击注册</el-link>
+                  还没有账号？<el-link
+                    type="primary" underline="never"
+                    @click="router.replace('/login/register')"
+                  >
+                    点击注册
+                  </el-link>
                 </div>
-
               </div>
             </el-form-item>
             <el-form-item>
@@ -70,7 +77,6 @@ const handleLogin = () => {
             </el-form-item>
           </el-form>
         </div>
-
       </div>
     </div>
     <!-- <div class="w-500px flex-center bg-white rounded-lg p-10">

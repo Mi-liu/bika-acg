@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { PageData, ComicOrderPage } from '@/api/comic'
-import { getComicPages } from '@/api/comic'
-import { Setting, QuestionFilled } from '@element-plus/icons-vue'
-import { getImageUrl } from '@/utils/string'
-import { pictureQuality } from '@/constants/options'
-import debounce from 'lodash-es/debounce'
-import { proxy } from '@/services/config'
+import type { ComicOrderPage, PageData } from '@/api/comic'
+import { QuestionFilled, Setting } from '@element-plus/icons-vue'
 import { omit } from 'lodash-es'
+import debounce from 'lodash-es/debounce'
+import { getComicPages } from '@/api/comic'
+import { pictureQuality } from '@/constants/options'
+import { proxy } from '@/services/config'
+import { getImageUrl } from '@/utils/string'
 
 // 类型定义
 type ChapterInfo = ComicOrderPage['ep']
@@ -16,10 +16,6 @@ interface ComicImage {
   path: string
 }
 
-// 常量定义
-const SCROLL_DEBOUNCE_DELAY = 50
-const PRELOAD_THRESHOLD_MULTIPLIER = 2
-
 const props = defineProps<{
   /** 漫画ID */
   id: string
@@ -28,6 +24,9 @@ const props = defineProps<{
   /** 最大章节数 */
   maxChapter: string
 }>()
+// 常量定义
+const SCROLL_DEBOUNCE_DELAY = 50
+const PRELOAD_THRESHOLD_MULTIPLIER = 2
 
 const settingStore = useSettingStoreHook()
 const scrollbarRef = useTemplateRef('scrollbarRef')
@@ -68,7 +67,8 @@ const loadingState = reactive({
  */
 async function getChapterPages(page?: number, forceRefresh = false) {
   // 防止重复请求
-  if (loadingState.isLoadingNextPage) return
+  if (loadingState.isLoadingNextPage)
+    return
 
   try {
     loadingState.isLoadingNextPage = true
@@ -91,13 +91,14 @@ async function getChapterPages(page?: number, forceRefresh = false) {
 
     // 添加到图片列表
     comicImages.push(...formatData)
-
-  } catch (error) {
+  }
+  catch (error) {
     console.error('章节数据加载失败:', error)
     loadingState.hasError = true
     loadingState.errorMessage = '章节数据加载失败，请稍后重试'
     ElMessage.error(loadingState.errorMessage)
-  } finally {
+  }
+  finally {
     loadingState.isLoadingNextPage = false
   }
 }
@@ -106,9 +107,10 @@ async function getChapterPages(page?: number, forceRefresh = false) {
  * 滚动事件处理函数
  * 使用防抖优化性能，支持无限滚动加载
  */
-const handleScroll = debounce((e: { scrollTop: number; scrollLeft: number }) => {
+const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => {
   const scrollElement = scrollbarRef.value?.wrapRef
-  if (!scrollElement) return
+  if (!scrollElement)
+    return
 
   const { scrollTop } = e
   const { scrollHeight, clientHeight } = scrollElement
@@ -118,10 +120,10 @@ const handleScroll = debounce((e: { scrollTop: number; scrollLeft: number }) => 
   const preloadThreshold = windowInnerHeight * PRELOAD_THRESHOLD_MULTIPLIER
 
   // 检查是否需要加载下一页
-  const shouldLoadNextPage =
-    distanceFromBottom <= preloadThreshold &&
-    pageInfo.page < pageInfo.pages &&
-    !loadingState.isLoadingNextPage
+  const shouldLoadNextPage
+    = distanceFromBottom <= preloadThreshold
+      && pageInfo.page < pageInfo.pages
+      && !loadingState.isLoadingNextPage
 
   if (shouldLoadNextPage) {
     getChapterPages()
@@ -136,7 +138,7 @@ function clearCurrentData() {
   comicImages.length = 0
 
   // 清空章节信息
-  Object.keys(chapterInfo).forEach(key => {
+  Object.keys(chapterInfo).forEach((key) => {
     delete chapterInfo[key as keyof ChapterInfo]
   })
 
@@ -158,7 +160,8 @@ function clearCurrentData() {
  * 上一章
  */
 function prevChapter() {
-  if (!canGoPrevChapter.value) return
+  if (!canGoPrevChapter.value)
+    return
 
   // 清空当前数据
   clearCurrentData()
@@ -174,7 +177,8 @@ function prevChapter() {
  * 下一章
  */
 function nextChapter() {
-  if (!canGoNextChapter.value) return
+  if (!canGoNextChapter.value)
+    return
 
   // 清空当前数据
   clearCurrentData()
@@ -292,10 +296,16 @@ getChapterPages(1)
 
       <!-- 章节导航按钮 -->
       <div class="flex items-center gap-2">
-        <el-button :disabled="!canGoPrevChapter" text bg @click="prevChapter">
+        <el-button
+          :disabled="!canGoPrevChapter" text bg
+          @click="prevChapter"
+        >
           上一章
         </el-button>
-        <el-button :disabled="!canGoNextChapter" text bg @click="nextChapter">
+        <el-button
+          :disabled="!canGoNextChapter" text bg
+          @click="nextChapter"
+        >
           下一章
         </el-button>
 
@@ -308,11 +318,14 @@ getChapterPages(1)
 
     <!-- 内容区域 -->
     <div class="flex-1 overflow-hidden" @contextmenu.prevent="handleContextMenu">
-      <el-scrollbar class="h-full" ref="scrollbarRef" @scroll="handleScroll">
-        <div class="mx-auto" :style="{ width: settingStore.comic.comicImageWidth + 'px' }">
+      <el-scrollbar ref="scrollbarRef" class="h-full" @scroll="handleScroll">
+        <div class="mx-auto" :style="{ width: `${settingStore.comic.comicImageWidth}px` }">
           <!-- 图片列表 -->
-          <Image :src="item.path" aspect="auto" v-for="(item, index) in comicImages" :key="item.id || index"
-            :alt="`第${index + 1}张图片`" />
+          <Image
+            v-for="(item, index) in comicImages" :key="item.id || index" :src="item.path"
+            aspect="auto"
+            :alt="`第${index + 1}张图片`"
+          />
 
           <!-- 加载更多指示器 -->
           <div v-if="loadingState.isLoadingNextPage" class="text-center py-4">
@@ -328,17 +341,27 @@ getChapterPages(1)
     </div>
 
     <!-- 设置抽屉 -->
-    <el-drawer v-model="drawer" modal-class="chapter-drawer-modal" direction="rtl" size="400px" :with-header="false">
+    <el-drawer
+      v-model="drawer" modal-class="chapter-drawer-modal" direction="rtl"
+      size="400px" :with-header="false"
+    >
       <div class="size-full">
-
-        <el-form label-width="100px" labelPosition="left">
+        <el-form label-width="100px" label-position="left">
           <el-form-item label="宽度">
-            <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth" :step="10" />
+            <el-slider
+              v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth"
+              :step="10"
+            />
           </el-form-item>
           <el-form-item label="画质">
-            <el-select v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
-              :loading="loadingState.isLoadingNextPage" @change="handleQualityChange">
-              <el-option v-for="item in pictureQuality" :key="item.value" :label="item.label" :value="item.value" />
+            <el-select
+              v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
+              :loading="loadingState.isLoadingNextPage" @change="handleQualityChange"
+            >
+              <el-option
+                v-for="item in pictureQuality" :key="item.value" :label="item.label"
+                :value="item.value"
+              />
             </el-select>
             <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
               正在切换画质，重新加载图片...
@@ -350,8 +373,8 @@ getChapterPages(1)
               <el-tooltip placement="top">
                 <template #content>
                   [开发中]自动下滑阅读，解放双手，且当前章节完成后会默认阅读下一章
-                  <br />建议网速较好的情况下使用
-                  <br />无忧无虑的冲吧~少年/女
+                  <br>建议网速较好的情况下使用
+                  <br>无忧无虑的冲吧~少年/女
                 </template>
                 <el-icon class="ml-1 cursor-pointer">
                   <QuestionFilled />
@@ -361,23 +384,29 @@ getChapterPages(1)
             <el-switch v-model="settingStore.comic.autoRead" />
           </el-form-item>
           <el-form-item label="自动阅读速度">
-            <el-input-number v-model="settingStore.comic.autoReadSpeed" :min="1" :max="1000" :step="1" />
+            <el-input-number
+              v-model="settingStore.comic.autoReadSpeed" :min="1" :max="1000"
+              :step="1"
+            />
           </el-form-item>
 
           <el-form-item label="线路代理">
-            <el-select v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
-              @change="handleProxyChange">
-              <el-option v-for="item in proxy" :key="item.label" :label="item.label" :value="item.value" />
+            <el-select
+              v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
+              @change="handleProxyChange"
+            >
+              <el-option
+                v-for="item in proxy" :key="item.label" :label="item.label"
+                :value="item.value"
+              />
             </el-select>
             <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
               正在切换线路，重新加载图片...
             </div>
           </el-form-item>
-
         </el-form>
       </div>
     </el-drawer>
-
   </div>
 </template>
 

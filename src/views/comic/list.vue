@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ComicList from '@/components/ComicList/index.vue'
 import { getComics } from '@/api/comic'
+import ComicList from '@/components/ComicList/index.vue'
 
 const props = defineProps<{
   /** 标题 */
@@ -23,16 +23,17 @@ const listTitle = computed(() => {
   }
   return '漫画列表'
 })
-
 </script>
 
 <template>
   <div>
-    <ComicList :title="listTitle" :params="{
-      c: props.title ? encodeURIComponent(props.title) : undefined,
-      a: props.author ? encodeURIComponent(props.author) : undefined,
-      t: props.keywords ? encodeURIComponent(props.keywords) : undefined
-    }" :fetch="getComics"></ComicList>
+    <ComicList
+      :title="listTitle" :params="{
+        c: props.title ? encodeURIComponent(props.title) : undefined,
+        a: props.author ? encodeURIComponent(props.author) : undefined,
+        t: props.keywords ? encodeURIComponent(props.keywords) : undefined,
+      }" :fetch="getComics"
+    />
   </div>
 </template>
 

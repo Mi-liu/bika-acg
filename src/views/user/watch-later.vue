@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ComicList from '@/components/ComicList/index.vue'
 import type { Comics, ComicsParams } from '@/api/comic'
+import ComicList from '@/components/ComicList/index.vue'
 
 /**
  * 稍后再看页面
@@ -15,7 +15,7 @@ const localStore = useLocalStoreHook()
  * @param params 查询参数（包含分页信息）
  * @returns 符合 Comics['comics'] 格式的数据
  */
-async function getWatchLaterList(params: Partial<ComicsParams> & { page: number; s: string }): Promise<Comics['comics']> {
+async function getWatchLaterList(params: Partial<ComicsParams> & { page: number, s: string }): Promise<Comics['comics']> {
   const { page = 1, s = 'dd' } = params
   const pageSize = 20 // 每页显示数量
 
@@ -26,13 +26,16 @@ async function getWatchLaterList(params: Partial<ComicsParams> & { page: number;
   if (s === 'dd') {
     // 按添加时间倒序（最新添加的在前面）
     watchLaterList = watchLaterList.reverse()
-  } else if (s === 'da') {
+  }
+  else if (s === 'da') {
     // 按添加时间正序（最早添加的在前面）
     // 保持原顺序
-  } else if (s === 'ld') {
+  }
+  else if (s === 'ld') {
     // 按点赞数倒序
     watchLaterList.sort((a, b) => b.totalLikes - a.totalLikes)
-  } else if (s === 'vd') {
+  }
+  else if (s === 'vd') {
     // 按浏览量倒序
     watchLaterList.sort((a, b) => b.totalViews - a.totalViews)
   }
@@ -50,7 +53,7 @@ async function getWatchLaterList(params: Partial<ComicsParams> & { page: number;
     total,
     page,
     pages,
-    limit: pageSize
+    limit: pageSize,
   }
 }
 
@@ -69,8 +72,8 @@ async function handleClearAll() {
     {
       confirmButtonText: '确定清空',
       cancelButtonText: '取消',
-      type: 'warning'
-    }
+      type: 'warning',
+    },
   )
 
   // 清空本地存储
