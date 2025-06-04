@@ -16,5 +16,9 @@ export default createRouterModule(name, {
       path: 'following',
       component: () => import('@/views/user/following.vue'),
     },
+    {
+      path: 'watch-later',
+      component: () => import('@/views/user/watch-later.vue'),
+    },
   ],
 })
