@@ -1,7 +1,8 @@
 import { store } from '@/store'
 import localforage from 'localforage'
 
-import { cloneDeep, uniq, isEqual } from 'lodash-es'
+import { cloneDeep, uniq } from 'lodash-es'
+import { smartIndexOf } from '@/utils/array'
 
 import type { Categories, Comic } from '@/api/comic'
 
@@ -88,18 +89,29 @@ const useLocalStore = defineStore('local', () => {
     // @ts-ignore
     return localforage.setItem(key, cloneDeep(uniq(local[key])))
   }
+
   /**
    * 从存储的数组中移除元素
    * @param key 存储键名（必须是数组类型的键）
    * @param value 要移除的元素
+   * @param uniqueKey 可选，对象的唯一标识符属性名（如 'id', '_id', 'title' 等）
    */
-  function removeItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(key: K, value: V) {
+  function removeItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(
+    key: K,
+    value: V,
+    uniqueKey?: keyof V,
+  ) {
     // @ts-ignore
-    const index = local[key].findIndex((item) => isEqual(item, value))
+    const array = local[key] as V[]
+
+    // 使用智能查找策略
+    const index = smartIndexOf(array, value, uniqueKey)
+
     if (index !== -1) {
+      // @ts-ignore
       local[key].splice(index, 1)
       // @ts-ignore
-      localforage.setItem(key, cloneDeep(uniq(local[key])))
+      return localforage.setItem(key, cloneDeep(local[key]))
     }
   }
 
