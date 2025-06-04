@@ -32,16 +32,11 @@ function handleRefreshImage() {
 
 <template>
   <div class="relative bg-[--el-fill-color]" :class="[aspect]">
-    <el-image
-      v-if="uri.length" class="w-full vertical-top" :class="[aspect]"
-      :src="uri" fit="cover" loading="lazy"
-      @load="state = 'load'" @error="state = 'error'"
-    >
+    <el-image v-if="uri.length" class="w-full vertical-top" :class="[aspect]" :src="uri" fit="cover" loading="lazy"
+      @load="state = 'load'" @error="state = 'error'">
       <template #error>
-        <div
-          class="aspect-3/4 flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
-          @click.stop="handleRefreshImage"
-        >
+        <div class="aspect-3/4 flex-col flex-center cursor-pointer text-[--el-text-color-secondary]"
+          @click.stop="handleRefreshImage">
           <div>加载失败</div>
           <div>点击重新加载</div>
         </div>

@@ -9,7 +9,7 @@ const router = useRouter()
 
 const { data: categories } = useRequest(getCategories)
 
-const { data: randomComics, run: handleRandomRefresh } = useRequest(getRandomComic)
+const { data: randomComics, run: randomRefresh, mutate: randomMutate, loading: randomLoading } = useRequest(getRandomComic)
 
 function handleCategoryClick(title: string) {
   const url = router.resolve({
@@ -27,6 +27,13 @@ function handleComicClick(id: string) {
   })
   window.open(to.href, '_blank')
 }
+
+function handleRandomRefresh() {
+  randomMutate(undefined)
+  randomRefresh()
+}
+
+
 </script>
 
 <template>
@@ -47,10 +54,20 @@ function handleComicClick(id: string) {
           </el-button>
         </div>
         <div class="random-comic-list mt-2">
-          <div
-            v-for="comic in randomComics" :key="comic._id"
-            class="random-comic-item cursor-pointer" @click="handleComicClick(comic._id)"
-          >
+          <el-skeleton class="w-full" v-for="i in 10" :key="i" :loading="randomLoading">
+            <template #template>
+              <div class="size-full">
+                <div class="w-full! aspect-3/4">
+                  <el-skeleton-item class="size-full!" variant="image" />
+                </div>
+                <el-skeleton-item variant="h3" class="w-40%! mt-1" />
+                <el-skeleton-item variant="h3" />
+              </div>
+            </template>
+          </el-skeleton>
+
+          <div v-for="comic in randomComics" :key="comic._id" class="random-comic-item cursor-pointer"
+            @click="handleComicClick(comic._id)">
             <Image :src="getImageUrl(comic.thumb.path)" />
             <div class="random-comic-item-title line-clamp-2">
               {{ comic.title }}
