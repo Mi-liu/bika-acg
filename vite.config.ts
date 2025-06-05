@@ -37,18 +37,14 @@ export default defineConfig({
       '@common': `${root}/common`,
     },
   },
-  base: process.env.NODE_ENV === 'production' ? '/' : './',
+  base: './', // 使用相对路径
   build: {
     outDir: 'dist',
     emptyOutDir: true,
     assetsDir: 'assets',
     // 设置 chunk 大小警告限制为 1000KB
-    chunkSizeWarningLimit: 1000,
-    // 生产环境优化
-    minify: 'esbuild',
-    sourcemap: process.env.VITE_BUILD_SOURCEMAP === 'true',
-    // 启用 CSS 代码分割
-    cssCodeSplit: true,
+    chunkSizeWarningLimit: 500,
+
     rollupOptions: {
       output: {
         // 手动分割代码块
