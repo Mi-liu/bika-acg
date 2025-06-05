@@ -14,7 +14,11 @@
     "lint": "npm run lint:oxlint && npm run lint:eslint",
     "format": "eslint . --fix",
     "format:prettier": "prettier --write \"**/*.{md,yml,yaml}\" --ignore-path .gitignore",
-    "check-node": "node scripts/check-node-version.js"
+    "check-node": "node scripts/check-node-version.js",
+    "deploy:preview": "node scripts/deploy.js",
+    "deploy:prod": "node scripts/deploy.js --prod",
+    "vercel:build": "npm run build",
+    "vercel:dev": "vite"
   },
   "dependencies": {
     "@alova/adapter-axios": "^2.0.13",
