@@ -47,38 +47,40 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // 手动分割代码块
-        manualChunks: {
+        manualChunks: (id) => {
           // Vue 核心库
-          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+            return 'vue-vendor'
+          }
           // Element Plus UI 库
-          'element-plus': ['element-plus'],
+          if (id.includes('element-plus')) {
+            return 'element-plus'
+          }
           // VueUse 工具库
-          vueuse: ['@vueuse/core'],
+          if (id.includes('@vueuse/core')) {
+            return 'vueuse'
+          }
           // Vue Hooks Plus
-          'vue-hooks-plus': ['vue-hooks-plus'],
+          if (id.includes('vue-hooks-plus')) {
+            return 'vue-hooks-plus'
+          }
           // 动画库
-          animation: ['gsap'],
+          if (id.includes('gsap')) {
+            return 'animation'
+          }
           // 工具库
-          utils: ['dayjs', 'crypto-js', 'lodash-es'],
+          if (id.includes('dayjs') || id.includes('crypto-js') || id.includes('lodash-es')) {
+            return 'utils'
+          }
           // 图标库
-          icons: ['@element-plus/icons-vue'],
+          if (id.includes('@element-plus/icons-vue')) {
+            return 'icons'
+          }
         },
         // 为静态资源文件命名
         chunkFileNames: 'assets/js/[name]-[hash].js',
         entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: (assetInfo) => {
-          const fileName = assetInfo.name ?? ''
-          if (/\.(?:mp4|webm|ogg|mp3|wav|flac|aac)$/.test(fileName)) {
-            return 'assets/media/[name]-[hash].[ext]'
-          }
-          if (/\.(?:png|jpe?g|gif|svg|ico|webp)$/.test(fileName)) {
-            return 'assets/images/[name]-[hash].[ext]'
-          }
-          if (/\.(?:woff2?|eot|ttf|otf)$/.test(fileName)) {
-            return 'assets/fonts/[name]-[hash].[ext]'
-          }
-          return 'assets/[name]-[hash].[ext]'
-        },
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
   },

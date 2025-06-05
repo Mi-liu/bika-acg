@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * 检查并切换到 package.json 中 engines.node 指定的 Node.js 版本
+ * 检查并切换到 .nvmrc 文件中指定的 Node.js 版本
  * 如果没有安装该版本，则安装它
  */
 
@@ -16,15 +16,19 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const rootDir = path.resolve(__dirname, '..')
 
-// 读取 package.json
-const packageJsonPath = path.join(rootDir, 'package.json')
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+// 读取 .nvmrc 文件
+const nvmrcPath = path.join(rootDir, '.nvmrc')
 
-// 获取 engines.node 版本
-const requiredNodeVersion = packageJson.engines?.node
+if (!fs.existsSync(nvmrcPath)) {
+  console.error('未找到 .nvmrc 文件')
+  process.exit(1)
+}
+
+// 获取 .nvmrc 中指定的 Node.js 版本
+const requiredNodeVersion = fs.readFileSync(nvmrcPath, 'utf8').trim()
 
 if (!requiredNodeVersion) {
-  console.error('未在 package.json 中找到 engines.node 配置')
+  console.error('.nvmrc 文件为空或无效')
   process.exit(1)
 }
 
@@ -36,8 +40,7 @@ function isVersionInstalled(version) {
     // 尝试直接使用 nvm 切换到该版本，如果成功则说明已安装
     execSync(`nvm use ${version} > nul 2>&1`, { shell: true })
     return true
-  }
-  catch {
+  } catch {
     // 如果切换失败，则说明未安装
     return false
   }
@@ -48,8 +51,7 @@ function isUsingVersion(version) {
   try {
     const currentVersion = execSync('node -v', { shell: true }).toString().trim().replace('v', '')
     return currentVersion === version
-  }
-  catch (error) {
+  } catch (error) {
     console.error('检查当前 Node.js 版本失败:', error.message)
     return false
   }
@@ -68,8 +70,7 @@ if (isInstalled && !isUsing) {
   console.log(`切换到 Node.js v${requiredNodeVersion}`)
   try {
     execSync(`nvm use ${requiredNodeVersion}`, { stdio: 'inherit', shell: true })
-  }
-  catch (error) {
+  } catch (error) {
     console.error('切换 Node.js 版本失败:', error.message)
     process.exit(1)
   }
@@ -80,8 +81,7 @@ else if (!isInstalled) {
   try {
     execSync(`nvm install ${requiredNodeVersion}`, { stdio: 'inherit', shell: true })
     execSync(`nvm use ${requiredNodeVersion}`, { stdio: 'inherit', shell: true })
-  }
-  catch (error) {
+  } catch (error) {
     console.error('安装或切换 Node.js 版本失败:', error.message)
     process.exit(1)
   }
