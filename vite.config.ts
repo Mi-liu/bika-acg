@@ -37,11 +37,49 @@ export default defineConfig({
       '@common': `${root}/common`,
     },
   },
-  base: '/', // 确保基础路径正确
+  base: './', // 使用相对路径
   build: {
-    outDir: 'dist', // 确认输出目录
-    emptyOutDir: true, // 构建前清空目录
-    assetsDir: 'assets', // 静态资源目录
-    manifest: true, // 生成manifest文件
+    outDir: 'dist',
+    emptyOutDir: true,
+    assetsDir: 'assets',
+    // 设置 chunk 大小警告限制为 1000KB
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      output: {
+        // 手动分割代码块
+        manualChunks: {
+          // Vue 核心库
+          'vue-vendor': ['vue', 'vue-router', 'pinia'],
+          // Element Plus UI 库
+          'element-plus': ['element-plus'],
+          // VueUse 工具库
+          vueuse: ['@vueuse/core'],
+          // Vue Hooks Plus
+          'vue-hooks-plus': ['vue-hooks-plus'],
+          // 动画库
+          animation: ['gsap'],
+          // 工具库
+          utils: ['dayjs', 'crypto-js', 'lodash-es'],
+          // 图标库
+          icons: ['@element-plus/icons-vue'],
+        },
+        // 为静态资源文件命名
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: (assetInfo) => {
+          const fileName = assetInfo.name ?? ''
+          if (/\.(?:mp4|webm|ogg|mp3|wav|flac|aac)$/.test(fileName)) {
+            return 'assets/media/[name]-[hash].[ext]'
+          }
+          if (/\.(?:png|jpe?g|gif|svg|ico|webp)$/.test(fileName)) {
+            return 'assets/images/[name]-[hash].[ext]'
+          }
+          if (/\.(?:woff2?|eot|ttf|otf)$/.test(fileName)) {
+            return 'assets/fonts/[name]-[hash].[ext]'
+          }
+          return 'assets/[name]-[hash].[ext]'
+        },
+      },
+    },
   },
 })
