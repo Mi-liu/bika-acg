@@ -13,12 +13,24 @@ dist-ssr
 coverage
 *.local
 
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+.vercel.json.bak
+
 /cypress/videos/
 /cypress/screenshots/
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/settings.json
 .idea
 *.suo
 *.ntvs*
@@ -27,3 +39,13 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Build artifacts
+dist/
+build/
+.output/
+
+# Cache directories
+.cache/
+.temp/
+.tmp/
