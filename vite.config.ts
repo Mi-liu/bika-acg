@@ -45,43 +45,43 @@ export default defineConfig({
     // 设置 chunk 大小警告限制为 1000KB
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      output: {
-        // 手动分割代码块
-        manualChunks: (id) => {
-          // Vue 核心库
-          if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
-            return 'vue-vendor'
-          }
-          // Element Plus UI 库
-          if (id.includes('element-plus')) {
-            return 'element-plus'
-          }
-          // VueUse 工具库
-          if (id.includes('@vueuse/core')) {
-            return 'vueuse'
-          }
-          // Vue Hooks Plus
-          if (id.includes('vue-hooks-plus')) {
-            return 'vue-hooks-plus'
-          }
-          // 动画库
-          if (id.includes('gsap')) {
-            return 'animation'
-          }
-          // 工具库
-          if (id.includes('dayjs') || id.includes('crypto-js') || id.includes('lodash-es')) {
-            return 'utils'
-          }
-          // 图标库
-          if (id.includes('@element-plus/icons-vue')) {
-            return 'icons'
-          }
-        },
-        // 为静态资源文件命名
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]',
-      },
+      // output: {
+      //   // 手动分割代码块
+      //   manualChunks: (id) => {
+      //     // Vue 核心库
+      //     if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+      //       return 'vue-vendor'
+      //     }
+      //     // Element Plus UI 库
+      //     if (id.includes('element-plus')) {
+      //       return 'element-plus'
+      //     }
+      //     // VueUse 工具库
+      //     if (id.includes('@vueuse/core')) {
+      //       return 'vueuse'
+      //     }
+      //     // Vue Hooks Plus
+      //     if (id.includes('vue-hooks-plus')) {
+      //       return 'vue-hooks-plus'
+      //     }
+      //     // 动画库
+      //     if (id.includes('gsap')) {
+      //       return 'animation'
+      //     }
+      //     // 工具库
+      //     if (id.includes('dayjs') || id.includes('crypto-js') || id.includes('lodash-es')) {
+      //       return 'utils'
+      //     }
+      //     // 图标库
+      //     if (id.includes('@element-plus/icons-vue')) {
+      //       return 'icons'
+      //     }
+      //   },
+      //   // 为静态资源文件命名
+      //   chunkFileNames: 'assets/js/[name]-[hash].js',
+      //   entryFileNames: 'assets/js/[name]-[hash].js',
+      //   assetFileNames: 'assets/[name]-[hash].[ext]',
+      // },
     },
   },
 })
