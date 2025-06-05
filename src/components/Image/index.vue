@@ -50,11 +50,11 @@ function handleRefreshImage() {
       </el-skeleton>
     </div>
 
-    <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
+    <!-- <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
       <el-icon>
         <Hide />
       </el-icon>
-    </div>
+    </div> -->
   </div>
 </template>
 
