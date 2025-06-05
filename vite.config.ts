@@ -45,7 +45,7 @@ export default defineConfig({
     // 设置 chunk 大小警告限制为 1000KB
     chunkSizeWarningLimit: 1000,
     // 生产环境优化
-    minify: 'terser',
+    minify: 'esbuild',
     sourcemap: process.env.VITE_BUILD_SOURCEMAP === 'true',
     // 启用 CSS 代码分割
     cssCodeSplit: true,
