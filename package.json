@@ -12,7 +12,8 @@
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
     "lint": "npm run lint:oxlint && npm run lint:eslint",
-    "format": "prettier --write src/",
+    "format": "eslint . --fix",
+    "format:prettier": "prettier --write \"**/*.{md,yml,yaml}\" --ignore-path .gitignore",
     "check-node": "node scripts/check-node-version.js"
   },
   "dependencies": {

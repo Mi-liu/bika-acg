@@ -32,8 +32,6 @@ function handleRandomRefresh() {
   randomMutate(undefined)
   randomRefresh()
 }
-
-
 </script>
 
 <template>
@@ -54,7 +52,10 @@ function handleRandomRefresh() {
           </el-button>
         </div>
         <div class="random-comic-list mt-2">
-          <el-skeleton class="w-full" v-for="i in 10" :key="i" :loading="randomLoading">
+          <el-skeleton
+            v-for="i in 10" :key="i" class="w-full"
+            :loading="randomLoading"
+          >
             <template #template>
               <div class="size-full">
                 <div class="w-full! aspect-3/4">
@@ -66,8 +67,10 @@ function handleRandomRefresh() {
             </template>
           </el-skeleton>
 
-          <div v-for="comic in randomComics" :key="comic._id" class="random-comic-item cursor-pointer"
-            @click="handleComicClick(comic._id)">
+          <div
+            v-for="comic in randomComics" :key="comic._id" class="random-comic-item cursor-pointer"
+            @click="handleComicClick(comic._id)"
+          >
             <Image :src="getImageUrl(comic.thumb.path)" />
             <div class="random-comic-item-title line-clamp-2">
               {{ comic.title }}

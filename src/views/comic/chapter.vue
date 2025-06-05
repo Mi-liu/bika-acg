@@ -122,8 +122,8 @@ const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => 
   // 检查是否需要加载下一页
   const shouldLoadNextPage
     = distanceFromBottom <= preloadThreshold
-    && pageInfo.page < pageInfo.pages
-    && !loadingState.isLoadingNextPage
+      && pageInfo.page < pageInfo.pages
+      && !loadingState.isLoadingNextPage
 
   if (shouldLoadNextPage) {
     getChapterPages()
@@ -296,10 +296,16 @@ getChapterPages(1)
 
       <!-- 章节导航按钮 -->
       <div class="flex items-center gap-2">
-        <el-button :disabled="!canGoPrevChapter" text bg @click="prevChapter">
+        <el-button
+          :disabled="!canGoPrevChapter" text bg
+          @click="prevChapter"
+        >
           上一章
         </el-button>
-        <el-button :disabled="!canGoNextChapter" text bg @click="nextChapter">
+        <el-button
+          :disabled="!canGoNextChapter" text bg
+          @click="nextChapter"
+        >
           下一章
         </el-button>
 
@@ -315,8 +321,11 @@ getChapterPages(1)
       <el-scrollbar ref="scrollbarRef" class="h-full" @scroll="handleScroll">
         <div class="mx-auto" :style="{ width: `${settingStore.comic.comicImageWidth}px` }">
           <!-- 图片列表 -->
-          <Image v-for="(item, index) in comicImages" :key="item.id || index" :src="item.path" aspect="auto"
-            :alt="`第${index + 1}张图片`" />
+          <Image
+            v-for="(item, index) in comicImages" :key="item.id || index" :src="item.path"
+            aspect="auto"
+            :alt="`第${index + 1}张图片`"
+          />
 
           <!-- 加载更多指示器 -->
           <div v-if="loadingState.isLoadingNextPage" class="text-center py-4">
@@ -332,16 +341,27 @@ getChapterPages(1)
     </div>
 
     <!-- 设置抽屉 -->
-    <el-drawer v-model="drawer" modal-class="chapter-drawer-modal" direction="rtl" size="400px" :with-header="false">
+    <el-drawer
+      v-model="drawer" modal-class="chapter-drawer-modal" direction="rtl"
+      size="400px" :with-header="false"
+    >
       <div class="size-full">
         <el-form label-width="100px" label-position="left">
           <el-form-item label="宽度">
-            <el-slider v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth" :step="10" />
+            <el-slider
+              v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth"
+              :step="10"
+            />
           </el-form-item>
           <el-form-item label="画质">
-            <el-select v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
-              :loading="loadingState.isLoadingNextPage" @change="handleQualityChange">
-              <el-option v-for="item in pictureQuality" :key="item.value" :label="item.label" :value="item.value" />
+            <el-select
+              v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
+              :loading="loadingState.isLoadingNextPage" @change="handleQualityChange"
+            >
+              <el-option
+                v-for="item in pictureQuality" :key="item.value" :label="item.label"
+                :value="item.value"
+              />
             </el-select>
             <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
               正在切换画质，重新加载图片...
@@ -364,13 +384,21 @@ getChapterPages(1)
             <el-switch v-model="settingStore.comic.autoRead" />
           </el-form-item>
           <el-form-item label="自动阅读速度">
-            <el-input-number v-model="settingStore.comic.autoReadSpeed" :min="1" :max="1000" :step="1" />
+            <el-input-number
+              v-model="settingStore.comic.autoReadSpeed" :min="1" :max="1000"
+              :step="1"
+            />
           </el-form-item>
 
           <el-form-item label="线路代理">
-            <el-select v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
-              @change="handleProxyChange">
-              <el-option v-for="item in proxy" :key="item.label" :label="item.label" :value="item.value" />
+            <el-select
+              v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
+              @change="handleProxyChange"
+            >
+              <el-option
+                v-for="item in proxy" :key="item.label" :label="item.label"
+                :value="item.value"
+              />
             </el-select>
             <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
               正在切换线路，重新加载图片...

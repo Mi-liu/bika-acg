@@ -37,8 +37,11 @@ function handleWatchLater() {
 </script>
 
 <template>
-  <el-dropdown v-if="userStore.user" class="h-full ml-auto" placement="bottom-end" trigger="hover" :show-timeout="100"
-    :hide-timeout="100">
+  <el-dropdown
+    v-if="userStore.user" class="h-full ml-auto" placement="bottom-end"
+    trigger="hover" :show-timeout="100"
+    :hide-timeout="100"
+  >
     <el-button class="h-full! outline-none!" text>
       <div class="truncate max-w-6em">
         {{ userStore.user?.name }}

@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import CommonPagination from '@common/components/CommonPagination/index.vue'
+import { ChatLineRound, Document } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
+import { cardAnimations } from '@/animations/cardAnimation'
 import { getMyComments } from '@/api/user'
 import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
-import CommonPagination from '@common/components/CommonPagination/index.vue'
-import { cardAnimations } from '@/animations/cardAnimation'
-import { ChatLineRound, Calendar, Document } from '@element-plus/icons-vue'
-import dayjs from 'dayjs'
 import '@/animations/cardAnimation.scss'
 
 const router = useRouter()
@@ -62,18 +62,20 @@ function getRelativeTime(dateString: string) {
 
   if (diffDays === 0) {
     return '今天'
-  } else if (diffDays === 1) {
+  }
+  else if (diffDays === 1) {
     return '昨天'
-  } else if (diffDays < 7) {
+  }
+  else if (diffDays < 7) {
     return `${diffDays}天前`
-  } else {
+  }
+  else {
     return commentTime.format('MM-DD')
   }
 }
 
 // 选择动画效果
 const animation = cardAnimations.leftToRight
-
 </script>
 
 <template>
@@ -88,20 +90,27 @@ const animation = cardAnimations.leftToRight
           我的评论
         </div>
       </div>
-      <CommonPagination ref="CommonPaginationRef" :total="data?.total || 0"
+      <CommonPagination
+        ref="CommonPaginationRef" :total="data?.total || 0"
         layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" :disabled="loading"
-        @change="handlePageChange" />
+        @change="handlePageChange"
+      />
     </div>
 
     <!-- 内容区域 -->
     <div class="h-full flex-1 overflow-hidden">
       <el-scrollbar height="100%">
-        <div class="w-full h-6px"></div>
+        <div class="w-full h-6px" />
 
         <!-- 加载状态骨架屏 -->
-        <div v-if="loading" class="card-animation-grid comment-grid"
-          style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;">
-          <el-skeleton v-for="i in 6" :key="i" class="comment-card" :loading="true">
+        <div
+          v-if="loading" class="card-animation-grid comment-grid"
+          style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;"
+        >
+          <el-skeleton
+            v-for="i in 6" :key="i" class="comment-card"
+            :loading="true"
+          >
             <template #template>
               <div class="p-4">
                 <div class="flex items-center gap-3 mb-3">
@@ -120,11 +129,13 @@ const animation = cardAnimations.leftToRight
         </div>
 
         <!-- 评论列表 -->
-        <TransitionGroup v-else-if="data?.docs && data.docs.length > 0" tag="div"
+        <TransitionGroup
+          v-else-if="data?.docs && data.docs.length > 0" tag="div"
           class="card-animation-grid comment-grid"
           style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;" :css="false"
           @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
-          @move="animation.onMove">
+          @move="animation.onMove"
+        >
           <div v-for="item in data.docs" :key="item._id" class="comment-card">
             <!-- 评论头部 -->
             <div class="comment-header">
@@ -152,7 +163,10 @@ const animation = cardAnimations.leftToRight
 
             <!-- 评论底部操作 -->
             <div class="comment-footer">
-              <el-button type="primary" link size="small" @click="handleComicClick(item._comic._id)">
+              <el-button
+                type="primary" link size="small"
+                @click="handleComicClick(item._comic._id)"
+              >
                 查看漫画
               </el-button>
             </div>
@@ -173,7 +187,7 @@ const animation = cardAnimations.leftToRight
           </el-empty>
         </div>
 
-        <div class="w-full h-6px"></div>
+        <div class="w-full h-6px" />
       </el-scrollbar>
     </div>
   </div>

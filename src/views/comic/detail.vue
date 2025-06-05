@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import Image from '@/components/Image/index.vue'
 import CommonButton from '@common/components/CommonButton/index.vue'
-import { getImageUrl } from '@/utils/string'
-import { getComicDetail, favorites, getComicEps } from '@/api/comic'
-import { Star, StarFilled, Reading, Document, Memo, Plus } from '@element-plus/icons-vue'
+import { Document, Memo, Reading, Star, StarFilled } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
+import { favorites, getComicDetail, getComicEps } from '@/api/comic'
+import Image from '@/components/Image/index.vue'
 import { loopRequestList } from '@/utils/fetch'
-
-const router = useRouter()
+import { getImageUrl } from '@/utils/string'
 
 const props = defineProps<{ id: string }>()
+
+const router = useRouter()
 
 const localStore = useLocalStoreHook()
 
@@ -23,7 +23,7 @@ watch(data, (newVal) => {
   }
 })
 
-const toolList = <const>[
+const toolList = [
   {
     label: '点赞',
     prop: 'totalLikes',
@@ -36,10 +36,9 @@ const toolList = <const>[
     label: '评论',
     prop: 'totalComments',
   },
-]
+] as const
 
-
-const { data: epsData } = loopRequestList((page) => getComicEps(props.id, page), {
+const { data: epsData } = loopRequestList(page => getComicEps(props.id, page), {
   key: 'docs',
   beforeRequest: (page, res) => {
     if (res === undefined) {
@@ -60,10 +59,10 @@ function handleAuthorClick(author: string) {
   const url = router.resolve({
     path: '/comic/list',
     query: {
-      author: author
-    }
+      author,
+    },
   }).href
-  window.open(url, '_blank');
+  window.open(url, '_blank')
 }
 
 function handleFollowAuthor(author: string) {
@@ -74,24 +73,25 @@ function handleUnfollowAuthor(author: string) {
   localStore.removeItem('FOLLOW_AUTHOR_LIST', author)
 }
 
-
 function handleTagClick(tag: string) {
   const url = router.resolve({
     path: '/comic/list',
     query: {
-      title: tag
-    }
+      title: tag,
+    },
   }).href
-  window.open(url, '_blank');
+  window.open(url, '_blank')
 }
 
 function handleFavoritesClick() {
-  if (data.value === undefined) return
+  if (data.value === undefined)
+    return
   return favorites(data.value._id)
-    .then(res => {
+    .then((res) => {
       if (res === 'favourite') {
         data.value!.isFavourite = true
-      } else if (res === 'un_favourite') {
+      }
+      else if (res === 'un_favourite') {
         data.value!.isFavourite = false
       }
     })
@@ -104,10 +104,10 @@ function handleEpsClick(index: number) {
     path: `/comic/chapter/${props.id}`,
     query: {
       chapter: chapterNum,
-      maxChapter: maxChapter
-    }
+      maxChapter,
+    },
   }).href
-  window.open(url, '_blank');
+  window.open(url, '_blank')
 }
 </script>
 
@@ -115,7 +115,7 @@ function handleEpsClick(index: number) {
   <el-scrollbar class="bg-[--el-bg-color-page]">
     <div class="max-w-1100px mx-auto">
       <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <Image :src="getImageUrl(data?.thumb.path!)"></Image>
+        <Image :src="getImageUrl(data?.thumb.path!)" />
         <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
           <div class="flex-1 overflow-hidden flex flex-col">
             <!-- 标题和基本信息区域 -->
@@ -134,8 +134,11 @@ function handleEpsClick(index: number) {
 
               <!-- 分类 -->
               <div class="mt-2 flex flex-wrap gap-2">
-                <el-tag class="cursor-pointer" v-for="tag in data?.categories" :key="tag" type="primary" effect="plain"
-                  @click="handleTagClick(tag)">
+                <el-tag
+                  v-for="tag in data?.categories" :key="tag" class="cursor-pointer"
+                  type="primary" effect="plain"
+                  @click="handleTagClick(tag)"
+                >
                   {{ tag }}
                 </el-tag>
               </div>
@@ -146,43 +149,47 @@ function handleEpsClick(index: number) {
                 </el-tag>
               </div>
             </div>
-
           </div>
           <div class="flex mt">
             <el-button type="primary" :icon="Reading" @click="handleEpsClick(0)">开始阅读</el-button>
             <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
               <el-icon class="mr-1" size="18" color="var(--el-color-warning-light-3)">
-                <StarFilled></StarFilled>
+                <StarFilled />
               </el-icon>
               取消收藏
             </CommonButton>
-            <CommonButton @click="handleFavoritesClick" v-else>
+            <CommonButton v-else @click="handleFavoritesClick">
               <el-icon class="mr-1">
-                <Star></Star>
+                <Star />
               </el-icon>
               收藏漫画
             </CommonButton>
 
             <div class="ml-auto flex items-center gap-2">
-              <el-popover width="70px" v-for="author in data?.author.split(/[、,，]\s*/)" :key="author">
+              <el-popover v-for="author in data?.author.split(/[、,，]\s*/)" :key="author" width="70px">
                 <template #reference>
-                  <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">{{ author
-                  }}</el-link>
+                  <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
+                    {{ author
+                    }}
+                  </el-link>
                 </template>
                 <div class="w-full flex flex-col">
-                  <el-button class="w-full" type="danger" size="default"
-                    v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)"
-                    @click.stop="handleUnfollowAuthor(author)">
+                  <el-button
+                    v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
+                    size="default"
+                    @click.stop="handleUnfollowAuthor(author)"
+                  >
                     取消关注
                   </el-button>
-                  <el-button v-else class="w-full" type="primary" size="default"
-                    @click.stop="handleFollowAuthor(author)">
+                  <el-button
+                    v-else class="w-full" type="primary"
+                    size="default"
+                    @click.stop="handleFollowAuthor(author)"
+                  >
                     关注
                   </el-button>
                 </div>
               </el-popover>
-
-
             </div>
           </div>
         </div>
@@ -190,7 +197,7 @@ function handleEpsClick(index: number) {
 
       <!-- 统计 -->
       <div class="h-90px flex mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <div class="flex-1 flex flex-col items-center justify-center" v-for="item in toolList" :key="item.prop">
+        <div v-for="item in toolList" :key="item.prop" class="flex-1 flex flex-col items-center justify-center">
           <div>
             <el-statistic :value="data?.[item.prop]" />
           </div>
@@ -221,13 +228,14 @@ function handleEpsClick(index: number) {
           章节列表
         </div>
         <div class="mt3 flex flex-wrap gap-10px">
-          <el-button class="ml-0!" v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index"
-            @click="handleEpsClick(index)">
+          <el-button
+            v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index" class="ml-0!"
+            @click="handleEpsClick(index)"
+          >
             {{ item.title }}
           </el-button>
         </div>
       </div>
-
     </div>
   </el-scrollbar>
 </template>

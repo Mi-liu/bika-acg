@@ -7,7 +7,7 @@ function handleLogoClick() {
 
 <template>
   <div class="select-none cursor-pointer" @click="handleLogoClick">
-    哔咔漫画
+    哔咔漫画 测试233
   </div>
 </template>
 

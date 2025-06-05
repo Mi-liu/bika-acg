@@ -1,5 +1,5 @@
-import { Priority } from '@/enum/priority'
 import { useRequestProvider } from 'vue-hooks-plus'
+import { Priority } from '@/enum/priority'
 
 export default {
   index: Priority.Low,

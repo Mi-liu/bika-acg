@@ -1,6 +1,5 @@
-import type { Comics, ComicsParams } from './comic'
+import type { Comics, ComicsParams, PageData } from './comic'
 import alova from '@/services'
-import type { PageData } from './comic'
 
 /**
  * 登录
@@ -9,7 +8,7 @@ import type { PageData } from './comic'
  * @param params.password 密码
  * @returns 登录结果
  */
-export function login(params: { email: string; password: string }) {
+export function login(params: { email: string, password: string }) {
   return alova.Post<{
     token: string
   }>('auth/sign-in', params)

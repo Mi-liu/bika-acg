@@ -41,8 +41,8 @@ const { loading, data, run: fetchComics } = useRequest<Comics['comics'], [T & { 
     } as Comics['comics'],
     onError: (error) => {
       console.error('获取漫画列表失败:', error)
-    }
-  }
+    },
+  },
 )
 
 function handleSelectChange() {
@@ -69,7 +69,8 @@ handlePageChange({
 })
 
 const comics = computed(() => {
-  if (!data.value) return []
+  if (!data.value)
+    return []
 
   if (props.isBlockedCategories) {
     return data.value.docs.filter((item) => {
@@ -144,22 +145,34 @@ function handleTagClick(tag: string) {
     <div class="flex px py">
       <div class="size-full flex justify-between">
         <div class="text-18px">{{ props.title || '漫画列表' }}</div>
-        <el-select v-model="s" class="w-110px!" :disabled="loading" @change="handleSelectChange">
-          <el-option v-for="item in sort" :key="item.value" :label="item.label" :value="item.value" />
+        <el-select
+          v-model="s" class="w-110px!" :disabled="loading"
+          @change="handleSelectChange"
+        >
+          <el-option
+            v-for="item in sort" :key="item.value" :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </div>
-      <CommonPagination ref="CommonPaginationRef" :total="data?.total || 0"
+      <CommonPagination
+        ref="CommonPaginationRef" :total="data?.total || 0"
         layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" :disabled="loading"
-        @change="handlePageChange" />
+        @change="handlePageChange"
+      />
     </div>
     <div class="h-full flex-1 overflow-hidden">
       <el-scrollbar height="100%">
-        <div class="w-full h-6px"></div>
+        <div class="w-full h-6px" />
         <!-- 加载状态骨架屏 -->
-        <div v-if="loading" class="card-animation-grid card-grid-custom"
-          style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;">
-          <el-skeleton v-for="i in 12" :key="i" class="rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
-            :loading="true">
+        <div
+          v-if="loading" class="card-animation-grid card-grid-custom"
+          style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;"
+        >
+          <el-skeleton
+            v-for="i in 12" :key="i" class="rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
+            :loading="true"
+          >
             <template #template>
               <div class="size-full">
                 <div class="w-full! aspect-3/4">
@@ -179,28 +192,38 @@ function handleTagClick(tag: string) {
         </div>
 
         <!-- 实际内容 -->
-        <TransitionGroup v-else tag="div" class="card-animation-grid card-grid-custom"
+        <TransitionGroup
+          v-else tag="div" class="card-animation-grid card-grid-custom"
           style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;" :css="false"
           @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
-          @move="animation.onMove">
-          <div v-for="item in comics" :key="item._id"
+          @move="animation.onMove"
+        >
+          <div
+            v-for="item in comics" :key="item._id"
             class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]"
-            @click="handleComicClick(item)">
+            @click="handleComicClick(item)"
+          >
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)" />
-              <el-tooltip class="box-item" effect="dark"
+              <el-tooltip
+                class="box-item" effect="dark"
                 :content="arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id') ? '从稍后再看中移除' : '添加到稍后再看'"
-                placement="top-start">
-                <div v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
+                placement="top-start"
+              >
+                <div
+                  v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
                   class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
-                  @click.stop="handleAddToLater(item)">
+                  @click.stop="handleAddToLater(item)"
+                >
                   <el-icon class="text-[--el-color-white]!">
                     <Timer />
                   </el-icon>
                 </div>
-                <div v-else class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
-                  @click.stop="handleRemoveFromLater(item)">
+                <div
+                  v-else class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                  @click.stop="handleRemoveFromLater(item)"
+                >
                   <el-icon class="text-[--el-color-white]!">
                     <Minus />
                   </el-icon>
@@ -228,12 +251,17 @@ function handleTagClick(tag: string) {
                     </el-link>
                   </template>
                   <div class="w-full flex flex-col">
-                    <el-button v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
-                      size="default" @click.stop="handleUnfollowAuthor(author)">
+                    <el-button
+                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
+                      size="default" @click.stop="handleUnfollowAuthor(author)"
+                    >
                       取消关注
                     </el-button>
-                    <el-button v-else class="w-full" type="primary" size="default"
-                      @click.stop="handleFollowAuthor(author)">
+                    <el-button
+                      v-else class="w-full" type="primary"
+                      size="default"
+                      @click.stop="handleFollowAuthor(author)"
+                    >
                       关注
                     </el-button>
                   </div>
@@ -242,14 +270,17 @@ function handleTagClick(tag: string) {
             </div>
             <!-- 分类 -->
             <div class="mt-2 flex flex-wrap gap-2">
-              <el-tag v-for="tag in item.categories" :key="tag" closable type="primary" effect="plain"
-                @close="handleCloseTag(tag)" @click.stop="handleTagClick(tag)">
+              <el-tag
+                v-for="tag in item.categories" :key="tag" closable
+                type="primary" effect="plain"
+                @close="handleCloseTag(tag)" @click.stop="handleTagClick(tag)"
+              >
                 {{ tag }}
               </el-tag>
             </div>
           </div>
         </TransitionGroup>
-        <div class="w-full h-6px"></div>
+        <div class="w-full h-6px" />
       </el-scrollbar>
     </div>
   </div>
