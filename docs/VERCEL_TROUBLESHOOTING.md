@@ -22,7 +22,33 @@
 ```json
 // vercel.json
 {
-  "installCommand": "npm ci --legacy-peer-deps"
+  "installCommand": "npm install --legacy-peer-deps"
+}
+```
+
+#### 问题：Rollup 原生依赖缺失
+**错误信息**: `Cannot find module @rollup/rollup-linux-x64-gnu`
+**原因**: npm 可选依赖的已知 bug (https://github.com/npm/cli/issues/4828)
+**解决方案**:
+1. 添加 `.npmrc` 文件：
+```
+legacy-peer-deps=true
+```
+
+2. 使用自定义构建脚本：
+```json
+// vercel.json
+{
+  "buildCommand": "node scripts/vercel-build.js",
+  "installCommand": "npm install --legacy-peer-deps"
+}
+```
+
+3. 或者使用简化的构建命令：
+```json
+// vercel.json
+{
+  "buildCommand": "npm install --legacy-peer-deps && npm run build-only"
 }
 ```
 
@@ -66,7 +92,7 @@
 
 #### 问题：页面 404
 **原因**: SPA 路由配置问题
-**解决方案**: 
+**解决方案**:
 由于项目使用 Hash 路由，通常不需要额外配置。如果仍有问题，可以添加：
 ```json
 {
