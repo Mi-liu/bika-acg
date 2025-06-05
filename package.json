@@ -5,13 +5,13 @@
   "private": true,
   "scripts": {
     "dev": "node scripts/check-node-version.js && vite",
-    "build": "run-p type-check \"build-only {@}\" --",
+    "build": "npm run type-check && npm run build-only",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
-    "lint": "run-s lint:*",
+    "lint": "npm run lint:oxlint && npm run lint:eslint",
     "format": "prettier --write src/",
     "check-node": "node scripts/check-node-version.js"
   },
@@ -51,7 +51,6 @@
     "eslint-plugin-oxlint": "^0.16.0",
     "eslint-plugin-vue": "~10.0.0",
     "jiti": "^2.4.2",
-    "npm-run-all2": "^7.0.2",
     "oxlint": "^0.16.0",
     "prettier": "3.5.3",
     "sass-embedded": "^1.87.0",
