@@ -1,7 +1,6 @@
-import { getFileName } from '@/utils/file'
 import { createRouterModule } from '../utils'
 
-const name = getFileName(import.meta.url).baseName
+const name = 'login'
 
 /**
  * 登录路由模块

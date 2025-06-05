@@ -1,7 +1,6 @@
-import { getFileName } from '@/utils/file'
 import { createRouterModule } from '../utils'
 
-const name = getFileName(import.meta.url).baseName
+const name = 'comic'
 
 /**
  * 漫画相关路由模块
