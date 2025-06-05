@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "npm run build-only",
+  "buildCommand": "node scripts/vercel-build.js",
   "outputDirectory": "dist",
-  "installCommand": "npm ci",
+  "installCommand": "npm install --legacy-peer-deps",
   "headers": [
     {
       "source": "/assets/(.*)",

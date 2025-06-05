@@ -1,3 +1,6 @@
 {
-  "version": 2
+  "version": 2,
+  "buildCommand": "npm install --legacy-peer-deps && npm run build-only",
+  "outputDirectory": "dist",
+  "installCommand": "npm install --legacy-peer-deps"
 }

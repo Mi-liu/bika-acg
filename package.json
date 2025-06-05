@@ -17,7 +17,7 @@
     "check-node": "node scripts/check-node-version.js",
     "deploy:preview": "node scripts/deploy.js",
     "deploy:prod": "node scripts/deploy.js --prod",
-    "vercel:build": "npm run build",
+    "vercel:build": "node scripts/vercel-build.js",
     "vercel:dev": "vite"
   },
   "dependencies": {
