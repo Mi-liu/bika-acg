@@ -26,7 +26,7 @@ export function createRouterModule(
     meta: merge(defaultMeta, config.meta),
     redirect: config.redirect || `/${moduleName}/${config.children?.[0]?.path}`,
     ...config,
-    children: config.children?.map(child => ({
+    children: config.children?.map((child) => ({
       ...child,
       props: (route: RouteLocationNormalizedLoaded) => ({
         ...route.params,
