@@ -181,7 +181,7 @@ const animation = cardAnimations.leftToRight
                 <ChatLineRound />
               </el-icon>
             </template>
-            <el-button type="primary" @click="$router.push('/')">
+            <el-button type="primary" @click="router.push('/')">
               去看看漫画
             </el-button>
           </el-empty>
