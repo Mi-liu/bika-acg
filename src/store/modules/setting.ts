@@ -12,8 +12,6 @@ const useSettingStore = defineStore(
       imageQuality: pictureQuality[2].value,
       /** 请求代理 */
       proxy: cloneDeep(proxy[0].value),
-      /** 屏蔽的分类 */
-      blockedCategories: [] as string[],
       /** 漫画图片宽度 */
       comicImageWidth: 800,
       /** 自动阅读 */
@@ -22,7 +20,13 @@ const useSettingStore = defineStore(
       autoReadSpeed: 20,
     })
 
-    return { comic }
+    /** 过滤漫画设置 */
+    const filter = reactive({
+      /** 分类 */
+      categories: [] as string[],
+    })
+
+    return { comic, filter }
   },
   {
     persist: true,
@@ -30,8 +34,6 @@ const useSettingStore = defineStore(
       enabled: true,
       debounce: 200,
       conflictResolution: 'latest',
-      // 同步所有漫画设置
-      include: ['comic'],
     },
   },
 )
