@@ -38,6 +38,8 @@ interface SyncEnabledStore {
   _lastSyncTime?: number
   _isSyncing?: boolean
   _syncConfig?: MultiWindowSyncConfig
+  _previousStateStr?: string
+  _isInitialized?: boolean
 }
 
 // 当前窗口唯一标识
@@ -80,10 +82,17 @@ const broadcastState = debounce((storeId: string, state: Record<string, unknown>
     }
   }
 
+  // 检查状态是否真的发生了变化
+  const currentStateStr = JSON.stringify(filteredState)
+  if (store._previousStateStr === currentStateStr) {
+    return // 状态没有实际变化，跳过广播
+  }
+  store._previousStateStr = currentStateStr
+
   const message: WindowSyncMessage = {
     type: 'PINIA_WINDOW_SYNC',
     storeId,
-    state: JSON.parse(JSON.stringify(filteredState)), // 深拷贝
+    state: JSON.parse(currentStateStr), // 使用已序列化的状态
     timestamp: Date.now(),
     windowId: CURRENT_WINDOW_ID,
   }
@@ -167,7 +176,10 @@ async function handleSyncMessage(message: WindowSyncMessage) {
     // 使用 $patch 方法强制更新状态
     store.$patch(updateData)
 
-    console.log(`[WindowSync] 状态同步成功 - Store: ${message.storeId}`, message.state)
+    // 只在开发环境输出同步日志
+    if (import.meta.env.DEV) {
+      console.log(`[WindowSync] 状态同步成功 - Store: ${message.storeId}`, updateData)
+    }
   }
   catch (error) {
     console.warn(`[WindowSync] 状态同步失败 - Store: ${message.storeId}:`, error)
@@ -191,7 +203,9 @@ function initializeMessageListeners() {
       handleSyncMessage(event.data)
     })
 
-    console.log('[WindowSync] BroadcastChannel listener initialized')
+    if (import.meta.env.DEV) {
+      console.log('[WindowSync] BroadcastChannel listener initialized')
+    }
   }
 
   // localStorage 事件监听（备用方案）
@@ -207,7 +221,9 @@ function initializeMessageListeners() {
     }
   })
 
-  console.log('[WindowSync] Storage listener initialized')
+  if (import.meta.env.DEV) {
+    console.log('[WindowSync] Storage listener initialized')
+  }
 }
 
 /**
@@ -229,11 +245,30 @@ export default function windowSyncPlugin({ store, options }: PiniaPluginContext)
   // 初始化同步相关属性
   store._lastSyncTime = Date.now()
   store._isSyncing = false
+  store._isInitialized = false
+  store._previousStateStr = undefined
+
+  // 延迟初始化，避免初始状态触发同步
+  setTimeout(() => {
+    store._isInitialized = true
+    // 记录初始状态
+    const initialState = store.$state
+    let filteredState = initialState
+    if (syncConfig?.include && Array.isArray(syncConfig.include)) {
+      filteredState = {}
+      for (const key of syncConfig.include) {
+        if (key in initialState) {
+          filteredState[key] = initialState[key]
+        }
+      }
+    }
+    store._previousStateStr = JSON.stringify(filteredState)
+  }, 500) // 延迟 500ms，确保初始化完成
 
   // 监听状态变更
   store.$subscribe((_mutation, state) => {
-    // 如果正在同步中，跳过广播
-    if (store._isSyncing) {
+    // 如果正在同步中或未初始化完成，跳过广播
+    if (store._isSyncing || !store._isInitialized) {
       return
     }
 
