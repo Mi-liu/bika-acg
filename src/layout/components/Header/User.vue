@@ -34,6 +34,13 @@ function handleWatchLater() {
   }).href
   window.open(url, '_blank')
 }
+
+function handleSetting() {
+  const url = router.resolve({
+    path: '/setting/index',
+  }).href
+  window.open(url, '_blank')
+}
 </script>
 
 <template>
@@ -54,7 +61,7 @@ function handleWatchLater() {
         <el-dropdown-item :icon="Star" @click="handleFavourite">我的收藏</el-dropdown-item>
         <el-dropdown-item :icon="ChatLineSquare" @click="handleComments">我的评论</el-dropdown-item>
         <el-dropdown-item :icon="Timer" @click="handleWatchLater">稍后再看</el-dropdown-item>
-        <el-dropdown-item :icon="Setting">设置</el-dropdown-item>
+        <el-dropdown-item :icon="Setting" @click="handleSetting">设置</el-dropdown-item>
         <el-dropdown-item :icon="SwitchButton" divided>退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </template>

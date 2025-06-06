@@ -74,7 +74,7 @@ const comics = computed(() => {
 
   if (props.isBlockedCategories) {
     return data.value.docs.filter((item) => {
-      return !item.categories.some(tag => settingStore.comic.blockedCategories.includes(tag))
+      return !item.categories.some(tag => settingStore.filter.categories.includes(tag))
     })
   }
   else {
@@ -83,15 +83,15 @@ const comics = computed(() => {
 })
 
 async function handleCloseTag(tag: string) {
-  await ElMessageBox.alert(`是否屏蔽分类：${tag}`, '提示', {
+  await ElMessageBox.alert(`是否过滤分类：${tag}`, '提示', {
     showCancelButton: true,
   })
-  if (settingStore.comic.blockedCategories.includes(tag)) {
-    ElMessage.warning('分类已被屏蔽，请勿重复添加')
+  if (settingStore.filter.categories.includes(tag)) {
+    ElMessage.warning('分类已被过滤，请勿重复添加')
   }
   else {
-    settingStore.comic.blockedCategories.push(tag)
-    ElMessage.success('分类已被屏蔽')
+    settingStore.filter.categories.push(tag)
+    ElMessage.success('分类已被过滤')
   }
 }
 
