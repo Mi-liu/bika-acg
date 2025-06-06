@@ -30,7 +30,7 @@ coverage
 *.tsbuildinfo
 
 # Build artifacts
-# dist/
+dist/
 build/
 .output/
 
