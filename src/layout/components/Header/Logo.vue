@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const router = useRouter()
+import router from '@/router'
+
 function handleLogoClick() {
   router.push('/')
 }
@@ -7,7 +8,7 @@ function handleLogoClick() {
 
 <template>
   <div class="select-none cursor-pointer" @click="handleLogoClick">
-    哔咔漫画 测试233
+    哔咔漫画
   </div>
 </template>
 
