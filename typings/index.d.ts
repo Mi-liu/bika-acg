@@ -13,6 +13,22 @@ declare global {
     [K in keyof T]: T[K] extends Array<any> ? K : never
   }[keyof T]
 
+  /**
+   * 多窗口同步配置接口
+   */
+  interface MultiWindowSyncConfig {
+    /** 是否启用多窗口同步 */
+    enabled?: boolean
+    /** 需要同步的字段，如果不指定则同步所有字段 */
+    include?: string[]
+    /** 不需要同步的字段 */
+    exclude?: string[]
+    /** 同步延迟（毫秒） */
+    debounce?: number
+    /** 冲突解决策略 */
+    conflictResolution?: 'latest' | 'merge' | 'ignore'
+  }
+
   // 添加 ES2023 数组方法的类型声明
   interface Array<T> {
     /**
@@ -38,6 +54,26 @@ declare global {
      * ES2023 新增方法
      */
     toSpliced: (start: number, deleteCount?: number, ...items: T[]) => T[]
+  }
+}
+
+// 扩展 Pinia 类型定义
+declare module 'pinia' {
+  export interface DefineStoreOptionsBase<S, Store> {
+    /**
+     * 多窗口同步配置
+     */
+    multiWindowSync?: MultiWindowSyncConfig
+  }
+
+  export interface PiniaCustomProperties {
+    // 同步相关的内部属性
+    _lastSyncTime?: number
+    _isSyncing?: boolean
+    _syncDisabled?: boolean
+    _localChanges?: Record<string, number>
+    _previousState?: any
+    _syncConfig?: MultiWindowSyncConfig
   }
 }
 

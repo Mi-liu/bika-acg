@@ -27,6 +27,13 @@ const useUserStore = defineStore(
   },
   {
     persist: true,
+    multiWindowSync: {
+      enabled: true,
+      debounce: 100,
+      conflictResolution: 'latest',
+      // 同步用户信息和 token
+      include: ['token', 'user'],
+    },
   },
 )
 

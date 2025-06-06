@@ -1,6 +1,5 @@
 import type { Categories, Comic } from '@/api/comic'
 import localforage from 'localforage'
-
 import { cloneDeep, uniq } from 'lodash-es'
 import { store } from '@/store'
 
@@ -86,8 +85,9 @@ const useLocalStore = defineStore('local', () => {
   function pushItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(key: K, value: V) {
     // @ts-expect-error - 数组类型操作需要忽略类型检查
     local[key].push(value)
-    // @ts-expect-error - 动态键访问需要忽略类型检查
-    return localforage.setItem(key, cloneDeep(uniq(local[key])))
+    // 使用类型断言来处理 uniq 函数的类型问题
+    const uniqueArray = uniq(local[key] as any[]) as Local[K]
+    return localforage.setItem(key, cloneDeep(uniqueArray))
   }
 
   /**
@@ -113,6 +113,16 @@ const useLocalStore = defineStore('local', () => {
   }
 
   return { local, initStorage, pushItem, removeItem }
+}, {
+  // 本地存储不需要持久化到 localStorage（已经使用 localforage）
+  persist: false,
+  multiWindowSync: {
+    enabled: true,
+    debounce: 300,
+    conflictResolution: 'merge',
+    // 同步关注作者和稍后观看列表
+    include: ['local'],
+  },
 })
 
 /**

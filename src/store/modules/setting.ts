@@ -26,6 +26,13 @@ const useSettingStore = defineStore(
   },
   {
     persist: true,
+    multiWindowSync: {
+      enabled: true,
+      debounce: 200,
+      conflictResolution: 'latest',
+      // 同步所有漫画设置
+      include: ['comic'],
+    },
   },
 )
 
