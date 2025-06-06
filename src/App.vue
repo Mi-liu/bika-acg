@@ -2,9 +2,10 @@
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import layout from '@/layout/index.vue'
 
-const localStore = useLocalStoreHook()
-localStore.initStorage().then(() => {
-  // localStore.syncStorage()
+// 初始化本地存储
+onMounted(() => {
+  const localStore = useLocalStoreHook()
+  localStore.initStorage()
 })
 </script>
 
