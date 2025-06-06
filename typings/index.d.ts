@@ -1,5 +1,10 @@
 // 可以在这里添加项目特定的类型定义
 
+// 修复 lodash-es 类型声明问题
+declare module 'lodash-es' {
+  export * from 'lodash'
+}
+
 declare global {
   /**
    * 将类型部分字段设置为可选
