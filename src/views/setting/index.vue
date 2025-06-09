@@ -17,6 +17,8 @@ import { proxy } from '@/services/config'
 import { useLocalStoreHook } from '@/store/modules/local'
 import { useSettingStoreHook } from '@/store/modules/setting'
 
+console.log(import.meta.env.VITE_APP_NAME)
+
 /**
  * 设置页面
  */
@@ -24,6 +26,12 @@ import { useSettingStoreHook } from '@/store/modules/setting'
 // Store 实例
 const settingStore = useSettingStoreHook()
 const localStore = useLocalStoreHook()
+
+const labelWidth = '120px'
+const lebelPosition = 'left'
+
+const appName = import.meta.env.VITE_APP_NAME
+const appVersion = import.meta.env.VITE_APP_VERSION
 
 async function handleCloseTag(tag: string) {
   await ElMessageBox.alert(`是否取消过滤分类：${tag}`, '提示', {
@@ -160,14 +168,14 @@ function handleClearData() {
 
         <!-- 漫画阅读设置 -->
         <div>
-          <h3>
+          <div class="flex items-center gap-2 text-18px font-bold line-height-1 py-10px my-14px border-b-3px border-[--el-color-primary] border-b-solid">
             <el-icon>
               <Reading />
             </el-icon>
             漫画阅读设置
-          </h3>
+          </div>
 
-          <el-form label-width="auto">
+          <el-form :label-width="labelWidth" :label-position="lebelPosition">
             <el-form-item label="图片质量">
               <el-select v-model="settingStore.comic.imageQuality">
                 <el-option
@@ -198,14 +206,14 @@ function handleClearData() {
 
         <!-- 网络设置 -->
         <div>
-          <h3>
+          <div class="flex items-center gap-2 text-18px font-bold line-height-1 py-10px my-14px border-b-3px border-[--el-color-primary] border-b-solid">
             <el-icon>
               <Connection />
             </el-icon>
             网络设置
-          </h3>
+          </div>
 
-          <el-form label-width="auto">
+          <el-form :label-width="labelWidth" :label-position="lebelPosition">
             <el-form-item label="代理线路">
               <el-select v-model="settingStore.comic.proxy" value-key="api">
                 <el-option
@@ -221,14 +229,14 @@ function handleClearData() {
 
         <!-- 漫画过滤设置 -->
         <div>
-          <h3>
+          <div class="flex items-center gap-2 text-18px font-bold line-height-1 py-10px my-14px border-b-3px border-[--el-color-primary] border-b-solid">
             <el-icon>
               <Filter />
             </el-icon>
             漫画过滤设置
-          </h3>
+          </div>
 
-          <el-form label-width="auto">
+          <el-form :label-width="labelWidth" :label-position="lebelPosition">
             <el-form-item label="过滤分类">
               <div class="w-full flex flex-wrap gap-2">
                 <el-tag
@@ -299,33 +307,21 @@ function handleClearData() {
 
         <!-- 关于信息 -->
         <div>
-          <h3>
+          <div class="flex items-center gap-2 text-18px font-bold line-height-1 py-10px my-14px border-b-3px border-[--el-color-primary] border-b-solid">
             <el-icon>
               <InfoFilled />
             </el-icon>
             关于应用
-          </h3>
-
-          <div>
-            <div>
-              <div>
-                <span>应用名称:</span>
-                <span>哔咔漫画</span>
-              </div>
-              <div>
-                <span>版本信息:</span>
-                <span>v1.0.0</span>
-              </div>
-              <div>
-                <span>多窗口同步:</span>
-                <el-tag type="success" size="small">已启用</el-tag>
-              </div>
-              <div>
-                <span>数据持久化:</span>
-                <el-tag type="success" size="small">已启用</el-tag>
-              </div>
-            </div>
           </div>
+
+          <el-form :label-width="labelWidth" :label-position="lebelPosition">
+            <el-form-item label="应用名称">
+              {{ appName }}
+            </el-form-item>
+            <el-form-item label="版本信息">
+              {{ appVersion }}
+            </el-form-item>
+          </el-form>
         </div>
       </el-card>
     </div>
