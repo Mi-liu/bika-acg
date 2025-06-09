@@ -1,18 +1,18 @@
 # pic-age
 
-This template should help get you started developing with Vue 3 in Vite.
+哔咔漫画的PC版本，因使用了 `vercel` 进行打包构建，目前需要翻墙使用
 
-## Recommended IDE Setup
+## 为什么要开发这个产品？
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### 哔咔网页版使用起来太难受了
 
-## Type Support for `.vue` Imports in TS
+- 访问详情页再返回就会出现刷新页面的情况
+- 漫画封面图片不够大，电脑用户看着很累
+- 无法关注作者，如果想查看作者是否更新还需要翻记录，再点击作者名字
+- 前端技术架构落后
+- 等等...
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
+作为一名刚好从事前端it行业的瑟瑟人员，本意是开发给自己用的
 
 ## Project Setup
 
