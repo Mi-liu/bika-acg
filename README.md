@@ -2,38 +2,23 @@
 
 哔咔漫画的PC版本，因使用了 `vercel` 进行打包构建，目前需要翻墙使用
 
-## 为什么要开发这个产品？
+### 对比哔咔的网页版，有什么区别
 
-### 哔咔网页版使用起来太难受了
-
-- 访问详情页再返回就会出现刷新页面的情况
-- 漫画封面图片不够大，电脑用户看着很累
-- 无法关注作者，如果想查看作者是否更新还需要翻记录，再点击作者名字
-- 前端技术架构落后
+- 访问漫画列表、详情、使用新开标签页，防止丢失当前信息
+- 增加关注作者、稍后再看功能
 - 等等...
 
-作为一名刚好从事前端it行业的瑟瑟人员，本意是开发给自己用的
+### 预览
 
-## Project Setup
+![列表图片](./src/assets/image/demo/list.jpeg "列表")
+![详情图片](./src/assets/image/demo/detail.jpeg "详情")
+![阅读图片](./src/assets/image/demo/chapter.png "阅读")
 
-```sh
-npm install
-```
+### 待开发/TODO
 
-### Compile and Hot-Reload for Development
+- 自动阅读功能，解放左手
+- ui美化
 
-```sh
-npm run dev
-```
+### 建议
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+- 希望大家多多提意见
