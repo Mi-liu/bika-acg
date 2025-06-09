@@ -6,6 +6,7 @@ import debounce from 'lodash-es/debounce'
 import { getComicPages } from '@/api/comic'
 import { pictureQuality } from '@/constants/options'
 import { proxy } from '@/services/config'
+import { addAutoReadMouseEvents, addAutoReadScrollListener, useAutoRead } from '@/utils/autoRead'
 import { getImageUrl } from '@/utils/string'
 
 // 类型定义
@@ -34,6 +35,14 @@ const scrollbarRef = useTemplateRef('scrollbarRef')
 // 窗口尺寸常量
 const windowInnerWidth = window.innerWidth
 const windowInnerHeight = window.innerHeight
+
+// 自动阅读功能
+const autoRead = useAutoRead({
+  enabled: computed(() => settingStore.comic.autoRead),
+  speed: computed(() => settingStore.comic.autoReadSpeed),
+  container: computed(() => scrollbarRef.value?.wrapRef),
+  resumeDelay: 1000,
+})
 
 // 响应式状态
 const currentChapter = ref(Number(props.chapter))
@@ -263,8 +272,27 @@ function handleContextMenu(e: MouseEvent) {
   drawer.value = !drawer.value
 }
 
+// 自动阅读事件监听器清理函数
+let autoReadCleanupFunctions: (() => void)[] = []
+
 onMounted(() => {
   useEventListener(document.querySelector('.chapter-drawer-modal'), 'contextmenu', handleContextMenu)
+
+  // 初始化自动阅读事件监听器
+  nextTick(() => {
+    const scrollContainer = scrollbarRef.value?.wrapRef
+    if (scrollContainer) {
+      // 添加滚动监听器
+      const scrollCleanup = addAutoReadScrollListener(scrollContainer, autoRead)
+      autoReadCleanupFunctions.push(scrollCleanup)
+    }
+  })
+})
+
+onUnmounted(() => {
+  // 清理自动阅读事件监听器
+  autoReadCleanupFunctions.forEach(cleanup => cleanup())
+  autoReadCleanupFunctions = []
 })
 
 // chapter-drawer-modal
@@ -325,6 +353,8 @@ getChapterPages(1)
             v-for="(item, index) in comicImages" :key="item.id || index" :src="item.path"
             aspect="auto"
             :alt="`第${index + 1}张图片`"
+            @mouseenter="autoRead.pauseByHover"
+            @mouseleave="autoRead.resumeByHover"
           />
 
           <!-- 加载更多指示器 -->
@@ -372,22 +402,47 @@ getChapterPages(1)
               {{ label }}
               <el-tooltip placement="top">
                 <template #content>
-                  [开发中]自动下滑阅读，解放双手，且当前章节完成后会默认阅读下一章
+                  自动下滑阅读，解放双手，鼠标移动到图片上会暂停
                   <br>建议网速较好的情况下使用
-                  <br>无忧无虑的冲吧~少年/女
+                  <br>手动滚动后会在1秒后自动恢复
                 </template>
                 <el-icon class="ml-1 cursor-pointer">
                   <QuestionFilled />
                 </el-icon>
               </el-tooltip>
             </template>
-            <el-switch v-model="settingStore.comic.autoRead" />
+            <div class="flex items-center gap-2">
+              <el-switch v-model="settingStore.comic.autoRead" />
+              <el-button
+                v-if="settingStore.comic.autoRead"
+                :type="autoRead.state.isAutoScrolling ? 'danger' : 'primary'"
+                size="small"
+                @click="autoRead.toggle"
+              >
+                {{ autoRead.state.isAutoScrolling ? '暂停' : '开始' }}
+              </el-button>
+            </div>
           </el-form-item>
-          <el-form-item label="自动阅读速度">
-            <el-input-number
-              v-model="settingStore.comic.autoReadSpeed" :min="1" :max="1000"
-              :step="1"
-            />
+          <el-form-item v-if="settingStore.comic.autoRead" label="自动阅读速度">
+            <div class="w-full">
+              <el-slider
+                v-model="settingStore.comic.autoReadSpeed"
+                :min="5"
+                :max="200"
+                :step="5"
+                show-input
+                :show-input-controls="false"
+              />
+              <div class="text-xs text-gray-400 mt-1">
+                当前速度: {{ settingStore.comic.autoReadSpeed }} 像素/秒
+                <span v-if="autoRead.state.isPausedByHover" class="text-yellow-400 ml-2">
+                  (鼠标悬停已暂停)
+                </span>
+                <span v-else-if="autoRead.state.isPausedByManualScroll" class="text-blue-400 ml-2">
+                  (手动滚动已暂停)
+                </span>
+              </div>
+            </div>
           </el-form-item>
 
           <el-form-item label="线路代理">
