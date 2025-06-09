@@ -8,10 +8,8 @@ import {
   InfoFilled,
   QuestionFilled,
   Reading,
-  Setting,
   Upload,
 } from '@element-plus/icons-vue'
-import { getCategories } from '@/api/comic'
 import { pictureQuality } from '@/constants/options'
 import { proxy } from '@/services/config'
 import { useLocalStoreHook } from '@/store/modules/local'
@@ -196,10 +194,23 @@ function handleClearData() {
               />
             </el-form-item>
             <el-form-item label="自动阅读">
-              <el-switch v-model="settingStore.comic.autoRead" size="large" />
+              <el-switch v-model="settingStore.comic.autoRead" />
             </el-form-item>
             <el-form-item v-if="settingStore.comic.autoRead" label="自动阅读速度">
               <el-slider v-model="settingStore.comic.autoReadSpeed" />
+            </el-form-item>
+            <el-form-item label="隐私模式">
+              <template #label="{ label }">
+                <div class="size-full flex items-center gap-1">
+                  {{ label }}
+                  <el-tooltip placement="top" content="隐私模式下，漫画图片会显示为灰色，不会显示图片内容">
+                    <el-icon class="cursor-pointer">
+                      <QuestionFilled />
+                    </el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
+              <el-switch v-model="settingStore.comic.privacyMode" />
             </el-form-item>
           </el-form>
         </div>

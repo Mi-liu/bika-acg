@@ -7,6 +7,8 @@ const props = withDefaults(defineProps<ImageProps>(), {
   aspect: '3/4',
 })
 
+const settingStore = useSettingStoreHook()
+
 const uri = ref('')
 watchEffect(() => {
   uri.value = props.src
@@ -55,7 +57,7 @@ function handleRefreshImage() {
       </el-skeleton>
     </div>
 
-    <div class="absolute inset-0 flex-center bg-[--el-fill-color]">
+    <div v-if="settingStore.comic.privacyMode" class="absolute inset-0 flex-center bg-[--el-fill-color]">
       <el-icon>
         <Hide />
       </el-icon>
