@@ -4,6 +4,7 @@ import type { Comic, Comics, ComicsParams } from '@/api/comic'
 import type { SortOptionValue } from '@/constants/options'
 import CommonPagination from '@common/components/CommonPagination/index.vue'
 import { Minus, Timer } from '@element-plus/icons-vue'
+import { Eye, Heart } from '@vicons/ionicons5'
 import { cloneDeep } from 'lodash-es'
 import { cardAnimations } from '@/animations/cardAnimation'
 import Image from '@/components/Image/index.vue'
@@ -138,6 +139,21 @@ function handleTagClick(tag: string) {
   }).href
   window.open(url, '_blank')
 }
+
+/**
+ * 格式化数字显示
+ * @param num 数字
+ * @returns 格式化后的字符串
+ */
+function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return `${(num / 1000000).toFixed(1)}M`
+  }
+  else if (num >= 1000) {
+    return `${(num / 1000).toFixed(1)}k`
+  }
+  return num.toString()
+}
 </script>
 
 <template>
@@ -268,8 +284,23 @@ function handleTagClick(tag: string) {
                 </el-popover>
               </div>
             </div>
+            <!-- 统计信息 -->
+            <div class="mt-2 flex items-center gap-4 text-[--el-text-color-secondary] text-14px">
+              <div class="flex items-center gap-1">
+                <el-icon class="text-red-500">
+                  <Heart />
+                </el-icon>
+                <span>{{ formatNumber(item.totalLikes) }}</span>
+              </div>
+              <div class="flex items-center gap-1">
+                <el-icon class="text-blue-500">
+                  <Eye />
+                </el-icon>
+                <span>{{ formatNumber(item.totalViews) }}</span>
+              </div>
+            </div>
             <!-- 分类 -->
-            <div class="mt-2 flex flex-wrap gap-2">
+            <div class="mt-1 flex flex-wrap gap-2">
               <el-tag
                 v-for="tag in item.categories" :key="tag" closable
                 type="primary" effect="plain"
