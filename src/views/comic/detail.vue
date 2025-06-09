@@ -13,7 +13,7 @@ const router = useRouter()
 
 const localStore = useLocalStoreHook()
 
-const { data } = useRequest(getComicDetail, {
+const { data, loading } = useRequest(getComicDetail, {
   defaultParams: [props.id],
 })
 
@@ -114,127 +114,243 @@ function handleEpsClick(index: number) {
 <template>
   <el-scrollbar class="bg-[--el-bg-color-page]">
     <div class="max-w-1100px mx-auto">
+      <!-- 主要信息区域 -->
       <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <Image :src="getImageUrl(data?.thumb.path!)" />
-        <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
-          <div class="flex-1 overflow-hidden flex flex-col">
-            <!-- 标题和基本信息区域 -->
-            <div class="flex flex-col space-y-3">
-              <!-- 标题 -->
-              <div class="text-26px">
-                {{ data?.title }}
+        <!-- 骨架屏 -->
+        <el-skeleton v-if="loading" class="size-full" :loading="true">
+          <template #template>
+            <div class="flex size-full">
+              <!-- 封面图骨架 -->
+              <div class="w-280px h-full">
+                <el-skeleton-item class="size-full!" variant="image" />
               </div>
+              <!-- 信息区域骨架 -->
+              <div class="flex-1 flex flex-col justify-between ml-4">
+                <div class="flex-1 flex flex-col space-y-4">
+                  <!-- 标题骨架 -->
+                  <el-skeleton-item variant="h1" class="w-80%!" />
 
-              <div class="flex gap-2">
-                <el-tag type="info" round>{{ data?.epsCount }}章</el-tag>
-                <el-tag type="info" round>{{ data?.pagesCount }}P</el-tag>
-                <el-tag type="info" round>{{ data?.finished ? '已完结' : '连载中' }}</el-tag>
-                <el-tag type="info" round>{{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }} 更新</el-tag>
-              </div>
+                  <!-- 标签骨架 -->
+                  <div class="flex gap-2">
+                    <el-skeleton-item variant="button" class="w-60px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-80px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-70px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-120px! h-24px!" />
+                  </div>
 
-              <!-- 分类 -->
-              <div class="mt-2 flex flex-wrap gap-2">
-                <el-tag
-                  v-for="tag in data?.categories" :key="tag" class="cursor-pointer"
-                  type="primary" effect="plain"
-                  @click="handleTagClick(tag)"
-                >
-                  {{ tag }}
-                </el-tag>
-              </div>
-              <!-- 标签 -->
-              <div class="flex flex-wrap gap-10px cursor-pointer mt">
-                <el-tag v-for="item in data?.tags" :key="item">
-                  {{ item }}
-                </el-tag>
-              </div>
-            </div>
-          </div>
-          <div class="flex mt">
-            <el-button type="primary" :icon="Reading" @click="handleEpsClick(0)">开始阅读</el-button>
-            <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
-              <el-icon class="mr-1" size="18" color="var(--el-color-warning-light-3)">
-                <StarFilled />
-              </el-icon>
-              取消收藏
-            </CommonButton>
-            <CommonButton v-else @click="handleFavoritesClick">
-              <el-icon class="mr-1">
-                <Star />
-              </el-icon>
-              收藏漫画
-            </CommonButton>
+                  <!-- 分类标签骨架 -->
+                  <div class="flex flex-wrap gap-2">
+                    <el-skeleton-item variant="button" class="w-50px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-60px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-40px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-70px! h-24px!" />
+                  </div>
 
-            <div class="ml-auto flex items-center gap-2">
-              <el-popover v-for="author in data?.author.split(/[、,，]\s*/)" :key="author" width="70px">
-                <template #reference>
-                  <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
-                    {{ author
-                    }}
-                  </el-link>
-                </template>
-                <div class="w-full flex flex-col">
-                  <el-button
-                    v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
-                    size="default"
-                    @click.stop="handleUnfollowAuthor(author)"
-                  >
-                    取消关注
-                  </el-button>
-                  <el-button
-                    v-else class="w-full" type="primary"
-                    size="default"
-                    @click.stop="handleFollowAuthor(author)"
-                  >
-                    关注
-                  </el-button>
+                  <!-- 标签骨架 -->
+                  <div class="flex flex-wrap gap-2">
+                    <el-skeleton-item variant="button" class="w-45px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-55px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-65px! h-24px!" />
+                  </div>
                 </div>
-              </el-popover>
+
+                <!-- 按钮区域骨架 -->
+                <div class="flex justify-between items-center">
+                  <div class="flex gap-2">
+                    <el-skeleton-item variant="button" class="w-100px! h-32px!" />
+                    <el-skeleton-item variant="button" class="w-100px! h-32px!" />
+                  </div>
+                  <div class="flex gap-2">
+                    <el-skeleton-item variant="text" class="w-60px! h-20px!" />
+                    <el-skeleton-item variant="text" class="w-60px! h-20px!" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+
+        <!-- 实际内容 -->
+        <template v-else>
+          <Image :src="getImageUrl(data?.thumb.path!)" />
+          <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
+            <div class="flex-1 overflow-hidden flex flex-col">
+              <!-- 标题和基本信息区域 -->
+              <div class="flex flex-col space-y-3">
+                <!-- 标题 -->
+                <div class="text-26px">
+                  {{ data?.title }}
+                </div>
+
+                <div class="flex gap-2">
+                  <el-tag type="info" round>{{ data?.epsCount }}章</el-tag>
+                  <el-tag type="info" round>{{ data?.pagesCount }}P</el-tag>
+                  <el-tag type="info" round>{{ data?.finished ? '已完结' : '连载中' }}</el-tag>
+                  <el-tag type="info" round>{{ dayjs.utc(data?.updated_at).format('YYYY-MM-DD HH:mm:ss') }} 更新</el-tag>
+                </div>
+
+                <!-- 分类 -->
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <el-tag
+                    v-for="tag in data?.categories" :key="tag" class="cursor-pointer"
+                    type="primary" effect="plain"
+                    @click="handleTagClick(tag)"
+                  >
+                    {{ tag }}
+                  </el-tag>
+                </div>
+                <!-- 标签 -->
+                <div class="flex flex-wrap gap-10px cursor-pointer mt">
+                  <el-tag v-for="item in data?.tags" :key="item">
+                    {{ item }}
+                  </el-tag>
+                </div>
+              </div>
+            </div>
+            <div class="flex mt">
+              <el-button type="primary" :icon="Reading" @click="handleEpsClick(0)">开始阅读</el-button>
+              <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
+                <el-icon class="mr-1" size="18" color="var(--el-color-warning-light-3)">
+                  <StarFilled />
+                </el-icon>
+                取消收藏
+              </CommonButton>
+              <CommonButton v-else @click="handleFavoritesClick">
+                <el-icon class="mr-1">
+                  <Star />
+                </el-icon>
+                收藏漫画
+              </CommonButton>
+
+              <div class="ml-auto flex items-center gap-2">
+                <el-popover v-for="author in data?.author.split(/[、,，]\s*/)" :key="author" width="70px">
+                  <template #reference>
+                    <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
+                      {{ author
+                      }}
+                    </el-link>
+                  </template>
+                  <div class="w-full flex flex-col">
+                    <el-button
+                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
+                      size="default"
+                      @click.stop="handleUnfollowAuthor(author)"
+                    >
+                      取消关注
+                    </el-button>
+                    <el-button
+                      v-else class="w-full" type="primary"
+                      size="default"
+                      @click.stop="handleFollowAuthor(author)"
+                    >
+                      关注
+                    </el-button>
+                  </div>
+                </el-popover>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
       </div>
 
       <!-- 统计 -->
       <div class="h-90px flex mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <div v-for="item in toolList" :key="item.prop" class="flex-1 flex flex-col items-center justify-center">
-          <div>
-            <el-statistic :value="data?.[item.prop]" />
+        <!-- 统计区域骨架屏 -->
+        <el-skeleton v-if="loading" class="size-full p-4" :loading="true">
+          <template #template>
+            <div class="flex h-full">
+              <div v-for="i in 3" :key="i" class="flex-1 flex flex-col items-center justify-center gap-2">
+                <el-skeleton-item variant="h3" class="w-60px! h-32px!" />
+                <el-skeleton-item variant="text" class="w-40px! h-16px!" />
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+
+        <!-- 实际统计内容 -->
+        <template v-else>
+          <div v-for="item in toolList" :key="item.prop" class="flex-1 flex flex-col items-center justify-center">
+            <div>
+              <el-statistic :value="data?.[item.prop]" />
+            </div>
+            <div>{{ item.label }}</div>
           </div>
-          <div>{{ item.label }}</div>
-        </div>
-        <!-- <div class="flex-1 flex flex-col items-center justify-center">
-          爱心
-        </div> -->
+        </template>
       </div>
 
       <!-- 简介 -->
       <div class="p4 mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <div class="flex items-center gap-1 text-18px font-bold">
-          <el-icon>
-            <Document />
-          </el-icon>
-          作品简介
-        </div>
-        <div class="mt2 text-[--el-text-color-secondary] whitespace-pre-wrap break-words">{{ data?.description }}</div>
+        <!-- 简介区域骨架屏 -->
+        <el-skeleton v-if="loading" class="size-full" :loading="true">
+          <template #template>
+            <div class="space-y-3">
+              <!-- 标题骨架 -->
+              <div class="flex items-center gap-1">
+                <el-skeleton-item variant="circle" class="w-18px! h-18px!" />
+                <el-skeleton-item variant="h3" class="w-80px! h-18px!" />
+              </div>
+              <!-- 内容骨架 -->
+              <div class="space-y-2">
+                <el-skeleton-item variant="text" class="w-full!" />
+                <el-skeleton-item variant="text" class="w-90%!" />
+                <el-skeleton-item variant="text" class="w-85%!" />
+                <el-skeleton-item variant="text" class="w-70%!" />
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+
+        <!-- 实际简介内容 -->
+        <template v-else>
+          <div class="flex items-center gap-1 text-18px font-bold">
+            <el-icon>
+              <Document />
+            </el-icon>
+            作品简介
+          </div>
+          <div class="mt2 text-[--el-text-color-secondary] whitespace-pre-wrap break-words">{{ data?.description }}</div>
+        </template>
       </div>
 
       <!-- 章节信息 -->
       <div class="p4 mt-4  rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
-        <div class="flex items-center gap-1 text-18px font-bold">
-          <el-icon>
-            <Memo />
-          </el-icon>
-          章节列表
-        </div>
-        <div class="mt3 flex flex-wrap gap-10px">
-          <el-button
-            v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index" class="ml-0!"
-            @click="handleEpsClick(index)"
-          >
-            {{ item.title }}
-          </el-button>
-        </div>
+        <!-- 章节列表区域骨架屏 -->
+        <el-skeleton v-if="loading || epsData.docs.length === 0" class="size-full" :loading="true">
+          <template #template>
+            <div class="space-y-3">
+              <!-- 标题骨架 -->
+              <div class="flex items-center gap-1">
+                <el-skeleton-item variant="circle" class="w-18px! h-18px!" />
+                <el-skeleton-item variant="h3" class="w-80px! h-18px!" />
+              </div>
+              <!-- 章节按钮骨架 -->
+              <div class="flex flex-wrap gap-2">
+                <el-skeleton-item
+                  v-for="i in 12" :key="i" variant="button"
+                  class="w-80px! h-32px!"
+                />
+              </div>
+            </div>
+          </template>
+        </el-skeleton>
+
+        <!-- 实际章节内容 -->
+        <template v-else>
+          <div class="flex items-center gap-1 text-18px font-bold">
+            <el-icon>
+              <Memo />
+            </el-icon>
+            章节列表
+          </div>
+          <div class="mt3 flex flex-wrap gap-10px">
+            <el-button
+              v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index" class="ml-0!"
+              @click="handleEpsClick(index)"
+            >
+              {{ item.title }}
+            </el-button>
+          </div>
+        </template>
       </div>
     </div>
   </el-scrollbar>
