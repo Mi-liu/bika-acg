@@ -235,12 +235,12 @@ function handleTagClick(tag: string) {
               {{ item.title }}
             </div>
             <!-- 章节信息 -->
-            <div class="text-13px mt-1 text-[--el-text-color-secondary]">
-              <el-text v-if="item.finished" class="mx-1" type="primary">[完结]</el-text> {{ item.epsCount }}章 共 {{
+            <div class="text-16px mt-1 text-[--el-text-color-secondary]">
+              <el-text v-if="item.finished" class="mx-1" type="primary">[完结]</el-text> {{ item.epsCount }}章 {{
                 item.pagesCount }}P
             </div>
             <!-- 作者 -->
-            <div class="text-14px text-[--el-text-color-secondary] flex">
+            <div class="text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
                 <el-popover v-for="author in item.author.split(/[、,，]\s*/)" :key="author" width="70px">
