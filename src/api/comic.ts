@@ -264,3 +264,11 @@ export function getRandomComic() {
     })
     .then(res => res.comics)
 }
+
+/** 获取本子推荐列表 */
+export function getComicRecommendation(id: string) {
+  return alova.Get<{
+    comics: Comic[]
+  }>(`comics/${id}/recommendation`)
+    .then(res => res.comics)
+}

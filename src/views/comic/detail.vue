@@ -2,7 +2,7 @@
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { Document, Memo, Reading, Star, StarFilled } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
-import { favorites, getComicDetail, getComicEps } from '@/api/comic'
+import { favorites, getComicDetail, getComicEps, getComicRecommendation } from '@/api/comic'
 import Image from '@/components/Image/index.vue'
 import { loopRequestList } from '@/utils/fetch'
 import { getImageUrl } from '@/utils/string'
@@ -14,6 +14,10 @@ const router = useRouter()
 const localStore = useLocalStoreHook()
 
 const { data, loading } = useRequest(getComicDetail, {
+  defaultParams: [props.id],
+})
+
+const { data: recommendationData, loading: recommendationLoading } = useRequest(getComicRecommendation, {
   defaultParams: [props.id],
 })
 
@@ -109,11 +113,20 @@ function handleEpsClick(index: number) {
   }).href
   window.open(url, '_blank')
 }
+
+/**
+ * 处理推荐漫画点击事件
+ * @param comicId 漫画ID
+ */
+function handleRecommendationClick(comicId: string) {
+  const url = router.resolve(`/comic/detail/${comicId}`).href
+  window.open(url, '_blank')
+}
 </script>
 
 <template>
-  <el-scrollbar class="bg-[--el-bg-color-page]">
-    <div class="max-w-1100px mx-auto">
+  <el-scrollbar class="bg-[--el-bg-color-page] ">
+    <div class="max-w-1100px mx-auto px-2">
       <!-- 主要信息区域 -->
       <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
         <!-- 骨架屏 -->
@@ -351,6 +364,75 @@ function handleEpsClick(index: number) {
             </el-button>
           </div>
         </template>
+      </div>
+
+      <!-- 相关推荐 -->
+      <div class="p4 mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+        <div class="flex items-center gap-1 text-18px font-bold mb-4">
+          <el-icon>
+            <Star />
+          </el-icon>
+          相关推荐
+        </div>
+
+        <!-- 推荐列表骨架屏 -->
+        <div v-if="recommendationLoading" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <el-skeleton
+            v-for="i in 10" :key="i" class="rounded-2 overflow-hidden"
+            :loading="true"
+          >
+            <template #template>
+              <div class="space-y-2">
+                <!-- 封面图骨架 -->
+                <div class="w-full aspect-3/4">
+                  <el-skeleton-item class="size-full!" variant="image" />
+                </div>
+                <!-- 标题骨架 -->
+                <el-skeleton-item variant="h3" class="w-full! h-16px!" />
+                <el-skeleton-item variant="text" class="w-80%! h-14px!" />
+              </div>
+            </template>
+          </el-skeleton>
+        </div>
+
+        <!-- 推荐列表内容 -->
+        <div v-else-if="recommendationData && recommendationData.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div
+            v-for="comic in recommendationData" :key="comic._id"
+            class="group cursor-pointer rounded-2 overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105"
+            @click="handleRecommendationClick(comic._id)"
+          >
+            <!-- 封面图 -->
+            <div class="relative w-full aspect-3/4 overflow-hidden rounded-2">
+              <Image
+                :src="getImageUrl(comic.thumb.path)"
+                :alt="comic.title"
+                class="size-full object-cover transition-transform duration-300 group-hover:scale-110"
+              />
+              <!-- 悬停遮罩 -->
+              <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                <div class="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-sm font-medium">
+                  点击查看
+                </div>
+              </div>
+            </div>
+
+            <!-- 标题 -->
+            <div class="mt-2 px-1">
+              <h3 class="text-14px font-medium line-clamp-2 text-[--el-text-color-primary] group-hover:text-[--el-color-primary] transition-colors duration-300">
+                {{ comic.title }}
+              </h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- 无推荐内容 -->
+        <div v-else class="text-center py-8 text-[--el-text-color-secondary]">
+          <el-icon class="text-48px mb-2">
+            <Star />
+          </el-icon>
+          <div>暂无相关推荐</div>
+        </div>
       </div>
     </div>
   </el-scrollbar>
