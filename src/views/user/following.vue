@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Close, UserFilled } from '@element-plus/icons-vue'
 import { ElButton, ElIcon, ElMessage } from 'element-plus'
+import Author from '@/components/Author/index.vue'
 
 /**
  * 我的关注列表页面
@@ -9,16 +10,6 @@ import { ElButton, ElIcon, ElMessage } from 'element-plus'
 const router = useRouter()
 
 const localStore = useLocalStoreHook()
-
-function handleAuthorClick(author: string) {
-  const url = router.resolve({
-    path: '/comic/list',
-    query: {
-      author,
-    },
-  }).href
-  window.open(url, '_blank')
-}
 
 /**
  * 取消关注作者
@@ -45,13 +36,8 @@ async function handleUnfollow(authorName: string) {
     <el-scrollbar>
       <div class="flex gap-2">
         <ElButton v-for="item in localStore.local.FOLLOW_AUTHOR_LIST" :key="item" class="ml-0! h-fit!">
-          <el-avatar size="small" :icon="UserFilled" />
-          <el-link
-            class="ml-auto ml-2!" type="primary" underline="always"
-            @click="handleAuthorClick(item)"
-          >
-            {{ item }}
-          </el-link>
+          <el-avatar class="mr-2" size="small" :icon="UserFilled" />
+          <Author :author="item" />
 
           <div
             class="size-20px rounded-50% flex-center ml-2 hover:text-[--el-color-danger]"

@@ -7,6 +7,7 @@ import { Minus, Timer } from '@element-plus/icons-vue'
 import { Eye, Heart } from '@vicons/ionicons5'
 import { cloneDeep } from 'lodash-es'
 import { cardAnimations } from '@/animations/cardAnimation'
+import Author from '@/components/Author/index.vue'
 import Image from '@/components/Image/index.vue'
 import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
 import { defaultSort, sort } from '@/constants/options'
@@ -104,24 +105,6 @@ function handleComicClick(item: Comic) {
   window.open(url, '_blank')
 }
 
-function handleAuthorClick(author: string) {
-  const url = router.resolve({
-    path: '/comic/list',
-    query: {
-      author,
-    },
-  }).href
-  window.open(url, '_blank')
-}
-
-function handleFollowAuthor(author: string) {
-  localStore.pushItem('FOLLOW_AUTHOR_LIST', author)
-}
-
-function handleUnfollowAuthor(author: string) {
-  localStore.removeItem('FOLLOW_AUTHOR_LIST', author)
-}
-
 function handleAddToLater(item: Comic) {
   localStore.pushItem('WATCH_LATER_LIST', cloneDeep(item))
 }
@@ -161,15 +144,20 @@ function formatNumber(num: number): string {
     <div class="flex px py">
       <div class="size-full flex justify-between">
         <div class="text-18px">{{ props.title || '漫画列表' }}</div>
-        <el-select
-          v-model="s" class="w-110px!" :disabled="loading"
-          @change="handleSelectChange"
-        >
-          <el-option
-            v-for="item in sort" :key="item.value" :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+
+        <div>
+          <!-- 更多过滤 -->
+
+          <el-select
+            v-model="s" class="w-110px!" :disabled="loading"
+            @change="handleSelectChange"
+          >
+            <el-option
+              v-for="item in sort" :key="item.value" :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
       </div>
       <CommonPagination
         ref="CommonPaginationRef" :total="data?.total || 0"
@@ -259,29 +247,7 @@ function formatNumber(num: number): string {
             <div class="text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
-                <el-popover v-for="author in item.author.split(/[、,，]\s*/)" :key="author" width="70px">
-                  <template #reference>
-                    <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
-                      {{ author
-                      }}
-                    </el-link>
-                  </template>
-                  <div class="w-full flex flex-col">
-                    <el-button
-                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
-                      size="default" @click.stop="handleUnfollowAuthor(author)"
-                    >
-                      取消关注
-                    </el-button>
-                    <el-button
-                      v-else class="w-full" type="primary"
-                      size="default"
-                      @click.stop="handleFollowAuthor(author)"
-                    >
-                      关注
-                    </el-button>
-                  </div>
-                </el-popover>
+                <Author v-for="author in item.author.split(/[、,，]\s*/)" :key="author" :author="author" />
               </div>
             </div>
             <!-- 统计信息 -->

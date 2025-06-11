@@ -15,8 +15,6 @@ import { proxy } from '@/services/config'
 import { useLocalStoreHook } from '@/store/modules/local'
 import { useSettingStoreHook } from '@/store/modules/setting'
 
-console.log(import.meta.env.VITE_APP_NAME)
-
 /**
  * 设置页面
  */

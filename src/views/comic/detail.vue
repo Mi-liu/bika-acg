@@ -3,6 +3,7 @@ import CommonButton from '@common/components/CommonButton/index.vue'
 import { Document, Memo, Reading, Star, StarFilled } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 import { favorites, getComicDetail, getComicEps, getComicRecommendation } from '@/api/comic'
+import Author from '@/components/Author/index.vue'
 import Image from '@/components/Image/index.vue'
 import { loopRequestList } from '@/utils/fetch'
 import { getImageUrl } from '@/utils/string'
@@ -51,31 +52,6 @@ const { data: epsData } = loopRequestList(page => getComicEps(props.id, page), {
     return page <= res.pages
   },
 })
-
-// 关注状态管理
-const isFollowingAuthor = ref(false)
-
-/**
- * 处理作者点击事件
- * @param author 作者名称
- */
-function handleAuthorClick(author: string) {
-  const url = router.resolve({
-    path: '/comic/list',
-    query: {
-      author,
-    },
-  }).href
-  window.open(url, '_blank')
-}
-
-function handleFollowAuthor(author: string) {
-  localStore.pushItem('FOLLOW_AUTHOR_LIST', author)
-}
-
-function handleUnfollowAuthor(author: string) {
-  localStore.removeItem('FOLLOW_AUTHOR_LIST', author)
-}
 
 function handleTagClick(tag: string) {
   const url = router.resolve({
@@ -236,30 +212,7 @@ function handleRecommendationClick(comicId: string) {
               </CommonButton>
 
               <div class="ml-auto flex items-center gap-2">
-                <el-popover v-for="author in data?.author.split(/[、,，]\s*/)" :key="author" width="70px">
-                  <template #reference>
-                    <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
-                      {{ author
-                      }}
-                    </el-link>
-                  </template>
-                  <div class="w-full flex flex-col">
-                    <el-button
-                      v-if="localStore.local.FOLLOW_AUTHOR_LIST.includes(author)" class="w-full" type="danger"
-                      size="default"
-                      @click.stop="handleUnfollowAuthor(author)"
-                    >
-                      取消关注
-                    </el-button>
-                    <el-button
-                      v-else class="w-full" type="primary"
-                      size="default"
-                      @click.stop="handleFollowAuthor(author)"
-                    >
-                      关注
-                    </el-button>
-                  </div>
-                </el-popover>
+                <Author v-for="author in data?.author.split(/[、,，]\s*/)" :key="author" :author="author" />
               </div>
             </div>
           </div>
