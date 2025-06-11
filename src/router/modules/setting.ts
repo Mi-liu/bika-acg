@@ -7,6 +7,9 @@ export default createRouterModule(name, {
   children: [
     {
       path: 'index',
+      meta: {
+        title: '设置',
+      },
       component: () => import('@/views/setting/index.vue'),
     },
   ],

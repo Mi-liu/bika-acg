@@ -13,22 +13,24 @@ export default createRouterModule(name, {
     },
     {
       path: 'search',
+      meta: {
+        title: '搜索',
+      },
       component: () => import('@/views/comic/search.vue'),
     },
     {
       path: 'detail/:id',
-      component: () => import('@/views/comic/detail.vue'),
       meta: {
         title: '漫画详情',
       },
+      component: () => import('@/views/comic/detail.vue'),
     },
     {
       path: 'chapter/:id',
-      component: () => import('@/views/comic/chapter.vue'),
       meta: {
         title: '章节阅读',
-        layout: false,
       },
+      component: () => import('@/views/comic/chapter.vue'),
     },
   ],
 })
