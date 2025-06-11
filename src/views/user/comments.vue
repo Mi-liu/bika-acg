@@ -2,10 +2,9 @@
 import CommonPagination from '@common/components/CommonPagination/index.vue'
 import { ChatLineRound, Document } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
-import { cardAnimations } from '@/animations/cardAnimation'
+import { Motion } from 'motion-v'
 import { getMyComments } from '@/api/user'
 import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
-import '@/animations/cardAnimation.scss'
 
 const router = useRouter()
 
@@ -73,9 +72,6 @@ function getRelativeTime(dateString: string) {
     return commentTime.format('MM-DD')
   }
 }
-
-// 选择动画效果
-const animation = cardAnimations.leftToRight
 </script>
 
 <template>
@@ -104,7 +100,7 @@ const animation = cardAnimations.leftToRight
 
         <!-- 加载状态骨架屏 -->
         <div
-          v-if="loading" class="card-animation-grid comment-grid"
+          v-if="loading" class="grid comment-grid"
           style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;"
         >
           <el-skeleton
@@ -129,14 +125,22 @@ const animation = cardAnimations.leftToRight
         </div>
 
         <!-- 评论列表 -->
-        <TransitionGroup
-          v-else-if="data?.docs && data.docs.length > 0" tag="div"
-          class="card-animation-grid comment-grid"
-          style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;" :css="false"
-          @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
-          @move="animation.onMove"
+        <div
+          v-else-if="data?.docs && data.docs.length > 0"
+          class="grid comment-grid"
+          style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;"
         >
-          <div v-for="item in data.docs" :key="item._id" class="comment-card">
+          <Motion
+            v-for="(item, index) in data.docs" :key="item._id"
+            :initial="{ opacity: 0, y: 30, scale: 0.9 }"
+            :animate="{ opacity: 1, y: 0, scale: 1 }"
+            :transition="{
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: 'backOut',
+            }"
+            class="comment-card"
+          >
             <!-- 评论头部 -->
             <div class="comment-header">
               <div class="flex items-center gap-3">
@@ -170,8 +174,8 @@ const animation = cardAnimations.leftToRight
                 查看漫画
               </el-button>
             </div>
-          </div>
-        </TransitionGroup>
+          </Motion>
+        </div>
 
         <!-- 空状态 -->
         <div v-else-if="!loading" class="empty-state">

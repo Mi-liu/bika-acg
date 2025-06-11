@@ -6,14 +6,13 @@ import CommonPagination from '@common/components/CommonPagination/index.vue'
 import { Minus, Timer } from '@element-plus/icons-vue'
 import { Eye, Heart } from '@vicons/ionicons5'
 import { cloneDeep } from 'lodash-es'
-import { cardAnimations } from '@/animations/cardAnimation'
+import { Motion } from 'motion-v'
 import Author from '@/components/Author/index.vue'
 import Image from '@/components/Image/index.vue'
 import { DEFAULT_PAGE_SIZE } from '@/config/pagination'
 import { defaultSort, sort } from '@/constants/options'
 import { arrayContains } from '@/utils/array'
 import { getImageUrl } from '@/utils/string'
-import '@/animations/cardAnimation.scss'
 
 const props = withDefaults(defineProps<ComicsListProps<T>>(), {
   isBlockedCategories: true,
@@ -97,9 +96,6 @@ async function handleCloseTag(tag: string) {
   }
 }
 
-// 选择动画效果
-const animation = cardAnimations.leftToRight
-
 function handleComicClick(item: Comic) {
   const url = router.resolve(`/comic/detail/${item._id}`).href
   window.open(url, '_blank')
@@ -170,8 +166,8 @@ function formatNumber(num: number): string {
         <div class="w-full h-6px" />
         <!-- 加载状态骨架屏 -->
         <div
-          v-if="loading" class="card-animation-grid card-grid-custom"
-          style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;"
+          v-if="loading" class="grid justify-center gap-5"
+          style="grid-template-columns: repeat(auto-fill, 270px);"
         >
           <el-skeleton
             v-for="i in 12" :key="i" class="rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
@@ -196,14 +192,19 @@ function formatNumber(num: number): string {
         </div>
 
         <!-- 实际内容 -->
-        <TransitionGroup
-          v-else tag="div" class="card-animation-grid card-grid-custom"
-          style="grid-template-columns: repeat(auto-fill, 270px); gap: 20px;" :css="false"
-          @before-enter="animation.onBeforeEnter" @enter="animation.onEnter" @leave="animation.onLeave"
-          @move="animation.onMove"
+        <div
+          v-else class="grid justify-center gap-5"
+          style="grid-template-columns: repeat(auto-fill, 270px);"
         >
-          <div
-            v-for="item in comics" :key="item._id"
+          <Motion
+            v-for="(item, index) in comics" :key="item._id"
+            :initial="{ opacity: 0, x: -30, scale: 0.8 }"
+            :animate="{ opacity: 1, x: 0, scale: 1 }"
+            :transition="{
+              duration: 0.4,
+              delay: index * 0.05,
+              ease: 'backOut',
+            }"
             class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]"
             @click="handleComicClick(item)"
           >
@@ -275,8 +276,8 @@ function formatNumber(num: number): string {
                 {{ tag }}
               </el-tag>
             </div>
-          </div>
-        </TransitionGroup>
+          </Motion>
+        </div>
         <div class="w-full h-6px" />
       </el-scrollbar>
     </div>
