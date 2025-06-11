@@ -253,13 +253,13 @@ function formatNumber(num: number): string {
             <!-- 统计信息 -->
             <div class="mt-2 flex items-center gap-4 text-[--el-text-color-secondary] text-14px">
               <div class="flex items-center gap-1">
-                <el-icon class="text-red-500">
+                <el-icon color="var(--el-color-danger)">
                   <Heart />
                 </el-icon>
                 <span>{{ formatNumber(item.totalLikes) }}</span>
               </div>
               <div class="flex items-center gap-1">
-                <el-icon class="text-blue-500">
+                <el-icon color="var(--el-color-primary)">
                   <Eye />
                 </el-icon>
                 <span>{{ formatNumber(item.totalViews) }}</span>
