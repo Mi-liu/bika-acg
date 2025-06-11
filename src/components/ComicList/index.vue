@@ -76,7 +76,7 @@ const comics = computed(() => {
 
   if (props.isBlockedCategories) {
     return data.value.docs.filter((item) => {
-      return !item.categories.some(tag => settingStore.filter.categories.includes(tag))
+      return !item.categories.some(tag => settingStore.filter.categories.includes(tag)) && !settingStore.filter.authors.some(author => item.author.split(/[、,，]\s*/).includes(author))
     })
   }
   else {

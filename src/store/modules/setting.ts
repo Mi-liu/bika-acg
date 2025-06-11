@@ -26,6 +26,8 @@ const useSettingStore = defineStore(
     const filter = reactive({
       /** 分类 */
       categories: [] as string[],
+      /** 作者 */
+      authors: [] as string[],
     })
 
     return { comic, filter }

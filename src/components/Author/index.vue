@@ -7,6 +7,7 @@ const props = defineProps<{
 }>()
 
 const localStore = useLocalStoreHook()
+const settingStore = useSettingStoreHook()
 
 const router = useRouter()
 
@@ -15,10 +16,19 @@ const isFollowAuthor = computed(() => {
 })
 
 const menus = computed<CommonPopoverMenuProps['menus']>(() => {
+  // 是否关注
   if (isFollowAuthor.value) {
     return [
       { label: '取消关注', type: 'info', onClick: () => {
         localStore.removeItem('FOLLOW_AUTHOR_LIST', props.author)
+      } },
+    ]
+  }
+  // 是否屏蔽
+  else if (settingStore.filter.authors.includes(props.author)) {
+    return [
+      { label: '取消屏蔽', type: 'info', onClick: () => {
+        settingStore.filter.authors.splice(settingStore.filter.authors.indexOf(props.author), 1)
       } },
     ]
   }
@@ -28,7 +38,7 @@ const menus = computed<CommonPopoverMenuProps['menus']>(() => {
         localStore.pushItem('FOLLOW_AUTHOR_LIST', props.author)
       } },
       { label: '屏蔽', type: 'danger', onClick: () => {
-
+        settingStore.filter.authors.push(props.author)
       } },
     ]
   }

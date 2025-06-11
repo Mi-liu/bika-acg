@@ -147,6 +147,11 @@ function handleClearData() {
     ElMessage.info('已取消清空操作')
   })
 }
+
+function handleCloseAuthor(author: string) {
+  settingStore.filter.authors = settingStore.filter.authors.filter(item => item !== author)
+  ElMessage.success('作者已取消过滤')
+}
 </script>
 
 <template>
@@ -254,6 +259,16 @@ function handleClearData() {
                   @close="handleCloseTag(category)"
                 >
                   {{ category }}
+                </el-tag>
+              </div>
+            </el-form-item>
+            <el-form-item label="过滤作者">
+              <div class="w-full flex flex-wrap gap-2">
+                <el-tag
+                  v-for="author in settingStore.filter.authors" :key="author" type="info"
+                  closable @close="handleCloseAuthor(author)"
+                >
+                  {{ author }}
                 </el-tag>
               </div>
             </el-form-item>
