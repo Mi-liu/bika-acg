@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { Document, Memo, Reading, Star, StarFilled } from '@element-plus/icons-vue'
+import { Heart, HeartOutline } from '@vicons/ionicons5'
 import dayjs from 'dayjs'
-import { favorites, getComicDetail, getComicEps, getComicRecommendation } from '@/api/comic'
+import { favorites, getComicDetail, getComicEps, getComicRecommendation, likeComic } from '@/api/comic'
 import Author from '@/components/Author/index.vue'
 import Image from '@/components/Image/index.vue'
 import { loopRequestList } from '@/utils/fetch'
@@ -30,7 +31,7 @@ watch(data, (newVal) => {
 
 const toolList = [
   {
-    label: '点赞',
+    label: '喜欢',
     prop: 'totalLikes',
   },
   {
@@ -73,6 +74,20 @@ function handleFavoritesClick() {
       }
       else if (res === 'un_favourite') {
         data.value!.isFavourite = false
+      }
+    })
+}
+
+function handleLikeClick() {
+  if (data.value === undefined)
+    return
+  return likeComic(data.value._id)
+    .then((res) => {
+      if (res === 'like') {
+        data.value!.isLiked = true
+      }
+      else if (res === 'unlike') {
+        data.value!.isLiked = false
       }
     })
 }
@@ -148,6 +163,7 @@ function handleRecommendationClick(comicId: string) {
                   <div class="flex gap-2">
                     <el-skeleton-item variant="button" class="w-100px! h-32px!" />
                     <el-skeleton-item variant="button" class="w-100px! h-32px!" />
+                    <el-skeleton-item variant="button" class="w-100px! h-32px!" />
                   </div>
                   <div class="flex gap-2">
                     <el-skeleton-item variant="text" class="w-60px! h-20px!" />
@@ -209,6 +225,20 @@ function handleRecommendationClick(comicId: string) {
                   <Star />
                 </el-icon>
                 收藏漫画
+              </CommonButton>
+
+              <CommonButton v-if="data?.isLiked" @click="handleLikeClick">
+                <el-icon class="mr-1" size="15" color="var(--el-color-danger)">
+                  <Heart />
+                </el-icon>
+                取消喜欢
+              </CommonButton>
+
+              <CommonButton v-else @click="handleLikeClick">
+                <el-icon class="mr-1" size="15">
+                  <HeartOutline />
+                </el-icon>
+                喜欢
               </CommonButton>
 
               <div class="ml-auto flex items-center gap-2">

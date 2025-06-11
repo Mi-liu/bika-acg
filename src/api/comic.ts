@@ -272,3 +272,11 @@ export function getComicRecommendation(id: string) {
   }>(`comics/${id}/recommendation`)
     .then(res => res.comics)
 }
+
+/** 喜欢 or 取消喜欢本子 */
+export function likeComic(id: string) {
+  return alova.Post<{
+    action: 'like' | 'unlike'
+  }>(`comics/${id}/like`)
+    .then(res => res.action)
+}
