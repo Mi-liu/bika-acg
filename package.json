@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/check-node-version.js && vite",
+    "dev": "vite",
     "build": "vite build",
     "type-check-build": "npm run type-check && npm run build",
     "preview": "vite preview",
@@ -65,5 +65,8 @@
     "vite": "^6.2.4",
     "vite-plugin-vue-devtools": "^7.7.2",
     "vue-tsc": "^2.2.8"
+  },
+  "volta": {
+    "node": "22.16.0"
   }
 }
