@@ -20,6 +20,8 @@
   "include": [
     "src/**/*",
     "src/**/*.vue",
+    "common/**/*",
+    "common/**/*.vue",
     "typings/**/*.d.ts"
   ],
   "exclude": [
