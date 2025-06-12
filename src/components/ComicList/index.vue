@@ -169,35 +169,8 @@ function formatNumber(num: number): string {
           v-if="loading" class="grid justify-center gap-5"
           style="grid-template-columns: repeat(auto-fill, 270px);"
         >
-          <el-skeleton
-            v-for="i in 12" :key="i" class="rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
-            :loading="true"
-          >
-            <template #template>
-              <div class="size-full">
-                <div class="w-full! aspect-3/4">
-                  <el-skeleton-item class="size-full!" variant="image" />
-                </div>
-                <el-skeleton-item variant="h3" class="w-80%! mt-2" />
-                <el-skeleton-item variant="text" class="w-60%! mt-1" />
-                <el-skeleton-item variant="text" class="w-40%! mt-1" />
-                <div class="mt-2 flex gap-2">
-                  <el-skeleton-item variant="button" class="w-50px! h-24px!" />
-                  <el-skeleton-item variant="button" class="w-60px! h-24px!" />
-                  <el-skeleton-item variant="button" class="w-40px! h-24px!" />
-                </div>
-              </div>
-            </template>
-          </el-skeleton>
-        </div>
-
-        <!-- 实际内容 -->
-        <div
-          v-else class="grid justify-center gap-5"
-          style="grid-template-columns: repeat(auto-fill, 270px);"
-        >
           <Motion
-            v-for="(item, index) in comics" :key="item._id"
+            v-for="(i, index) in 12" :key="i"
             :initial="{ opacity: 0, x: -30, scale: 0.8 }"
             :animate="{ opacity: 1, x: 0, scale: 1 }"
             :transition="{
@@ -205,6 +178,37 @@ function formatNumber(num: number): string {
               delay: index * 0.05,
               ease: 'backOut',
             }"
+          >
+            <el-skeleton
+              class="rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
+              :loading="true"
+            >
+              <template #template>
+                <div class="size-full">
+                  <div class="w-full! aspect-3/4">
+                    <el-skeleton-item class="size-full!" variant="image" />
+                  </div>
+                  <el-skeleton-item variant="h3" class="w-80%! mt-2" />
+                  <el-skeleton-item variant="text" class="w-60%! mt-1" />
+                  <el-skeleton-item variant="text" class="w-40%! mt-1" />
+                  <div class="mt-2 flex gap-2">
+                    <el-skeleton-item variant="button" class="w-50px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-60px! h-24px!" />
+                    <el-skeleton-item variant="button" class="w-40px! h-24px!" />
+                  </div>
+                </div>
+              </template>
+            </el-skeleton>
+          </Motion>
+        </div>
+
+        <!-- 实际内容 -->
+        <div
+          v-else class="grid justify-center gap-5"
+          style="grid-template-columns: repeat(auto-fill, 270px);"
+        >
+          <div
+            v-for="item in comics" :key="item._id"
             class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]"
             @click="handleComicClick(item)"
           >
@@ -276,9 +280,9 @@ function formatNumber(num: number): string {
                 {{ tag }}
               </el-tag>
             </div>
-          </Motion>
+          </div>
+          <div class="w-full h-6px" />
         </div>
-        <div class="w-full h-6px" />
       </el-scrollbar>
     </div>
   </div>

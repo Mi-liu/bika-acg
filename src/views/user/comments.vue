@@ -103,25 +103,36 @@ function getRelativeTime(dateString: string) {
           v-if="loading" class="grid comment-grid"
           style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;"
         >
-          <el-skeleton
-            v-for="i in 6" :key="i" class="comment-card"
-            :loading="true"
+          <Motion
+            v-for="(i, index) in 6" :key="i"
+            :initial="{ opacity: 0, y: 30, scale: 0.9 }"
+            :animate="{ opacity: 1, y: 0, scale: 1 }"
+            :transition="{
+              duration: 0.5,
+              delay: index * 0.1,
+              ease: 'backOut',
+            }"
           >
-            <template #template>
-              <div class="p-4">
-                <div class="flex items-center gap-3 mb-3">
-                  <el-skeleton-item variant="circle" class="w-8 h-8" />
-                  <div class="flex-1">
-                    <el-skeleton-item variant="h3" class="w-60% mb-1" />
-                    <el-skeleton-item variant="text" class="w-40%" />
+            <el-skeleton
+              class="comment-card"
+              :loading="true"
+            >
+              <template #template>
+                <div class="p-4">
+                  <div class="flex items-center gap-3 mb-3">
+                    <el-skeleton-item variant="circle" class="w-8 h-8" />
+                    <div class="flex-1">
+                      <el-skeleton-item variant="h3" class="w-60% mb-1" />
+                      <el-skeleton-item variant="text" class="w-40%" />
+                    </div>
                   </div>
+                  <el-skeleton-item variant="text" class="w-full mb-2" />
+                  <el-skeleton-item variant="text" class="w-80% mb-2" />
+                  <el-skeleton-item variant="text" class="w-60%" />
                 </div>
-                <el-skeleton-item variant="text" class="w-full mb-2" />
-                <el-skeleton-item variant="text" class="w-80% mb-2" />
-                <el-skeleton-item variant="text" class="w-60%" />
-              </div>
-            </template>
-          </el-skeleton>
+              </template>
+            </el-skeleton>
+          </Motion>
         </div>
 
         <!-- 评论列表 -->
@@ -130,15 +141,8 @@ function getRelativeTime(dateString: string) {
           class="grid comment-grid"
           style="grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 20px;"
         >
-          <Motion
-            v-for="(item, index) in data.docs" :key="item._id"
-            :initial="{ opacity: 0, y: 30, scale: 0.9 }"
-            :animate="{ opacity: 1, y: 0, scale: 1 }"
-            :transition="{
-              duration: 0.5,
-              delay: index * 0.1,
-              ease: 'backOut',
-            }"
+          <div
+            v-for="item in data.docs" :key="item._id"
             class="comment-card"
           >
             <!-- 评论头部 -->
@@ -174,7 +178,7 @@ function getRelativeTime(dateString: string) {
                 查看漫画
               </el-button>
             </div>
-          </Motion>
+          </div>
         </div>
 
         <!-- 空状态 -->
