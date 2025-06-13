@@ -1,16 +1,16 @@
-import type { AnyObject } from '../../type/index'
-import type { CommonPaginationProps } from '../index'
+import type { CommonPaginationProps, CommonDialogProps } from '../index'
 
-export type CommonComponentProps = /* @vue-ignore */CreateCustomComponentUnion<CommonComponentsPropsMap>
+export type CommonComponentProps = /* @vue-ignore */CommonComponentsComponentUnion
 
 export interface CommonComponentsPropsMap {
   CommonPagination: CommonPaginationProps
+  CommonDialog: CommonDialogProps
 }
 
 /** 定义 CreateCustomComponentUnion 工具类型，用于生成联合类型 */
-type CreateCustomComponentUnion<T extends AnyObject> = {
-  [K in keyof T]: {
+export type CommonComponentsComponentUnion = {
+  [K in keyof CommonComponentsPropsMap]: {
     is: K
-    props?: T[K]
+    props: CommonComponentsPropsMap[K]
   }
-}[keyof T]
+}[keyof CommonComponentsPropsMap]
