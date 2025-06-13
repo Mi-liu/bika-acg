@@ -6,6 +6,8 @@ import CommonDialog from './index.vue'
  * @param options 对话框配置选项
  */
 export function useCommonDialog(options: CommonDialogOptions = {}, children?: CommonDialogSlots) {
+  const { promise, resolve, reject } = Promise.withResolvers()
+
   // 创建容器元素
   const container = document.createElement('div')
 
@@ -13,10 +15,9 @@ export function useCommonDialog(options: CommonDialogOptions = {}, children?: Co
     return h(CommonDialog, {
       ...options,
       beforeConfirm: () => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            resolve(false)
-          }, 2000)
+        return Promise.resolve(options.beforeConfirm?.()).then(resolve).catch((error) => {
+          reject(undefined)
+          return Promise.reject(error)
         })
       },
       modelValue: true,
@@ -31,4 +32,6 @@ export function useCommonDialog(options: CommonDialogOptions = {}, children?: Co
   document.body.appendChild(container)
 
   app.mount(container)
+
+  return promise
 }
