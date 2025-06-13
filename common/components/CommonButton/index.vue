@@ -11,21 +11,22 @@ const props = defineProps<CommonButtonProps>()
 
 const buttonProps = omit(props, 'onClick')
 
-const loading = ref(false)
+const modelValue = defineModel({ default: false })
+
 
 // 移除调试日志
 function handleClick(evt: MouseEvent) {
   if (props.onClick) {
-    loading.value = true
+    modelValue.value = true
     Promise.resolve(props.onClick(evt)).finally(() => {
-      loading.value = false
+      modelValue.value = false
     })
   }
 }
 </script>
 
 <template>
-  <el-button v-bind="buttonProps" :loading="loading" @click="handleClick">
+  <el-button v-bind="buttonProps" :loading="modelValue" @click="handleClick">
     <template v-for="(_, name) in $slots" :key="name" #[name]="scoped">
       <slot :name="name" v-bind="scoped || {}" />
     </template>
