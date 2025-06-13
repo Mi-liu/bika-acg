@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useCommonDialog } from '@common/components/CommonDialog/hooks'
 import CommonDialog from '@common/components/CommonDialog/index.vue'
+import CommonForm from '@common/components/CommonForm/index.vue'
+import type { CommonFormArrayItems, CommonFormObjectItems } from '@common/components/CommonForm/type'
+
 
 async function handleClick() {
   await useCommonDialog({
@@ -14,7 +17,7 @@ async function handleClick() {
         setTimeout(() => {
           resolve(undefined)
           reject(new Error('错误'))
-        }, 1000)
+        }, 4000)
       })
     },
   }, {
@@ -24,12 +27,61 @@ async function handleClick() {
   })
   console.log('成功')
 }
+
+const arrayItems: CommonFormArrayItems = [
+  {
+    is: 'CommonPagination',
+    props: {
+      total: 100,
+    },
+    formItemProps: {
+      prop: 'aaa',
+      label: '111',
+    },
+  },
+  {
+    is: 'CommonPagination',
+    props: {
+      total: 100,
+    },
+    formItemProps: {
+      prop: 'bbb',
+      label: '222',
+    },
+  },
+]
+
+const objectItems: CommonFormObjectItems = {
+  aaa: {
+    is: 'CommonPagination',
+    props: {
+      total: 100,
+    },
+    formItemProps: {
+      label: '111',
+    },
+  },
+  bbb: {
+    is: 'CommonPagination',
+    props: {
+      total: 100,
+    },
+    formItemProps: {
+      label: '222',
+    },
+  },
+}
+
 </script>
 
 <template>
   <div class="">
     1
     <el-button @click="handleClick">1</el-button>
+
+    <CommonForm :items="arrayItems" />
+    <CommonForm :items="objectItems" />
+
     <CommonDialog>
       <template #aaa />
     </CommonDialog>
