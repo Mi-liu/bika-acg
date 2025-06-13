@@ -1,5 +1,6 @@
 import type { DialogEmits, DialogProps } from 'element-plus'
 import type { ExtractPublicPropTypes, VNodeNormalizedChildren } from 'vue'
+import type { ToOnVoidHandlers } from '../../type'
 
 /**
  * 通用对话框组件属性接口
@@ -29,7 +30,7 @@ export interface CommonDialogProps extends ExtractPublicPropTypes<DialogProps> {
  */
 export interface CommonDialogEmits extends DialogEmits {}
 
-export interface CommonDialogOptions extends Partial<CommonDialogProps & ConvertEmits<CommonDialogEmits>> {}
+export interface CommonDialogOptions extends Partial<CommonDialogProps & ToOnVoidHandlers<CommonDialogEmits>> {}
 
 type BaseSlots<T extends string = string> = {
   [K in T]?: (() => VNodeNormalizedChildren) | undefined
@@ -43,12 +44,4 @@ export interface CommonDialogSlots extends BaseSlots {
   header?: () => VNodeNormalizedChildren
   footer?: () => VNodeNormalizedChildren
   [key: string]: (() => VNodeNormalizedChildren) | undefined
-}
-
-/**
- * 工具类型：将对象的每个 key 转换为 onXxx 格式
- * 例如：{ click: Function } => { onClick: Function }
- */
-export type ConvertEmits<T> = {
-  [K in keyof T as `on${Capitalize<string & K>}`]: () => void
 }

@@ -16,7 +16,7 @@ export function useCommonDialog(options: CommonDialogOptions = {}, children?: Co
       ...options,
       beforeConfirm: () => {
         return Promise.resolve(options.beforeConfirm?.()).then(resolve).catch((error) => {
-          reject(undefined)
+          reject(error)
           return Promise.reject(error)
         })
       },

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CommonButtonProps } from './type'
 import { omit } from 'lodash-es'
+import { ref } from 'vue'
 
 defineOptions({
   name: 'CommonButton',

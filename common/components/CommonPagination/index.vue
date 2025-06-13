@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { CommonPaginationProps } from './type'
-import { CommonPaginationConfig } from './config'
+import { ref, watch } from 'vue'
+import { CommonConfig } from '../../config'
 
 defineOptions({
   name: 'CommonPagination',
@@ -23,9 +24,9 @@ const props = withDefaults(defineProps<CommonPaginationProps & {
   /** 每页显示个数选择器的选项设置 */
   pageSizes: () => [10, 20, 30, 40, 50],
   /** 当前页码 */
-  currentPage: CommonPaginationConfig.defaultCurrentPage,
+  currentPage: CommonConfig.components.pagination.defaultCurrentPage,
   /** 每页条数 */
-  pageSize: CommonPaginationConfig.defaultPageSize,
+  pageSize: CommonConfig.components.pagination.defaultPageSize,
 })
 
 const emit = defineEmits<{
@@ -100,10 +101,10 @@ function emitChange() {
  * 重置分页
  */
 function reset() {
-  innerCurrentPage.value = CommonPaginationConfig.defaultCurrentPage
-  innerPageSize.value = CommonPaginationConfig.defaultPageSize
-  emit('update:currentPage', CommonPaginationConfig.defaultCurrentPage)
-  emit('update:pageSize', CommonPaginationConfig.defaultPageSize)
+  innerCurrentPage.value = CommonConfig.components.pagination.defaultCurrentPage
+  innerPageSize.value = CommonConfig.components.pagination.defaultPageSize
+  emit('update:currentPage', CommonConfig.components.pagination.defaultCurrentPage)
+  emit('update:pageSize', CommonConfig.components.pagination.defaultPageSize)
   emitChange()
 }
 

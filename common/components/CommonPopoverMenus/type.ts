@@ -2,10 +2,10 @@ import type { ButtonProps as ElButtonProps } from 'element-plus'
 import type { ExtractPublicPropTypes } from 'vue'
 
 export interface CommonPopoverMenuProps {
-  menus: CommonPopoverMenu[]
+  menus: CommonPopoverMenuMenus[]
 }
 
-interface CommonPopoverMenu extends ExtractPublicPropTypes<Omit<ElButtonProps, 'loading'>> {
+interface CommonPopoverMenuMenus extends ExtractPublicPropTypes<Omit<ElButtonProps, 'loading'>> {
   label: string
   id?: string
 }

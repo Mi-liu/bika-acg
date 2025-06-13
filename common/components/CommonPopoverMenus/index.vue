@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { CommonPopoverMenuProps } from './type'
+import { CommonButton } from '../CommonButton'
 
 defineProps<CommonPopoverMenuProps>()
 </script>
@@ -10,14 +11,14 @@ defineProps<CommonPopoverMenuProps>()
       <slot />
     </template>
     <div class="w-full flex flex-col gap-y-1">
-      <el-button
+      <CommonButton
         v-for="menu in menus"
         :key="menu.label"
         class="w-full ml-0!" size="default"
         v-bind="menu"
       >
         {{ menu.label }}
-      </el-button>
+      </CommonButton>
     </div>
   </el-popover>
 </template>
