@@ -1,4 +1,4 @@
-export * from './hooks'
+export * from './hook'
 
 export { default as CommonDialog } from './index.vue'
 

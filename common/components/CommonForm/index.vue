@@ -1,25 +1,26 @@
 <script setup lang="ts" generic="T extends AnyObject = { [key: string]: any }">
 import type { AnyObject } from '../../type'
-import type { CommonFormProps } from './type'
+import type { CommonFormArrayItems, CommonFormProps } from './type'
 import { cloneDeep } from 'lodash-es'
-import { computed, reactive, toRaw, useTemplateRef, watchEffect } from 'vue'
+import { computed, reactive, readonly, toRaw, useTemplateRef, watchEffect } from 'vue'
+import CommonComponent from '../CommonComponent/index.vue'
 
 const props = defineProps<CommonFormProps<T>>()
 
-const formData = reactive<Partial<T>>({})
+const emit = defineEmits<{
+  submit: [data: T]
+}>()
 
-/**
- * 将响应式对象转换为普通对象，用于 el-form 的 model 属性
- * 这样可以避免类型错误，同时保持响应性
- */
-const formModel = computed(() => toRaw(formData) as Record<string, any>)
+const formData = reactive<T>({} as T)
 
 const formItemsArray = computed(() => {
+  let items: CommonFormArrayItems<T>
+
   if (Array.isArray(props.items)) {
-    return props.items
+    items = props.items
   }
   else {
-    return Object.entries(props.items).map(([key, value]) => {
+    items = Object.entries(props.items).map(([key, value]) => {
       return {
         ...value,
         formItemProps: {
@@ -29,6 +30,12 @@ const formItemsArray = computed(() => {
       }
     })
   }
+  return items.filter((item) => {
+    if (item.visible) {
+      return item.visible(formData)
+    }
+    return true
+  })
 })
 
 watchEffect(() => {
@@ -37,7 +44,6 @@ watchEffect(() => {
       Reflect.set(formData, item.formItemProps.prop, item.defaultValue)
     }
   })
-  console.log(formData)
 })
 
 const elFormRef = useTemplateRef('elFormRef')
@@ -47,35 +53,60 @@ async function handleSearch() {
   submit()
 }
 
+async function handleReset() {
+  await elFormRef.value?.resetFields()
+  submit()
+}
+
 async function submit() {
   const formatData = getFormatterFormData()
-  console.log(formatData)
+  emit('submit', formatData)
 }
 
 /** 获取格式化后的表单数据 */
 function getFormatterFormData() {
-  const formatData = cloneDeep(toRaw(formData)) as Partial<T>
+  const formatData = cloneDeep(toRaw(formData)) as T
   formItemsArray.value.forEach((item) => {
     if (item.formatValue) {
-      formatData[item.formItemProps.prop] = item.formatValue(formatData[item.formItemProps.prop], formatData)
+      Object.assign(formatData, {
+        [item.formItemProps.prop]: item.formatValue(formatData[item.formItemProps.prop], formatData),
+      })
     }
   })
   return formatData
 }
+
+defineExpose({
+  submit,
+  getFormatterFormData,
+  formData: readonly(formData),
+})
 </script>
 
 <template>
-  <el-form ref="elFormRef" :model="formModel">
+  <el-form ref="elFormRef" :model="formData">
     {{ formData }}
     <el-form-item v-for="item in formItemsArray" :key="item.formItemProps.prop" v-bind="item.formItemProps">
-      1
-      <!-- <component :is="item.is" v-bind="item.props" /> -->
+      <slot
+        :name="item.formItemProps.prop"
+        :form-data="formData"
+        :props="item.props"
+        :model-value="formData[item.formItemProps.prop]"
+      >
+        <el-input v-model="formData[item.formItemProps.prop]" />
+        <!-- @vue-ignore -->
+        <CommonComponent
+          :is="item.is"
+          v-model="formData[item.formItemProps.prop]"
+          :props="item.props"
+        />
+      </slot>
     </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="handleSearch">
         搜索
       </el-button>
-      <el-button type="default">
+      <el-button type="default" @click="handleReset">
         重置
       </el-button>
     </el-form-item>

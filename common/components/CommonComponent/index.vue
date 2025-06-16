@@ -18,7 +18,7 @@ const componentMap: Record<string, Component>
  = Object.fromEntries(Object.entries(
    import.meta.glob<{
      default: Component
-   }>(['@/common/src/components/*/index.vue', '@/components/*/index.vue'], {
+   }>(['@common/components/*/index.vue', '@/components/*/index.vue'], {
      eager: true,
    }),
  ).map(([key, value]) => {
@@ -30,7 +30,7 @@ const componentNode = computed(() => {
   const name = mergedAttrs.value.is
   const component = componentMap[name]
   if (!component) {
-    console.warn(`${name}组件不存在于common/src/components或@/components/* 中`)
+    console.warn(`${name}组件不存在于common/components或@/components/* 中`)
   }
 
   return component

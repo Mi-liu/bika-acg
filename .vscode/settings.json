@@ -5,8 +5,19 @@
     "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig"
   },
+  // 文件监听优化 - 减少性能消耗
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.git/**": true,
+    "**/coverage/**": true,
+    "**/.nuxt/**": true,
+    "**/.next/**": true,
+    "**/.vuepress/**": true,
+    "**/typings/**": true
+  },
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": true
   },
   "editor.formatOnSave": false,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
@@ -57,22 +68,28 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "editor.formatOnSave": true
   },
-  // TypeScript 设置
-  "typescript.preferences.includePackageJsonAutoImports": "on",
-  "typescript.suggest.autoImports": true,
-  "typescript.updateImportsOnFileMove.enabled": "always",
+  // TypeScript 设置 - 性能优化
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.suggest.autoImports": false,
+  "typescript.updateImportsOnFileMove.enabled": "prompt",
   "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.parameterNames.enabled": "none",
   "typescript.inlayHints.variableTypes.enabled": false,
   "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
-  "typescript.workspaceSymbols.scope": "allOpenProjects",
-  // Vue 设置
+  "typescript.workspaceSymbols.scope": "currentProject",
+  "typescript.disableAutomaticTypeAcquisition": true,
+  // Vue 设置 - 性能优化
+  "vue.server.hybridMode": false,
+  "vue.server.diagnosticModel": "pull",
+  "vue.server.maxFileSize": 20971520,
+  "vue.server.petiteVue.supportHtmlFile": false,
+  "vue.server.vitePress.supportMdFile": false,
   "vue.codeActions.enabled": true,
   "vue.complete.casing.tags": "kebab",
   "vue.complete.casing.props": "camel",
-  "vue.inlayHints.missingProps": true,
-  "vue.inlayHints.inlineHandlerLeading": true,
-  "vue.inlayHints.optionsWrapper": true,
+  "vue.inlayHints.missingProps": false,
+  "vue.inlayHints.inlineHandlerLeading": false,
+  "vue.inlayHints.optionsWrapper": false,
   // 确保使用正确的 TypeScript 版本
   "typescript.preferences.useLabelDetailsInCompletionEntries": true,
   "typescript.suggest.completeFunctionCalls": true,
@@ -81,5 +98,18 @@
   // 禁用可能冲突的扩展
   "vetur.validation.template": false,
   "vetur.validation.script": false,
-  "vetur.validation.style": false
+  "vetur.validation.style": false,
+
+  // 额外性能优化
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/coverage": true
+  }
+
+  // 如果还是很卡，可以临时启用这些设置
+  // "vue.server.diagnosticModel": "none",
+  // "typescript.validate.enable": false,
+  // "eslint.enable": false
 }

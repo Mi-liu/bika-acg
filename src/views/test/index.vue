@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { useCommonDialog } from '@common/components/CommonDialog/hooks'
+import type { CommonFormArrayItems, CommonFormObjectItems } from '@common/components/CommonForm/type'
+import { useCommonDialog } from '@common/components/CommonDialog/hook'
 import CommonDialog from '@common/components/CommonDialog/index.vue'
 import CommonForm from '@common/components/CommonForm/index.vue'
-import type { CommonFormArrayItems, CommonFormObjectItems } from '@common/components/CommonForm/type'
-
 
 async function handleClick() {
   await useCommonDialog({
@@ -48,6 +47,10 @@ const arrayItems: CommonFormArrayItems = [
       prop: 'bbb',
       label: '222',
     },
+    visible(formData) {
+      console.log(formData)
+      return formData.aaa === '111'
+    },
   },
 ]
 
@@ -71,7 +74,6 @@ const objectItems: CommonFormObjectItems = {
     },
   },
 }
-
 </script>
 
 <template>
