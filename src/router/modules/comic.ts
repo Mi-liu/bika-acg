@@ -33,11 +33,11 @@ export default createRouterModule(name, {
       component: () => import('@/views/comic/chapter.vue'),
     },
     {
-      path: 'leaderboard',
+      path: 'ranking',
       meta: {
         title: '排行榜',
       },
-      component: () => import('@/views/comic/leaderboard.vue'),
+      component: () => import('@/views/comic/ranking.vue'),
     },
   ],
 })

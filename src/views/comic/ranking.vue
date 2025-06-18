@@ -46,7 +46,6 @@ async function fetchLeaderboardData() {
       :params="{}"
       :fetch="fetchLeaderboardData"
       :is-blocked-categories="true"
-      :page-size="40"
     >
       <template
         #filter="{
@@ -66,6 +65,10 @@ async function fetchLeaderboardData() {
             :value="item.value"
           />
         </el-select>
+      </template>
+
+      <template #pagination>
+        <div />
       </template>
     </ComicList>
   </div>

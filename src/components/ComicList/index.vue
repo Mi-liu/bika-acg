@@ -161,11 +161,13 @@ function formatNumber(num: number): string {
           </slot>
         </div>
       </div>
-      <CommonPagination
-        ref="CommonPaginationRef" :total="data?.total || 0"
-        layout="slot, ->, total, prev, pager, next, jumper" :page-size="props.pageSize" :disabled="loading"
-        @change="handlePageChange"
-      />
+      <slot name="pagination">
+        <CommonPagination
+          ref="CommonPaginationRef" :total="data?.total || 0"
+          layout="slot, ->, total, prev, pager, next, jumper" :page-size="props.pageSize" :disabled="loading"
+          @change="handlePageChange"
+        />
+      </slot>
     </div>
     <div class="h-full flex-1 overflow-hidden">
       <el-scrollbar height="100%">
