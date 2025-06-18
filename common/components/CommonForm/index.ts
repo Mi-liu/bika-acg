@@ -1,2 +1,2 @@
-export * from './type'
 export * from './CommonForm.vue'
+export * from './type'

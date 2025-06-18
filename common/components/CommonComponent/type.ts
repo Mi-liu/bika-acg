@@ -1,4 +1,4 @@
-import type { CommonPaginationProps, CommonDialogProps } from '../index'
+import type { CommonDialogProps, CommonPaginationProps } from '../index'
 
 export type CommonComponentProps = /* @vue-ignore */CommonComponentsComponentUnion
 

@@ -20,15 +20,14 @@ const loading = ref(false)
 
 /** 关闭对话框前执行 */
 function handleBeforeClose(done: () => void) {
-  if(loading.value) {
+  if (loading.value) {
     return
   }
-  if(props.beforeClose) {
+  else if (props.beforeClose) {
     return props.beforeClose(done)
   }
   done()
 }
-
 
 function handleConfirm() {
   return Promise.resolve(props.beforeConfirm?.()).then(() => {

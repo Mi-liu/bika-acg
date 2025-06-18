@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { CommonFormArrayItems, CommonFormObjectItems } from '@common/components/CommonForm/type'
 import { useCommonDialog } from '@common/components/CommonDialog/hook'
 import CommonDialog from '@common/components/CommonDialog/index.vue'
+import { useCommonFormProps } from '@common/components/CommonForm/hook'
 import CommonForm from '@common/components/CommonForm/index.vue'
 
 async function handleClick() {
@@ -27,53 +27,54 @@ async function handleClick() {
   console.log('成功')
 }
 
-const arrayItems: CommonFormArrayItems = [
-  {
-    is: 'CommonPagination',
-    props: {
-      total: 100,
+const arrayItems = useCommonFormProps({
+  columns: [
+    {
+      is: 'CommonPagination',
+      props: {
+        total: 100,
+      },
+      formItemProps: {
+        label: '111',
+        prop: 'aaa',
+      },
+      initValue: '11111111',
     },
-    formItemProps: {
-      prop: 'aaa',
-      label: '111',
+    {
+      is: 'CommonPagination',
+      props: {
+        total: 100,
+      },
+      formItemProps: {
+        label: '222',
+        prop: 'bbb',
+      },
     },
-  },
-  {
-    is: 'CommonPagination',
-    props: {
-      total: 100,
-    },
-    formItemProps: {
-      prop: 'bbb',
-      label: '222',
-    },
-    visible(formData) {
-      console.log(formData)
-      return formData.aaa === '111'
-    },
-  },
-]
+  ],
+})
 
-const objectItems: CommonFormObjectItems = {
-  aaa: {
-    is: 'CommonPagination',
-    props: {
-      total: 100,
+const objectItems = useCommonFormProps({
+  columns: {
+    aaa: {
+      is: 'CommonPagination',
+      props: {
+        total: 100,
+      },
+      formItemProps: {
+        label: '111',
+      },
     },
-    formItemProps: {
-      label: '111',
+    bbb: {
+      is: 'CommonPagination',
+      props: {
+        total: 100,
+      },
+      formItemProps: {
+        label: '222',
+      },
     },
   },
-  bbb: {
-    is: 'CommonPagination',
-    props: {
-      total: 100,
-    },
-    formItemProps: {
-      label: '222',
-    },
-  },
-}
+})
 </script>
 
 <template>
@@ -81,8 +82,8 @@ const objectItems: CommonFormObjectItems = {
     1
     <el-button @click="handleClick">1</el-button>
 
-    <CommonForm :items="arrayItems" />
-    <CommonForm :items="objectItems" />
+    <CommonForm v-bind="arrayItems" />
+    <CommonForm v-bind="objectItems" />
 
     <CommonDialog>
       <template #aaa />
