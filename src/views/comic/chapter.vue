@@ -6,7 +6,7 @@ import debounce from 'lodash-es/debounce'
 import { getComicPages } from '@/api/comic'
 import { pictureQuality } from '@/constants/options'
 import { proxy } from '@/services/config'
-import { addAutoReadMouseEvents, addAutoReadScrollListener, useAutoRead } from '@/utils/autoRead'
+import { addAutoReadScrollListener, useAutoRead } from '@/utils/autoRead'
 import { getImageUrl } from '@/utils/string'
 
 // 类型定义
@@ -36,12 +36,40 @@ const scrollbarRef = useTemplateRef('scrollbarRef')
 const windowInnerWidth = window.innerWidth
 const windowInnerHeight = window.innerHeight
 
+// 使用 VueUse 的 useDocumentVisibility 监听页面可见性
+const documentVisibility = useDocumentVisibility()
+
 // 自动阅读功能
 const autoRead = useAutoRead({
   enabled: computed(() => settingStore.comic.autoRead),
   speed: computed(() => settingStore.comic.autoReadSpeed),
   container: computed(() => scrollbarRef.value?.wrapRef),
   resumeDelay: 1000,
+})
+
+// 页面可见性状态管理
+const isPageVisible = ref(true)
+
+// 监听页面可见性变化，控制自动滚动
+watch(documentVisibility, (visibility) => {
+  if (!settingStore.comic.autoRead)
+    return
+
+  if (visibility === 'visible') {
+    // 页面获得焦点时，恢复自动滚动
+    console.log('页面获得焦点，恢复自动滚动')
+    isPageVisible.value = true
+    // 如果自动阅读开启且没有其他暂停条件，则开始滚动
+    if (!autoRead.state.isPausedByHover && !autoRead.state.isPausedByManualScroll) {
+      autoRead.start()
+    }
+  }
+  else if (visibility === 'hidden') {
+    // 页面失去焦点时，暂停自动滚动
+    console.log('页面失去焦点，暂停自动滚动')
+    isPageVisible.value = false
+    autoRead.stop()
+  }
 })
 
 // 响应式状态
@@ -428,14 +456,16 @@ getChapterPages(1)
               <el-slider
                 v-model="settingStore.comic.autoReadSpeed"
                 :min="5"
-                :max="200"
+                :max="300"
                 :step="5"
-                show-input
                 :show-input-controls="false"
               />
               <div class="text-xs text-gray-400 mt-1">
                 当前速度: {{ settingStore.comic.autoReadSpeed }} 像素/秒
-                <span v-if="autoRead.state.isPausedByHover" class="text-yellow-400 ml-2">
+                <span v-if="!isPageVisible" class="text-red-400 ml-2">
+                  (页面失去焦点已暂停)
+                </span>
+                <span v-else-if="autoRead.state.isPausedByHover" class="text-yellow-400 ml-2">
                   (鼠标悬停已暂停)
                 </span>
                 <span v-else-if="autoRead.state.isPausedByManualScroll" class="text-blue-400 ml-2">
