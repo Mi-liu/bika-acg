@@ -29,7 +29,7 @@ const listTitle = computed(() => {
   <div>
     <ComicList
       :title="listTitle" :params="{
-        c: props.title ? encodeURIComponent(props.title) : undefined,
+        c: props.title && props.title !== '最近更新' ? encodeURIComponent(props.title) : undefined,
         a: props.author ? encodeURIComponent(props.author) : undefined,
         t: props.keywords ? encodeURIComponent(props.keywords) : undefined,
       }" :fetch="getComics"

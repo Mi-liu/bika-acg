@@ -38,6 +38,12 @@ function handleRandomRefresh() {
   <el-scrollbar>
     <div class="content w-full max-w-1600px mx-auto">
       <div class="category-list">
+        <!-- 最近更新 -->
+        <div>
+          <el-button class="w-full" plain @click="handleCategoryClick('最近更新')">
+            最近更新
+          </el-button>
+        </div>
         <div v-for="category in categories" :key="category.title" class="category-item">
           <el-button class="w-full" plain @click="handleCategoryClick(category.title)">
             {{ category.title }}
