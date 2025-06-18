@@ -16,6 +16,7 @@ import { getImageUrl } from '@/utils/string'
 
 const props = withDefaults(defineProps<ComicsListProps<T>>(), {
   isBlockedCategories: true,
+  pageSize: DEFAULT_PAGE_SIZE,
 })
 
 const router = useRouter()
@@ -47,6 +48,10 @@ const { loading, data, run: fetchComics } = useRequest<Comics['comics'], [T & { 
 )
 
 function handleSelectChange() {
+  handleReset()
+}
+
+function handleReset() {
   CommonPaginationRef.value?.reset()
 }
 
@@ -142,22 +147,23 @@ function formatNumber(num: number): string {
         <div class="text-18px">{{ props.title || '漫画列表' }}</div>
 
         <div>
-          <!-- 更多过滤 -->
-
-          <el-select
-            v-model="s" class="w-110px!" :disabled="loading"
-            @change="handleSelectChange"
-          >
-            <el-option
-              v-for="item in sort" :key="item.value" :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <slot name="filter" :handle-reset="handleReset">
+            <!-- 更多过滤 -->
+            <el-select
+              v-model="s" class="w-110px!" :disabled="loading"
+              @change="handleSelectChange"
+            >
+              <el-option
+                v-for="item in sort" :key="item.value" :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </slot>
         </div>
       </div>
       <CommonPagination
         ref="CommonPaginationRef" :total="data?.total || 0"
-        layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" :disabled="loading"
+        layout="slot, ->, total, prev, pager, next, jumper" :page-size="props.pageSize" :disabled="loading"
         @change="handlePageChange"
       />
     </div>

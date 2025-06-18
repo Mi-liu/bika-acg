@@ -7,6 +7,9 @@ import router from '@/router'
 import { createHeader } from '@/utils/crypto'
 import { filterUndefined, objectToUrlParams } from '@/utils/object'
 
+// 登出处理标志位，防止多个接口同时触发登出逻辑
+let isLoggingOut = false
+
 export interface Response<T = unknown> {
   code: number
   data: T
@@ -46,13 +49,18 @@ const alova = createAlova({
         if (data.code !== ApiCode.Success) {
           reject(data)
         }
-        if (data.code === ApiCode.Logout) {
+        if (data.code === ApiCode.Logout && !isLoggingOut) {
+          // 使用标志位防止多个接口同时触发登出逻辑
+          isLoggingOut = true
           useUserStoreHook().clearUserProfile()
           router.replace({
             path: '/login/index',
             query: {
               redirect: encodeURIComponent(router.currentRoute.value.fullPath),
             },
+          }).finally(() => {
+            // 路由跳转完成后重置标志位，允许下次登出
+            isLoggingOut = false
           })
         }
         resolve(data.data)

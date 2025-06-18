@@ -2,7 +2,7 @@
 
 哔咔漫画的PC版本，因使用了 `vercel` 进行打包构建，目前需要翻墙使用
 
-测试地址: [https://bika-acg.vercel.app/]()
+测试地址: [https://bika-acg.vercel.app/#/](https://bika-acg.vercel.app/#/)
 
 ### 使用说明
 

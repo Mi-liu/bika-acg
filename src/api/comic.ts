@@ -280,3 +280,11 @@ export function likeComic(id: string) {
   }>(`comics/${id}/like`)
     .then(res => res.action)
 }
+// comics/leaderboard?tt=D30&ct=VC
+/** 获取排行榜 */
+export function getLeaderboard(params: { tt: string, ct: string }) {
+  return alova.Get<{
+    comics: Comic[]
+  }>(`comics/leaderboard`, { params })
+    .then(res => res.comics)
+}

@@ -45,3 +45,19 @@ export const pictureQuality = <const>[
     value: 'low',
   },
 ]
+
+/** 排行榜 */
+export const tt = <const>[
+  {
+    label: '当天',
+    value: 'H24',
+  },
+  {
+    label: '这周',
+    value: 'D7',
+  },
+  {
+    label: '这个月',
+    value: 'D30',
+  },
+]

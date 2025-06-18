@@ -31,7 +31,7 @@ function handleLogin() {
       localStore.local.ACCOUNT_INFO = { email: '', password: '' }
     }
     if (props.redirect) {
-      router.push(decodeURIComponent(props.redirect))
+      router.replace(decodeURIComponent(props.redirect))
     }
     else {
       router.push('/')

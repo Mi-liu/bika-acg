@@ -9,4 +9,6 @@ export interface ComicsListProps<T extends Partial<ComicsParams> = Partial<Comic
   params?: Omit<T, 'page' | 's'>
   /** 请求接口 */
   fetch: (params: T & { page: number, s: string }) => Promise<Comics['comics']>
+  /** 每页条数 */
+  pageSize?: number
 }

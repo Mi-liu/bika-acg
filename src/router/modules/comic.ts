@@ -32,5 +32,12 @@ export default createRouterModule(name, {
       },
       component: () => import('@/views/comic/chapter.vue'),
     },
+    {
+      path: 'leaderboard',
+      meta: {
+        title: '排行榜',
+      },
+      component: () => import('@/views/comic/leaderboard.vue'),
+    },
   ],
 })
