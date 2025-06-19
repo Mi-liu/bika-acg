@@ -456,8 +456,9 @@ getChapterPages(1)
               <el-slider
                 v-model="settingStore.comic.autoReadSpeed"
                 :min="5"
-                :max="300"
+                :max="200"
                 :step="5"
+                show-input
                 :show-input-controls="false"
               />
               <div class="text-xs text-gray-400 mt-1">
