@@ -7,9 +7,10 @@ function handleLogoClick() {
 </script>
 
 <template>
-  <div class="select-none cursor-pointer text-18px" @click="handleLogoClick">
-    哔咔漫画
-  </div>
+  <img
+    class="h-40px cursor-pointer" src="@/assets/image/app/logo.png" alt="Logo"
+    @click="handleLogoClick"
+  >
 </template>
 
 <style lang="scss" scoped></style>
