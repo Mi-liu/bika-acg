@@ -1,10 +1,11 @@
-import type { CommonPaginationProps, CommonDialogProps } from '../index'
+import type { CommonDialogProps, CommonInputProps, CommonPaginationProps } from '../index'
 
 export type CommonComponentProps = /* @vue-ignore */CommonComponentsComponentUnion
 
 export interface CommonComponentsPropsMap {
   CommonPagination: CommonPaginationProps
   CommonDialog: CommonDialogProps
+  CommonInput: CommonInputProps
 }
 
 /** 定义 CreateCustomComponentUnion 工具类型，用于生成联合类型 */
