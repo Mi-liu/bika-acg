@@ -3,6 +3,7 @@ import type { CommonFormArrayItems, CommonFormObjectItems } from '@common/compon
 import { useCommonDialog } from '@common/components/CommonDialog/hook'
 import CommonDialog from '@common/components/CommonDialog/index.vue'
 import CommonForm from '@common/components/CommonForm/index.vue'
+import CommonInput from '@common/components/CommonInput/index.vue'
 
 async function handleClick() {
   await useCommonDialog({
@@ -29,9 +30,9 @@ async function handleClick() {
 
 const arrayItems: CommonFormArrayItems = [
   {
-    is: 'CommonPagination',
+    is: 'CommonInput',
     props: {
-      total: 100,
+      placeholder: '111',
     },
     formItemProps: {
       prop: 'aaa',
@@ -39,9 +40,9 @@ const arrayItems: CommonFormArrayItems = [
     },
   },
   {
-    is: 'CommonPagination',
+    is: 'CommonInput',
     props: {
-      total: 100,
+      placeholder: '222',
     },
     formItemProps: {
       prop: 'bbb',
@@ -54,39 +55,21 @@ const arrayItems: CommonFormArrayItems = [
   },
 ]
 
-const objectItems: CommonFormObjectItems = {
-  aaa: {
-    is: 'CommonPagination',
-    props: {
-      total: 100,
-    },
-    formItemProps: {
-      label: '111',
-    },
-  },
-  bbb: {
-    is: 'CommonPagination',
-    props: {
-      total: 100,
-    },
-    formItemProps: {
-      label: '222',
-    },
-  },
+const aaa = ref('test')
+
+function handleInputClick() {
+  console.log('handleInputClick')
 }
 </script>
 
 <template>
   <div class="">
-    1
+    {{ aaa }}
+    <CommonInput v-model="aaa" @click="handleInputClick" />
+    122
     <el-button @click="handleClick">1</el-button>
 
-    <CommonForm :items="arrayItems" />
-    <CommonForm :items="objectItems" />
-
-    <CommonDialog>
-      <template #aaa />
-    </CommonDialog>
+    <!-- <CommonForm :items="arrayItems" /> -->
   </div>
 </template>
 

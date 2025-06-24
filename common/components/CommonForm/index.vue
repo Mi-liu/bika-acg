@@ -93,7 +93,6 @@ defineExpose({
         :props="item.props"
         :model-value="formData[item.formItemProps.prop]"
       >
-        <el-input v-model="formData[item.formItemProps.prop]" />
         <!-- @vue-ignore -->
         <CommonComponent
           :is="item.is"
