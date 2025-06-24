@@ -1,27 +1,29 @@
 {
-  "explorer.fileNesting.enabled": true,
-  "explorer.fileNesting.patterns": {
-    "tsconfig.json": "tsconfig.*.json, env.d.ts",
-    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
-    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig"
-  },
-  // 文件监听优化 - 减少性能消耗
-  "files.watcherExclude": {
-    "**/node_modules/**": true,
-    "**/dist/**": true,
-    "**/.git/**": true,
-    "**/coverage/**": true,
-    "**/.nuxt/**": true,
-    "**/.next/**": true,
-    "**/.vuepress/**": true,
-    "**/typings/**": true
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
+  // Disable the default formatter, use eslint instead
+  "prettier.enable": false,
   "editor.formatOnSave": false,
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-  // ESLint 设置
+
+  // Auto fix
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+
+  // Silent the stylistic rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    { "rule": "style/*", "severity": "off", "fixable": true },
+    { "rule": "format/*", "severity": "off", "fixable": true },
+    { "rule": "*-indent", "severity": "off", "fixable": true },
+    { "rule": "*-spacing", "severity": "off", "fixable": true },
+    { "rule": "*-spaces", "severity": "off", "fixable": true },
+    { "rule": "*-order", "severity": "off", "fixable": true },
+    { "rule": "*-dangle", "severity": "off", "fixable": true },
+    { "rule": "*-newline", "severity": "off", "fixable": true },
+    { "rule": "*quotes", "severity": "off", "fixable": true },
+    { "rule": "*semi", "severity": "off", "fixable": true }
+  ],
+
+  // Enable eslint for all supported languages
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -32,84 +34,17 @@
     "markdown",
     "json",
     "jsonc",
-    "yaml"
-  ],
-  "eslint.format.enable": true,
-  // 为特定文件类型设置格式化器
-  "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[vue]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[json]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  "[markdown]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
-    "editor.formatOnSave": true
-  },
-  // TypeScript 设置 - 性能优化
-  "typescript.preferences.includePackageJsonAutoImports": "off",
-  "typescript.suggest.autoImports": false,
-  "typescript.updateImportsOnFileMove.enabled": "prompt",
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.inlayHints.parameterNames.enabled": "none",
-  "typescript.inlayHints.variableTypes.enabled": false,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": false,
-  "typescript.workspaceSymbols.scope": "currentProject",
-  "typescript.disableAutomaticTypeAcquisition": true,
-  // Vue 设置 - 性能优化
-  "vue.server.hybridMode": false,
-  "vue.server.diagnosticModel": "pull",
-  "vue.server.maxFileSize": 20971520,
-  "vue.server.petiteVue.supportHtmlFile": false,
-  "vue.server.vitePress.supportMdFile": false,
-  "vue.codeActions.enabled": true,
-  "vue.complete.casing.tags": "kebab",
-  "vue.complete.casing.props": "camel",
-  "vue.inlayHints.missingProps": false,
-  "vue.inlayHints.inlineHandlerLeading": false,
-  "vue.inlayHints.optionsWrapper": false,
-  // 确保使用正确的 TypeScript 版本
-  "typescript.preferences.useLabelDetailsInCompletionEntries": true,
-  "typescript.suggest.completeFunctionCalls": true,
-  "typescript.suggest.enabled": true,
-  "typescript.validate.enable": true,
-  // 禁用可能冲突的扩展
-  "vetur.validation.template": false,
-  "vetur.validation.script": false,
-  "vetur.validation.style": false,
-
-  // 额外性能优化
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/.git": true,
-    "**/coverage": true
-  }
-
-  // 如果还是很卡，可以临时启用这些设置
-  // "vue.server.diagnosticModel": "none",
-  // "typescript.validate.enable": false,
-  // "eslint.enable": false
+    "yaml",
+    "toml",
+    "xml",
+    "gql",
+    "graphql",
+    "astro",
+    "svelte",
+    "css",
+    "less",
+    "scss",
+    "pcss",
+    "postcss"
+  ]
 }
