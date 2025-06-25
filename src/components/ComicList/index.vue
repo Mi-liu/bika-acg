@@ -129,7 +129,10 @@ function handleTagClick(tag: string) {
  * @param num 数字
  * @returns 格式化后的字符串
  */
-function formatNumber(num: number): string {
+function formatNumber(num?: number): string {
+  if (!num) {
+    return '0'
+  }
   if (num >= 1000000) {
     return `${(num / 1000000).toFixed(1)}M`
   }
