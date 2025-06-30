@@ -41,6 +41,33 @@ function handleSetting() {
   }).href
   window.open(url, '_blank')
 }
+
+/**
+ * 处理退出登录
+ * 清空用户信息并返回到登录页面
+ */
+function handleLogout() {
+  ElMessageBox.confirm('确定要退出登录吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    // 清空用户信息
+    userStore.clearUserProfile()
+
+    // 跳转到登录页面
+    router.replace({
+      path: '/login/index',
+      query: {
+        redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+      },
+    })
+
+    ElMessage.success('已退出登录')
+  }).catch(() => {
+    // 用户取消退出
+  })
+}
 </script>
 
 <template>
@@ -62,7 +89,7 @@ function handleSetting() {
         <el-dropdown-item :icon="ChatLineSquare" @click="handleComments">我的评论</el-dropdown-item>
         <el-dropdown-item :icon="Timer" @click="handleWatchLater">稍后再看</el-dropdown-item>
         <el-dropdown-item :icon="Setting" @click="handleSetting">设置</el-dropdown-item>
-        <el-dropdown-item :icon="SwitchButton" divided>退出登录</el-dropdown-item>
+        <el-dropdown-item :icon="SwitchButton" divided @click="handleLogout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
