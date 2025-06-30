@@ -15,5 +15,12 @@ export default createRouterModule(name, {
       },
       component: () => import('@/views/test/index.vue'),
     },
+    {
+      path: 'account-switch',
+      meta: {
+        title: '账号切换测试',
+      },
+      component: () => import('@/views/test/account-switch-test.vue'),
+    },
   ],
 })
