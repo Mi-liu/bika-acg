@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChatLineSquare, Link, Setting, Star, SwitchButton, Timer } from '@element-plus/icons-vue'
+import { ChatLineSquare, Link, Setting, Star, SwitchButton, Timer, UserFilled } from '@element-plus/icons-vue'
 import { getImageUrl } from '@/utils/string'
 
 const userStore = useUserStoreHook()
@@ -40,6 +40,19 @@ function handleSetting() {
     path: '/setting/index',
   }).href
   window.open(url, '_blank')
+}
+
+/**
+ * 处理切换账号
+ * 跳转到账号列表页面
+ */
+function handleSwitchAccount() {
+  router.replace({
+    path: '/login/account-list',
+    query: {
+      redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+    },
+  })
 }
 
 /**
@@ -89,7 +102,8 @@ function handleLogout() {
         <el-dropdown-item :icon="ChatLineSquare" @click="handleComments">我的评论</el-dropdown-item>
         <el-dropdown-item :icon="Timer" @click="handleWatchLater">稍后再看</el-dropdown-item>
         <el-dropdown-item :icon="Setting" @click="handleSetting">设置</el-dropdown-item>
-        <el-dropdown-item :icon="SwitchButton" divided @click="handleLogout">退出登录</el-dropdown-item>
+        <el-dropdown-item :icon="UserFilled" divided @click="handleSwitchAccount">切换账号</el-dropdown-item>
+        <el-dropdown-item :icon="SwitchButton" @click="handleLogout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>

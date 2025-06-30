@@ -23,5 +23,13 @@ export default createRouterModule(name, {
       },
       component: () => import('@/views/login/register.vue'),
     },
+    {
+      path: 'account-list',
+      meta: {
+        title: '账号列表',
+        layout: false,
+      },
+      component: () => import('@/views/login/account-list.vue'),
+    },
   ],
 })

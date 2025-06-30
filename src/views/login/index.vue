@@ -26,6 +26,8 @@ function handleLogin() {
     userStore.token = res.token
     if (remember.value) {
       localStore.local.ACCOUNT_INFO = { ...form }
+      // 将账号添加到账号列表
+      localStore.addOrUpdateAccount({ ...form })
     }
     else {
       localStore.local.ACCOUNT_INFO = { email: '', password: '' }
@@ -74,6 +76,12 @@ function handleLogin() {
             </el-form-item>
             <el-form-item>
               <CommonButton w-full type="primary" @click="handleLogin">登录</CommonButton>
+            </el-form-item>
+            <el-form-item v-if="localStore.local.ACCOUNT_LIST.length > 0">
+              <el-button w-full type="info" plain @click="router.replace('/login/account-list')">
+                <i class="i-ep-user mr-1" />
+                选择其他账号 ({{ localStore.local.ACCOUNT_LIST.length }})
+              </el-button>
             </el-form-item>
           </el-form>
         </div>

@@ -25,6 +25,14 @@ export interface Local {
     password: string
   }
   /**
+   * 账号列表
+   */
+  ACCOUNT_LIST: Array<{
+    email: string
+    password: string
+    lastLoginTime?: number
+  }>
+  /**
    * 关注作者列表
    */
   FOLLOW_AUTHOR_LIST: string[]
@@ -55,6 +63,10 @@ const useLocalStore = defineStore('local', () => {
       email: '',
       password: '',
     },
+    /**
+     * 账号列表
+     */
+    ACCOUNT_LIST: [],
   })
 
   /** 将本地local数据，同步到 useLocalStore.local中  */
@@ -112,7 +124,46 @@ const useLocalStore = defineStore('local', () => {
     }
   }
 
-  return { local, initStorage, pushItem, removeItem }
+  /**
+   * 添加或更新账号到账号列表
+   * @param account 账号信息
+   */
+  function addOrUpdateAccount(account: { email: string, password: string }) {
+    const existingIndex = local.ACCOUNT_LIST.findIndex(item => item.email === account.email)
+
+    const accountWithTime = {
+      ...account,
+      lastLoginTime: Date.now(),
+    }
+
+    if (existingIndex !== -1) {
+      // 更新现有账号
+      local.ACCOUNT_LIST[existingIndex] = accountWithTime
+    }
+    else {
+      // 添加新账号
+      local.ACCOUNT_LIST.push(accountWithTime)
+    }
+
+    // 按最后登录时间排序，最近登录的在前面
+    local.ACCOUNT_LIST.sort((a, b) => (b.lastLoginTime || 0) - (a.lastLoginTime || 0))
+
+    return localforage.setItem('ACCOUNT_LIST', cloneDeep(local.ACCOUNT_LIST))
+  }
+
+  /**
+   * 从账号列表中移除账号
+   * @param email 邮箱地址
+   */
+  function removeAccount(email: string) {
+    const index = local.ACCOUNT_LIST.findIndex(item => item.email === email)
+    if (index !== -1) {
+      local.ACCOUNT_LIST.splice(index, 1)
+      return localforage.setItem('ACCOUNT_LIST', cloneDeep(local.ACCOUNT_LIST))
+    }
+  }
+
+  return { local, initStorage, pushItem, removeItem, addOrUpdateAccount, removeAccount }
 }, {
   // 本地存储不需要持久化到 localStorage（已经使用 localforage）
   persist: false,
