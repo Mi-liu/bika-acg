@@ -23,7 +23,6 @@ export function useCommonDialog(options: CommonDialogOptions = {}, children?: Co
       modelValue: true,
       onClosed() {
         options.onClosed?.()
-        console.log('卸载元素')
         app.unmount()
         document.body.removeChild(container)
       },
