@@ -37,7 +37,7 @@ function handleRandomRefresh() {
 <template>
   <el-scrollbar>
     <div class="content w-full max-w-1600px mx-auto">
-      <div class="category-list">
+      <div class="category-list mt-20px">
         <!-- 最近更新 -->
         <div>
           <el-button class="w-full" plain @click="handleCategoryClick('最近更新')">
@@ -52,7 +52,7 @@ function handleRandomRefresh() {
       </div>
       <div>
         <div class="flex items-center justify-between mt-3">
-          <div>随机漫画</div>
+          <div class="text-20px">随机漫画</div>
           <el-button :icon="Refresh" @click="handleRandomRefresh">
             换一批
           </el-button>
