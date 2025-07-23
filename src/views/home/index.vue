@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { Refresh } from '@element-plus/icons-vue'
+import type { Categories } from '@/api/comic'
+import { Refresh, Sort } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { getCategories, getRandomComic } from '@/api/comic'
+import DraggableCategories from '@/components/DraggableCategories/index.vue'
 import Image from '@/components/Image/index.vue'
 import { getImageUrl } from '@/utils/string'
 
@@ -10,6 +12,9 @@ const router = useRouter()
 const { data: categories } = useRequest(getCategories)
 
 const { data: randomComics, run: randomRefresh, mutate: randomMutate, loading: randomLoading } = useRequest(getRandomComic)
+
+// 拖拽排序模式
+const isDragMode = ref(false)
 
 function handleCategoryClick(title: string) {
   const url = router.resolve({
@@ -28,6 +33,27 @@ function handleComicClick(id: string) {
   window.open(to.href, '_blank')
 }
 
+/**
+ * 处理分类顺序改变
+ */
+function handleCategoriesOrderChange(newCategories: Categories['categories']) {
+  // 这里可以添加额外的处理逻辑，比如通知其他组件等
+  console.log('分类顺序已更新:', newCategories)
+}
+
+/**
+ * 切换拖拽模式
+ */
+function toggleDragMode() {
+  isDragMode.value = !isDragMode.value
+  if (isDragMode.value) {
+    ElMessage.info('已开启拖拽排序模式，可以拖拽分类按钮调整顺序')
+  }
+  else {
+    ElMessage.info('已关闭拖拽排序模式')
+  }
+}
+
 function handleRandomRefresh() {
   randomMutate(undefined)
   randomRefresh()
@@ -37,18 +63,45 @@ function handleRandomRefresh() {
 <template>
   <el-scrollbar>
     <div class="content w-full max-w-1600px mx-auto">
-      <div class="category-list mt-20px">
-        <!-- 最近更新 -->
-        <div>
+      <!-- 分类区域标题和控制按钮 -->
+      <div class="flex items-center justify-between mt-20px mb-10px">
+        <div class="text-18px font-medium">漫画分类</div>
+        <el-button
+          :type="isDragMode ? 'primary' : 'default'"
+          :icon="Sort"
+          size="small"
+          @click="toggleDragMode"
+        >
+          {{ isDragMode ? '完成排序' : '拖拽排序' }}
+        </el-button>
+      </div>
+
+      <div class="category-section">
+        <!-- 最近更新 - 固定位置，不参与拖拽 -->
+        <div class="fixed-category mb-10px">
           <el-button class="w-full" plain @click="handleCategoryClick('最近更新')">
             最近更新
           </el-button>
         </div>
-        <div v-for="category in categories" :key="category.title" class="category-item">
-          <el-button class="w-full" plain @click="handleCategoryClick(category.title)">
-            {{ category.title }}
-          </el-button>
-        </div>
+
+        <!-- 可拖拽的分类列表 -->
+        <DraggableCategories
+          v-if="categories"
+          :categories="categories"
+          :draggable="true"
+          class="category-grid"
+          @order-change="handleCategoriesOrderChange"
+        >
+          <template #default="{ category }">
+            <el-button
+              class="w-full category-button"
+              plain
+              @click="handleCategoryClick(category.title)"
+            >
+              <span class="category-title">{{ category.title }}</span>
+            </el-button>
+          </template>
+        </DraggableCategories>
       </div>
       <div>
         <div class="flex items-center justify-between mt-3">
@@ -90,10 +143,40 @@ function handleRandomRefresh() {
 
 <style scoped lang="scss">
 .content {
-  .category-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
+  .category-section {
+    .fixed-category {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px;
+
+      .category-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .category-title {
+          flex: 1;
+          text-align: center;
+        }
+
+        .drag-handle {
+          opacity: 0.5;
+          transition: opacity 0.2s;
+          margin-left: 8px;
+          font-size: 14px;
+        }
+
+        &:hover .drag-handle {
+          opacity: 1;
+        }
+      }
+    }
   }
 
   .random-comic-list {

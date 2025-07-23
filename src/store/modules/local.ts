@@ -163,7 +163,16 @@ const useLocalStore = defineStore('local', () => {
     }
   }
 
-  return { local, initStorage, pushItem, removeItem, addOrUpdateAccount, removeAccount }
+  /**
+   * 更新分类顺序
+   * @param newCategories 新的分类顺序数组
+   */
+  function updateCategoriesOrder(newCategories: Categories['categories']) {
+    local.CATEGORIES = cloneDeep(newCategories)
+    return localforage.setItem('CATEGORIES', cloneDeep(newCategories))
+  }
+
+  return { local, initStorage, pushItem, removeItem, addOrUpdateAccount, removeAccount, updateCategoriesOrder }
 }, {
   // 本地存储不需要持久化到 localStorage（已经使用 localforage）
   persist: false,
