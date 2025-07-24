@@ -6,6 +6,9 @@ const name = 'login'
  * 登录路由模块
  */
 export default createRouterModule(name, {
+  meta: {
+    menu: false,
+  },
   children: [
     {
       path: 'index',

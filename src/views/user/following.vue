@@ -29,7 +29,7 @@ async function handleUnfollow(authorName: string) {
 </script>
 
 <template>
-  <div class="flex flex-col bg-[--el-bg-color-page]">
+  <div class="flex flex-col">
     <div>
       我的关注
     </div>

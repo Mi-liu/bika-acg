@@ -203,7 +203,6 @@ function getRelativeTime(dateString: string) {
 
 <style lang="scss" scoped>
 .comments-page {
-  background-color: var(--el-bg-color-page);
 }
 
 .comment-grid {

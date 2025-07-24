@@ -8,6 +8,7 @@ import { upperFirst } from '@/utils/string'
 
 const defaultMeta: RouteMeta = {
   layout: true,
+  menu: true,
 }
 
 /**
@@ -23,7 +24,7 @@ export function createRouterModule(
   return {
     path: `/${moduleName}`,
     name: upperFirst(moduleName),
-    meta: merge(defaultMeta, config.meta),
+    meta: merge({ ...defaultMeta }, config.meta),
     redirect: config.redirect || `/${moduleName}/${config.children?.[0]?.path}`,
     ...config,
     children: config.children?.map(child => ({

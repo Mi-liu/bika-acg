@@ -6,6 +6,9 @@ const name = 'comic'
  * 漫画相关路由模块
  */
 export default createRouterModule(name, {
+  meta: {
+    menu: false,
+  },
   children: [
     {
       path: 'list',
