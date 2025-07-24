@@ -10,7 +10,7 @@ const layoutStore = useLayoutStoreHook()
 
 <template>
   <header
-    class="layout-header size-full flex justify-between items-center  pl-4 bg-[--el-bg-color]"
+    class="layout-header size-full flex justify-between items-center pl-4 bg-[--el-bg-color] rounded-2"
     :style="{ height: `${layoutStore.header.height}px` }"
   >
     <div class="h-full flex-1 flex items-center gap-10px">

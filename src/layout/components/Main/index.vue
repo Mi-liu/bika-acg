@@ -3,8 +3,8 @@
 </script>
 
 <template>
-  <main class="layout-main flex-1 bg-[--el-bg-color] overflow-hidden">
-    <router-view v-slot="{ Component }">
+  <main class="layout-main flex-1 bg-[--el-bg-color] overflow-hidden rounded-2 p-2">
+    <router-view v-if="!false" v-slot="{ Component }">
       <transition>
         <!-- <keep-alive> -->
         <component :is="Component" class="size-full" />

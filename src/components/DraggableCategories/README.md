@@ -1,6 +1,6 @@
 # DraggableCategories 可拖拽排序组件
 
-一个基于 `sortablejs` 的通用拖拽排序组件，支持自定义样式和内容。
+一个基于 `vue-draggable-plus` 的现代拖拽排序组件，专为 Vue 3 设计，支持自定义样式和内容。
 
 ## 特性
 
@@ -16,7 +16,6 @@
 |------|------|--------|------|
 | `categories` | `Categories['categories']` | - | 分类数据数组 |
 | `draggable` | `boolean` | `false` | 是否启用拖拽排序 |
-| `sortableOptions` | `Partial<Sortable.Options>` | - | Sortable 自定义配置选项 |
 
 ## Events
 
@@ -55,6 +54,13 @@
   </DraggableCategories>
 </template>
 ```
+
+### 技术优势
+
+- **Vue 3 原生支持**: 基于 `vue-draggable-plus`，专为 Vue 3 设计
+- **TypeScript 友好**: 完整的类型支持和智能提示
+- **性能优化**: 使用 Vue 3 的响应式系统，性能更佳
+- **API 简洁**: 更简单的配置和使用方式
 
 ### 使用 Element Plus 按钮
 

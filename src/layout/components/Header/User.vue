@@ -37,7 +37,7 @@ function handleWatchLater() {
 
 function handleSetting() {
   const url = router.resolve({
-    path: '/setting/index',
+    path: '/user/setting',
   }).href
   window.open(url, '_blank')
 }

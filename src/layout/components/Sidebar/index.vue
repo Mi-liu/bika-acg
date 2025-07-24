@@ -82,7 +82,7 @@ const activeMenu = computed(() => {
 </script>
 
 <template>
-  <div class="sidebar w-200px bg-[--el-bg-color] border-r border-[--el-border-color]">
+  <div class="sidebar w-200px bg-[--el-bg-color] border-r border-[--el-border-color] overflow-hidden rounded-2">
     <el-menu
       :default-active="activeMenu"
       class="h-full border-none"
