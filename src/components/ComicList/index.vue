@@ -213,6 +213,36 @@ function formatNumber(num?: number): string {
           </Motion>
         </div>
 
+        <!-- 空状态显示 -->
+        <div v-else-if="!loading && comics.length === 0" class="flex-center h-full min-h-400px">
+          <div class="text-center">
+            <!-- 空状态图标 -->
+            <div class="mb-6">
+              <div class="relative inline-block">
+                <div class="text-120px opacity-20 animate-pulse">
+                  📚
+                </div>
+                <div class="absolute inset-0 flex-center">
+                  <div class="w-20px h-20px bg-[--el-color-info-light-7] rounded-full animate-bounce" style="animation-delay: 0s;" />
+                  <div class="w-16px h-16px bg-[--el-color-primary-light-7] rounded-full animate-bounce ml-2" style="animation-delay: 0.2s;" />
+                  <div class="w-12px h-12px bg-[--el-color-success-light-7] rounded-full animate-bounce ml-2" style="animation-delay: 0.4s;" />
+                </div>
+              </div>
+            </div>
+
+            <!-- 空状态文字 -->
+            <div class="mb-6">
+              <div class="text-20px font-medium text-[--el-text-color-primary] mb-2">
+                暂无漫画数据
+              </div>
+              <div class="text-14px text-[--el-text-color-secondary] leading-relaxed">
+                <div>当前筛选条件下没有找到相关漫画</div>
+                <div class="mt-1">请尝试调整筛选条件或稍后再试</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- 实际内容 -->
         <div
           v-else class="grid justify-center gap-5"
