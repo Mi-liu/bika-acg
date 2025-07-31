@@ -21,7 +21,10 @@ const remember = ref(true)
 form.email = localStore.local.ACCOUNT_INFO.email
 form.password = localStore.local.ACCOUNT_INFO.password
 
+const isLoading = ref(false)
+
 function handleLogin() {
+  isLoading.value = true
   login(form).then((res) => {
     userStore.token = res.token
     if (remember.value) {
@@ -38,6 +41,8 @@ function handleLogin() {
     else {
       router.push('/')
     }
+  }).finally(() => {
+    isLoading.value = false
   })
 }
 </script>
@@ -75,10 +80,18 @@ function handleLogin() {
               </div>
             </el-form-item>
             <el-form-item>
-              <CommonButton w-full type="primary" @click="handleLogin">登录</CommonButton>
+              <CommonButton
+                w-full type="primary" :loading="isLoading"
+                @click="handleLogin"
+              >
+                登录
+              </CommonButton>
             </el-form-item>
             <el-form-item v-if="localStore.local.ACCOUNT_LIST.length > 0">
-              <el-button w-full type="info" plain @click="router.replace('/login/account-list')">
+              <el-button
+                w-full type="info" plain
+                @click="router.replace('/login/account-list')"
+              >
                 <i class="i-ep-user mr-1" />
                 选择其他账号 ({{ localStore.local.ACCOUNT_LIST.length }})
               </el-button>
@@ -87,19 +100,6 @@ function handleLogin() {
         </div>
       </div>
     </div>
-    <!-- <div class="w-500px flex-center bg-white rounded-lg p-10">
-      <el-form w-full>
-        <el-form-item>
-          <el-input v-model="form.email" placeholder="用户名" />
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="form.password" placeholder="密码" />
-        </el-form-item>
-        <el-form-item>
-          <CommonButton w-full type="primary" @click="handleLogin">登录</CommonButton>
-        </el-form-item>
-      </el-form>
-    </div> -->
   </div>
 </template>
 
