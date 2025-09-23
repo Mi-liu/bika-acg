@@ -79,15 +79,15 @@ function isActive(item: MenuItem): boolean {
     background-color: var(--el-color-primary-light-9);
     color: var(--el-color-primary);
 
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background-color: var(--el-color-primary);
-    }
+    // &::before {
+    //   content: '';
+    //   position: absolute;
+    //   left: 0;
+    //   top: 0;
+    //   bottom: 0;
+    //   width: 3px;
+    //   background-color: var(--el-color-primary);
+    // }
   }
 }
 

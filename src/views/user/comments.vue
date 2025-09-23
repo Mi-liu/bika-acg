@@ -22,8 +22,6 @@ const { data, run: fetchComments, loading } = useRequest(getMyComments, {
   }],
 })
 
-const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
-
 function handlePageChange(event: { currentPage: number }) {
   // 清空当前数据，显示加载状态
   if (data.value) {
@@ -88,7 +86,7 @@ function getRelativeTime(dateString: string) {
         </div>
 
         <CommonPagination
-          ref="CommonPaginationRef" :total="data?.total || 0"
+          :total="data?.total || 0"
           layout="slot, ->, total, prev, pager, next, jumper" :page-size="DEFAULT_PAGE_SIZE" :disabled="loading"
           @change="handlePageChange"
         />

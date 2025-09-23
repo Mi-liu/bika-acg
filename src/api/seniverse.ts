@@ -37,11 +37,12 @@ interface WeatherNowResponse {
  * 根据ip获取城市实况
  */
 // https://seniverse.yuque.com/hyper_data/api_v3/nyiu3t?
-export function weatherNow() {
+export function weatherNow(location: string) {
   return seniverseAlova
     .Get<WeatherNowResponse>('weather/now.json', {
       params: {
-        location: 'ip',
+        location,
+        // 'ip'
       },
       cacheFor: {
         mode: 'restore',

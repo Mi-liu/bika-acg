@@ -116,7 +116,7 @@ function handleRecommendationClick(comicId: string) {
 </script>
 
 <template>
-  <el-scrollbar class="bg-[--el-bg-color-page] ">
+  <el-scrollbar>
     <div class="max-w-1100px mx-auto px-2">
       <!-- 主要信息区域 -->
       <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
