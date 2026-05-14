@@ -6,6 +6,9 @@ const name = 'login'
  * 登录路由模块
  */
 export default createRouterModule(name, {
+  meta: {
+    menu: false,
+  },
   children: [
     {
       path: 'index',
@@ -22,6 +25,14 @@ export default createRouterModule(name, {
         layout: false,
       },
       component: () => import('@/views/login/register.vue'),
+    },
+    {
+      path: 'account-list',
+      meta: {
+        title: '账号列表',
+        layout: false,
+      },
+      component: () => import('@/views/login/account-list.vue'),
     },
   ],
 })

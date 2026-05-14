@@ -6,6 +6,9 @@ const name = 'user'
  * 用户相关路由模块
  */
 export default createRouterModule(name, {
+  meta: {
+    title: '用户',
+  },
   children: [
     {
       path: 'favorites',
@@ -34,6 +37,14 @@ export default createRouterModule(name, {
         title: '评论',
       },
       component: () => import('@/views/user/comments.vue'),
+    },
+    {
+      path: 'setting',
+      meta: {
+        title: '设置',
+        menu: false,
+      },
+      component: () => import('@/views/user/setting.vue'),
     },
   ],
 })

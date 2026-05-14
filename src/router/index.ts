@@ -6,6 +6,10 @@ const title = useTitle('首页', { titleTemplate: '%s | 哔咔漫画' })
 // 使用 Vite 的 import.meta.globEager 一键导入所有路由模块
 const modules = import.meta.glob<{ default: RouteRecordRaw }>('./modules/*.ts', { eager: true })
 
+const routes = Object.entries(modules).map(([, value]) => value.default)
+
+// console.log(routes)
+
 /**
  * 创建路由实例
  *
@@ -16,7 +20,7 @@ const modules = import.meta.glob<{ default: RouteRecordRaw }>('./modules/*.ts', 
  */
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
-  routes: Object.entries(modules).map(([, value]) => value.default),
+  routes,
 })
 
 router.beforeEach((to, from) => {

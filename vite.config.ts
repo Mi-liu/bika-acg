@@ -1,5 +1,6 @@
 import path from 'node:path'
 import process from 'node:process'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 import vue from '@vitejs/plugin-vue'
 import { VueHooksPlusResolver } from '@vue-hooks-plus/resolvers'
 import UnoCSS from 'unocss/vite'
@@ -13,7 +14,11 @@ const root = process.cwd()
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    https: {},
+  },
   plugins: [
+    basicSsl(),
     vue(),
     vueDevTools(),
     // 添加 UnoCSS 插件
