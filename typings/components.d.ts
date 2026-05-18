@@ -12,6 +12,8 @@ declare module 'vue' {
     ComicList: typeof import('./../src/components/ComicList/index.vue')['default']
     DraggableCategories: typeof import('./../src/components/DraggableCategories/index.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
+    ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
+    ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCard: typeof import('element-plus/es')['ElCard']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']

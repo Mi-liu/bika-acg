@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Breadcrumb from './components/Breadcrumb/index.vue'
 import Header from './components/Header/index.vue'
 import Main from './components/Main/index.vue'
 import Sidebar from './components/Sidebar/index.vue'
@@ -12,6 +13,7 @@ const route = useRoute()
       <Sidebar />
       <div class="flex-1 flex flex-col gap-2 rounded-2">
         <Header />
+        <Breadcrumb />
         <Main />
       </div>
     </template>

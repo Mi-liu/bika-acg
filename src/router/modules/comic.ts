@@ -7,6 +7,7 @@ const name = 'comic'
  */
 export default createRouterModule(name, {
   meta: {
+    title: '漫画',
     menu: false,
   },
   children: [
