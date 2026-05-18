@@ -22,7 +22,6 @@ form.email = localStore.local.ACCOUNT_INFO.email
 form.password = localStore.local.ACCOUNT_INFO.password
 
 const isLoading = ref(false)
-console.log(decodeURIComponent(props.redirect))
 function handleLogin() {
   isLoading.value = true
   login(form).then((res) => {
