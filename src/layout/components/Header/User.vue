@@ -8,38 +8,33 @@ userStore.getUserProfile()
 const router = useRouter()
 
 function handleFavourite() {
-  const url = router.resolve({
+  router.push({
     path: '/user/favorites',
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 function handleComments() {
-  const url = router.resolve({
+  router.push({
     path: '/user/comments',
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 function handleFollowing() {
-  const url = router.resolve({
+  router.push({
     path: '/user/following',
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 function handleWatchLater() {
-  const url = router.resolve({
+  router.push({
     path: '/user/watch-later',
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 function handleSetting() {
-  const url = router.resolve({
+  router.push({
     path: '/user/setting',
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 /**

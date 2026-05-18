@@ -29,6 +29,8 @@ const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
 
 const s = ref<SortOptionValue>(defaultSort)
 
+const requestParamsKey = computed(() => JSON.stringify(props.params ?? {}))
+
 // 使用 useRequest 管理分页请求
 const { loading, data, run: fetchComics } = useRequest<Comics['comics'], [T & { page: number, s: string }]>(
   (params: T & { page: number, s: string }) => props.fetch(params),
@@ -74,6 +76,10 @@ handlePageChange({
   currentPage: 1,
 })
 
+watch(requestParamsKey, () => {
+  handleReset()
+})
+
 const comics = computed(() => {
   if (!data.value)
     return []
@@ -102,8 +108,7 @@ async function handleCloseTag(tag: string) {
 }
 
 function handleComicClick(item: Comic) {
-  const url = router.resolve(`/comic/detail/${item._id}`).href
-  window.open(url, '_blank')
+  router.push(`/comic/detail/${item._id}`)
 }
 
 function handleAddToLater(item: Comic) {
@@ -115,13 +120,12 @@ function handleRemoveFromLater(item: Comic) {
 }
 
 function handleTagClick(tag: string) {
-  const url = router.resolve({
+  router.push({
     path: '/comic/list',
     query: {
       title: tag,
     },
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 /**

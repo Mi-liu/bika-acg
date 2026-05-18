@@ -23,10 +23,9 @@ function handleCategoryClick(title: string) {
 }
 
 function handleComicClick(id: string) {
-  const to = router.resolve({
+  router.push({
     path: `/comic/detail/${id}`,
   })
-  window.open(to.href, '_blank')
 }
 
 /**

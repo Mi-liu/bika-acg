@@ -22,25 +22,23 @@ function handleBlur() {
 }
 
 function handleSearch() {
-  const url = router.resolve({
+  router.push({
     path: '/comic/search',
     query: {
       keyword: inputValue.value,
     },
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 function handleKeywordClick(keyword: string) {
   inputValue.value = keyword
 
-  const url = router.resolve({
+  router.push({
     path: '/comic/list',
     query: {
       keywords: keyword,
     },
-  }).href
-  window.open(url, '_blank')
+  })
 }
 </script>
 

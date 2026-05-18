@@ -37,8 +37,7 @@ function handlePageChange(event: { currentPage: number }) {
  * @param comicId 漫画ID
  */
 function handleComicClick(comicId: string) {
-  const url = router.resolve(`/comic/detail/${comicId}`).href
-  window.open(url, '_blank')
+  router.push(`/comic/detail/${comicId}`)
 }
 
 /**

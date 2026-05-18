@@ -109,8 +109,9 @@ async function handleRegister() {
               <div class="w-full select-none flex justify-end">
                 <div class="flex">
                   已有账号？<el-link
-                    type="primary" href="/#/login/index"
+                    type="primary"
                     underline="never"
+                    @click="router.push('/login/index')"
                   >
                     点击登录
                   </el-link>

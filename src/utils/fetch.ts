@@ -16,16 +16,22 @@ export function loopRequestList<K extends string, Item, R extends Record<K, Item
   },
 ) {
   let page = 1
+  let requestId = 0
 
   // 创建一个初始对象，只包含空数组
-  const initialData = { [options.key]: [] } as unknown as R
+  function getInitialData() {
+    return { [options.key]: [] } as unknown as R
+  }
 
   // 使用ref包装初始对象
-  const data = ref<R>(initialData)
+  const data = ref<R>(getInitialData())
 
-  function recursion() {
+  function recursion(currentRequestId: number) {
     if (options.beforeRequest(page, page === 1 ? undefined : data.value)) {
       callback(page++).then((res) => {
+        if (currentRequestId !== requestId) {
+          return
+        }
         // 获取当前项目数组和新项目数组
         const currentItems = data.value[options.key] || []
         const newItems = res[options.key] || []
@@ -33,14 +39,22 @@ export function loopRequestList<K extends string, Item, R extends Record<K, Item
           ...res,
           [options.key]: [...currentItems, ...newItems],
         } as R
-        recursion()
+        recursion(currentRequestId)
       })
     }
   }
 
-  recursion()
+  function run() {
+    requestId++
+    page = 1
+    data.value = getInitialData()
+    recursion(requestId)
+  }
+
+  run()
   return {
     data,
+    run,
   }
 }
 

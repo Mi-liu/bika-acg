@@ -45,13 +45,12 @@ const menus = computed<CommonPopoverMenuProps['menus']>(() => {
 })
 
 function handleAuthorClick(author: string) {
-  const url = router.resolve({
+  router.push({
     path: '/comic/list',
     query: {
       author,
     },
-  }).href
-  window.open(url, '_blank')
+  })
 }
 </script>
 

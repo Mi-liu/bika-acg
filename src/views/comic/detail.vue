@@ -15,11 +15,15 @@ const router = useRouter()
 
 const localStore = useLocalStoreHook()
 
-const { data, loading } = useRequest(getComicDetail, {
+const { data, loading, run: fetchComicDetail } = useRequest(getComicDetail, {
   defaultParams: [props.id],
 })
 
-const { data: recommendationData, loading: recommendationLoading } = useRequest(getComicRecommendation, {
+const {
+  data: recommendationData,
+  loading: recommendationLoading,
+  run: fetchComicRecommendation,
+} = useRequest(getComicRecommendation, {
   defaultParams: [props.id],
 })
 
@@ -44,7 +48,7 @@ const toolList = [
   },
 ] as const
 
-const { data: epsData } = loopRequestList(page => getComicEps(props.id, page), {
+const { data: epsData, run: fetchComicEps } = loopRequestList(page => getComicEps(props.id, page), {
   key: 'docs',
   beforeRequest: (page, res) => {
     if (res === undefined) {
@@ -54,14 +58,19 @@ const { data: epsData } = loopRequestList(page => getComicEps(props.id, page), {
   },
 })
 
+watch(() => props.id, (id) => {
+  fetchComicDetail(id)
+  fetchComicRecommendation(id)
+  fetchComicEps()
+})
+
 function handleTagClick(tag: string) {
-  const url = router.resolve({
+  router.push({
     path: '/comic/list',
     query: {
       title: tag,
     },
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 function handleFavoritesClick() {
@@ -95,14 +104,13 @@ function handleLikeClick() {
 function handleEpsClick(index: number) {
   const chapterNum = index + 1
   const maxChapter = epsData.value.docs.length
-  const url = router.resolve({
+  router.push({
     path: `/comic/chapter/${props.id}`,
     query: {
       chapter: chapterNum,
       maxChapter,
     },
-  }).href
-  window.open(url, '_blank')
+  })
 }
 
 /**
@@ -110,8 +118,7 @@ function handleEpsClick(index: number) {
  * @param comicId 漫画ID
  */
 function handleRecommendationClick(comicId: string) {
-  const url = router.resolve(`/comic/detail/${comicId}`).href
-  window.open(url, '_blank')
+  router.push(`/comic/detail/${comicId}`)
 }
 </script>
 

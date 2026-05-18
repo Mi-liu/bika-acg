@@ -2,10 +2,9 @@
 const router = useRouter()
 
 function handleClick() {
-  const url = router.resolve({
+  router.push({
     path: '/comic/ranking',
-  }).href
-  window.open(url, '_blank')
+  })
 }
 </script>
 
