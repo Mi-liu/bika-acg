@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CommonButton from '@common/components/CommonButton/index.vue'
+import { User } from '@element-plus/icons-vue'
 import { login } from '@/api/user'
 
 const props = defineProps<{
@@ -100,7 +101,9 @@ async function handleLogin() {
                 w-full type="info" plain
                 @click="router.replace('/login/account-list')"
               >
-                <i class="i-ep-user mr-1" />
+                <el-icon class="mr-1">
+                  <User />
+                </el-icon>
                 选择其他账号 ({{ localStore.local.ACCOUNT_LIST.length }})
               </el-button>
             </el-form-item>
@@ -114,7 +117,7 @@ async function handleLogin() {
 <style scoped lang="scss">
 .login {
   .login-bg {
-    background-image: url('@/assets/image/login/bg.png');
+    background-image: url('@/assets/image/login/bg.webp');
     background-size: cover;
     background-position: center;
     // filter: blur(10px);

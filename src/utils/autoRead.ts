@@ -1,4 +1,4 @@
-import { computed, onUnmounted, ref, watch } from 'vue'
+import { computed, onUnmounted, watch } from 'vue'
 
 /**
  * 自动阅读配置接口
@@ -46,7 +46,6 @@ export function useAutoRead(options: AutoReadOptions) {
   let animationFrameId: number | null = null
   let resumeTimeoutId: number | null = null
   let lastScrollTime = 0
-  let lastManualScrollTime = 0
 
   // 响应式配置
   const enabled = computed(() => unref(options.enabled))
@@ -146,8 +145,6 @@ export function useAutoRead(options: AutoReadOptions) {
    * 处理手动滚动事件
    */
   function handleManualScroll() {
-    const currentTime = performance.now()
-
     // 如果正在自动滚动，检查是否为手动滚动
     if (state.isAutoScrolling) {
       const container = getScrollContainer()
@@ -157,7 +154,6 @@ export function useAutoRead(options: AutoReadOptions) {
       if (Math.abs(actualScrollTop - state.scrollTop) > 10) {
         state.isPausedByManualScroll = true
         state.scrollTop = actualScrollTop
-        lastManualScrollTime = currentTime
 
         // 清除之前的恢复定时器
         if (resumeTimeoutId) {

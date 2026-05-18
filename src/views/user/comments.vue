@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import CommonPagination from '@common/components/CommonPagination/index.vue'
 import { ChatLineRound, Document } from '@element-plus/icons-vue'
-import { Heart, Time } from '@vicons/ionicons5'
+import { Time } from '@vicons/ionicons5'
 import dayjs from 'dayjs'
 import { Motion } from 'motion-v'
 import { getMyComments } from '@/api/user'

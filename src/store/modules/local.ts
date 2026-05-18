@@ -127,6 +127,8 @@ const useLocalStore = defineStore('local', () => {
   /**
    * 添加或更新账号到账号列表
    * @param account 账号信息
+   * @param account.email 邮箱地址
+   * @param account.password 密码
    */
   function addOrUpdateAccount(account: { email: string, password: string }) {
     const existingIndex = local.ACCOUNT_LIST.findIndex(item => item.email === account.email)

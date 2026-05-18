@@ -228,14 +228,17 @@ export interface ComicOrderPage {
 }
 
 /** 获取本子章节图片列表 */
-export function getComicPages(id: string, order: number, page: number, _forceRefresh = false) {
+export function getComicPages(id: string, order: number, page: number, forceRefresh = false) {
   const settingStore = useSettingStoreHook()
+  const params = {
+    page,
+    // 将画质作为请求参数，确保不同画质有不同的请求
+    settingStore: settingStore.comic.imageQuality,
+    ...(forceRefresh ? { t: Date.now() } : {}),
+  }
+
   return alova.Get<ComicOrderPage>(`comics/${id}/order/${order}/pages`, {
-    params: {
-      page,
-      // 将画质作为请求参数，确保不同画质有不同的请求
-      settingStore: settingStore.comic.imageQuality,
-    },
+    params,
   })
 }
 

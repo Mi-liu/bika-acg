@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import type { CommonFormArrayItems, CommonFormObjectItems } from '@common/components/CommonForm/type'
 import { useCommonDialog } from '@common/components/CommonDialog/hook'
-import CommonDialog from '@common/components/CommonDialog/index.vue'
-import CommonForm from '@common/components/CommonForm/index.vue'
 import CommonInput from '@common/components/CommonInput/index.vue'
 
 async function handleClick() {
@@ -28,33 +25,6 @@ async function handleClick() {
   console.log('成功')
 }
 
-const arrayItems: CommonFormArrayItems = [
-  {
-    is: 'CommonInput',
-    props: {
-      placeholder: '111',
-    },
-    formItemProps: {
-      prop: 'aaa',
-      label: '111',
-    },
-  },
-  {
-    is: 'CommonInput',
-    props: {
-      placeholder: '222',
-    },
-    formItemProps: {
-      prop: 'bbb',
-      label: '222',
-    },
-    visible(formData) {
-      console.log(formData)
-      return formData.aaa === '111'
-    },
-  },
-]
-
 const aaa = ref('test')
 
 function handleInputClick() {
@@ -73,6 +43,4 @@ function handleInputClick() {
   </div>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

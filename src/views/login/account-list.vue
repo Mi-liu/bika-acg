@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import CommonButton from '@common/components/CommonButton/index.vue'
+import { Back, Delete, Plus, User } from '@element-plus/icons-vue'
 import { login } from '@/api/user'
-
-const userStore = useUserStoreHook()
-const localStore = useLocalStoreHook()
-const router = useRouter()
 
 const props = defineProps<{
   redirect?: string
 }>()
+const userStore = useUserStoreHook()
+const localStore = useLocalStoreHook()
+const router = useRouter()
 
 /**
  * 处理账号登录
  * @param account 账号信息
+ * @param account.email 邮箱地址
+ * @param account.password 密码
  */
 function handleAccountLogin(account: { email: string, password: string }) {
   const form = {
@@ -29,7 +31,7 @@ function handleAccountLogin(account: { email: string, password: string }) {
     localStore.addOrUpdateAccount({ ...form })
 
     ElMessage.success(`欢迎回来，${account.email}`)
-    
+
     if (props.redirect) {
       router.replace(decodeURIComponent(props.redirect))
     }
@@ -70,7 +72,8 @@ function handleBackToLogin() {
  * @param timestamp 时间戳
  */
 function formatLastLoginTime(timestamp?: number): string {
-  if (!timestamp) return '从未登录'
+  if (!timestamp)
+    return '从未登录'
 
   const now = Date.now()
   const diff = now - timestamp
@@ -78,10 +81,14 @@ function formatLastLoginTime(timestamp?: number): string {
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes}分钟前`
-  if (hours < 24) return `${hours}小时前`
-  if (days < 30) return `${days}天前`
+  if (minutes < 1)
+    return '刚刚'
+  if (minutes < 60)
+    return `${minutes}分钟前`
+  if (hours < 24)
+    return `${hours}小时前`
+  if (days < 30)
+    return `${days}天前`
 
   return new Date(timestamp).toLocaleDateString()
 }
@@ -95,14 +102,18 @@ function formatLastLoginTime(timestamp?: number): string {
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold text-gray-800">选择账号</h2>
           <el-button type="primary" link @click="handleBackToLogin">
-            <i class="i-ep-back mr-1" />
+            <el-icon class="mr-1">
+              <Back />
+            </el-icon>
             返回登录
           </el-button>
         </div>
 
         <div v-if="localStore.local.ACCOUNT_LIST.length === 0" class="text-center py-12">
           <div class="text-gray-400 text-lg mb-4">
-            <i class="i-ep-user text-4xl mb-2" />
+            <el-icon class="text-4xl mb-2">
+              <User />
+            </el-icon>
             <div>暂无保存的账号</div>
           </div>
           <CommonButton type="primary" @click="handleBackToLogin">
@@ -119,7 +130,9 @@ function formatLastLoginTime(timestamp?: number): string {
           >
             <div class="flex items-center flex-1">
               <div class="w-12 h-12 bg-blue-100 rounded-full flex-center mr-4">
-                <i class="i-ep-user text-blue-600 text-xl" />
+                <el-icon class="text-blue-600 text-xl">
+                  <User />
+                </el-icon>
               </div>
               <div class="flex-1">
                 <div class="font-medium text-gray-800 mb-1">{{ account.email }}</div>
@@ -135,15 +148,22 @@ function formatLastLoginTime(timestamp?: number): string {
                 link
                 @click.stop="handleDeleteAccount(account.email)"
               >
-                <i class="i-ep-delete" />
+                <el-icon>
+                  <Delete />
+                </el-icon>
               </el-button>
             </div>
           </div>
         </div>
 
         <div class="mt-6 pt-4 border-t border-gray-200">
-          <CommonButton w-full type="primary" plain @click="handleBackToLogin">
-            <i class="i-ep-plus mr-1" />
+          <CommonButton
+            w-full type="primary" plain
+            @click="handleBackToLogin"
+          >
+            <el-icon class="mr-1">
+              <Plus />
+            </el-icon>
             添加新账号
           </CommonButton>
         </div>
@@ -155,7 +175,7 @@ function formatLastLoginTime(timestamp?: number): string {
 <style scoped lang="scss">
 .account-list {
   .account-list-bg {
-    background-image: url('@/assets/image/login/bg.png');
+    background-image: url('@/assets/image/login/bg.webp');
     background-size: cover;
     background-position: center;
   }

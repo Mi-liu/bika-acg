@@ -62,24 +62,4 @@ declare global {
   }
 }
 
-// 扩展 Pinia 类型定义
-declare module 'pinia' {
-  export interface DefineStoreOptionsBase<S, Store> {
-    /**
-     * 多窗口同步配置
-     */
-    multiWindowSync?: MultiWindowSyncConfig
-  }
-
-  export interface PiniaCustomProperties {
-    // 同步相关的内部属性
-    _lastSyncTime?: number
-    _isSyncing?: boolean
-    _syncDisabled?: boolean
-    _localChanges?: Record<string, number>
-    _previousState?: any
-    _syncConfig?: MultiWindowSyncConfig
-  }
-}
-
 export {}

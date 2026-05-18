@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { FormInstance } from 'element-plus'
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { merge } from 'lodash-es'
 import { register } from '@/api/user'
@@ -6,7 +7,7 @@ import { register } from '@/api/user'
 const router = useRouter()
 const localStore = useLocalStoreHook()
 
-const formRef = useTemplateRef('formRef')
+const formRef = useTemplateRef<FormInstance>('formRef')
 
 const form = reactive({
   name: '',
@@ -142,7 +143,7 @@ async function handleRegister() {
 <style scoped lang="scss">
 .login {
   .login-bg {
-    background-image: url('@/assets/image/login/bg.png');
+    background-image: url('@/assets/image/login/bg.webp');
     background-size: cover;
     background-position: center;
     // filter: blur(10px);

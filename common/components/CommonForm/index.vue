@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T extends AnyObject = { [key: string]: any }">
+import type { FormInstance } from 'element-plus'
 import type { AnyObject } from '../../type'
 import type { CommonFormArrayItems, CommonFormProps } from './type'
 import { cloneDeep } from 'lodash-es'
@@ -46,7 +47,7 @@ watchEffect(() => {
   })
 })
 
-const elFormRef = useTemplateRef('elFormRef')
+const elFormRef = useTemplateRef<FormInstance>('elFormRef')
 
 async function handleSearch() {
   await elFormRef.value?.validate()

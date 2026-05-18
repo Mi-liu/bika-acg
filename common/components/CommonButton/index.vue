@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { CommonButtonProps } from './type'
 import { omit } from 'lodash-es'
-import { ref } from 'vue'
 
 defineOptions({
   name: 'CommonButton',
@@ -13,8 +12,6 @@ const buttonProps = omit(props, 'onClick')
 
 const modelValue = defineModel({ default: false })
 
-
-// 移除调试日志
 function handleClick(evt: MouseEvent) {
   if (props.onClick) {
     modelValue.value = true

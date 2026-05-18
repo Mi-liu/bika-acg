@@ -1,22 +1,29 @@
 import antfu from '@antfu/eslint-config'
 
-console.log('开始检查代码格式问题')
 export default antfu(
   {
-    ignores: ['node_modules', 'dist'],
+    ignores: ['node_modules', 'dist', '**/*.md'],
   },
   {
     rules: {
       // 禁止使用未定义的变量
-      'no-unused-vars': 'warn',
+      'no-unused-vars': 'off',
       // 禁止使用console
       'no-console': 'off',
       // 禁止使用async-promise-executor
       'no-async-promise-executor': 'off',
       // 禁止使用未定义的变量
-      'ts/no-unused-vars': 'warn',
+      'ts/no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
       // 禁止使用未定义的变量
-      'unused-imports/no-unused-vars': 'warn',
+      'unused-imports/no-unused-vars': ['warn', {
+        argsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      }],
       // 组件名必须为多单词
       'vue/multi-word-component-names': 'off',
       // 禁止使用未定义的模板

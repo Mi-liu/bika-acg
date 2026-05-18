@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ScrollbarInstance } from 'element-plus'
 import type { ComicOrderPage, PageData } from '@/api/comic'
 import { QuestionFilled, Setting } from '@element-plus/icons-vue'
 import { omit } from 'lodash-es'
@@ -30,7 +31,7 @@ const SCROLL_DEBOUNCE_DELAY = 50
 const PRELOAD_THRESHOLD_MULTIPLIER = 2
 
 const settingStore = useSettingStoreHook()
-const scrollbarRef = useTemplateRef('scrollbarRef')
+const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
 
 // 窗口尺寸常量
 const windowInnerWidth = window.innerWidth

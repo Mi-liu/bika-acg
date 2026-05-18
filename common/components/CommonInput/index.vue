@@ -1,18 +1,14 @@
 <script setup lang="ts">
 import type { CommonInputEmits, CommonInputProps } from './type'
 import { ElInput } from 'element-plus'
-import { h } from 'vue'
 
 const props = defineProps<CommonInputProps>()
 
-const emit = defineEmits<CommonInputEmits>()
+defineEmits<CommonInputEmits>()
 
 const attrs = useAttrs()
 
 const definModel = defineModel<string>()
-
-console.log('props', props)
-console.log('attrs', attrs)
 </script>
 
 <template>
@@ -29,6 +25,4 @@ console.log('attrs', attrs)
   </ElInput>
 </template>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -7,8 +7,6 @@ import Author from '@/components/Author/index.vue'
  * 我的关注列表页面
  */
 
-const router = useRouter()
-
 const localStore = useLocalStoreHook()
 
 /**

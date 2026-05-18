@@ -54,32 +54,42 @@ export default defineConfig({
       output: {
         // 手动分割代码块
         manualChunks: (id) => {
+          const normalizedId = id.replaceAll(path.sep, '/')
+
+          if (!normalizedId.includes('/node_modules/')) {
+            return
+          }
+
           // Vue 核心库
-          if (id.includes('vue') || id.includes('pinia') || id.includes('vue-router')) {
+          if (/\/node_modules\/(?:\.pnpm\/)?(?:@vue\/|vue\/|pinia\/|vue-router\/)/.test(normalizedId)) {
             return 'vue-vendor'
           }
           // Element Plus UI 库
-          if (id.includes('element-plus')) {
+          if (normalizedId.includes('/element-plus/')) {
             return 'element-plus'
           }
           // VueUse 工具库
-          if (id.includes('@vueuse/core')) {
+          if (normalizedId.includes('/@vueuse/core/')) {
             return 'vueuse'
           }
           // Vue Hooks Plus
-          if (id.includes('vue-hooks-plus')) {
+          if (normalizedId.includes('/vue-hooks-plus/')) {
             return 'vue-hooks-plus'
           }
           // 动画库
-          if (id.includes('gsap')) {
+          if (normalizedId.includes('/gsap/')) {
             return 'animation'
           }
           // 工具库
-          if (id.includes('dayjs') || id.includes('crypto-js') || id.includes('lodash-es')) {
+          if (
+            normalizedId.includes('/dayjs/')
+            || normalizedId.includes('/crypto-js/')
+            || normalizedId.includes('/lodash-es/')
+          ) {
             return 'utils'
           }
           // 图标库
-          if (id.includes('@element-plus/icons-vue')) {
+          if (normalizedId.includes('/@element-plus/icons-vue/')) {
             return 'icons'
           }
         },
