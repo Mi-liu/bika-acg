@@ -90,8 +90,8 @@ onBeforeUnmount(() => {
     class="draggable-categories"
     :class="{ 'draggable-enabled': draggable }"
     :disabled="!draggable"
-    :animation="260"
-    easing="cubic-bezier(0.22, 1, 0.36, 1)"
+    :animation="420"
+    easing="cubic-bezier(0.2, 0, 0, 1)"
     draggable=".draggable-item"
     :handle="handle"
     ghost-class="sortable-ghost"
@@ -100,13 +100,18 @@ onBeforeUnmount(() => {
     fallback-class="sortable-fallback"
     :force-fallback="true"
     :fallback-on-body="true"
-    :fallback-tolerance="3"
-    :swap-threshold="0.42"
-    :invert-swap="false"
+    :fallback-tolerance="6"
+    :swap-threshold="0.65"
+    :invert-swap="true"
+    :inverted-swap-threshold="0.35"
     :empty-insert-threshold="18"
     @start="handleDragStart"
     @end="handleDragEnd"
   >
+    <div class="static-item">
+      <slot name="prepend" />
+    </div>
+
     <div
       v-for="(category, index) in localCategories"
       :key="category.title"
@@ -133,6 +138,16 @@ onBeforeUnmount(() => {
 
 <style scoped lang="scss">
 .draggable-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  .static-item,
+  .draggable-item {
+    flex: 0 0 var(--draggable-category-width, 120px);
+    width: var(--draggable-category-width, 120px);
+  }
+
   &.draggable-enabled {
     .draggable-item {
       touch-action: pan-y;
@@ -143,7 +158,7 @@ onBeforeUnmount(() => {
       }
 
       &:hover:not(.is-sorting) {
-        transform: translateY(-1px);
+        transform: translateY(-0.5px);
       }
     }
   }
@@ -151,10 +166,10 @@ onBeforeUnmount(() => {
   .draggable-item {
     position: relative;
     transition:
-      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 180ms ease,
-      box-shadow 180ms ease,
-      filter 180ms ease;
+      transform 420ms cubic-bezier(0.2, 0, 0, 1),
+      opacity 260ms ease,
+      box-shadow 260ms ease,
+      filter 260ms ease;
     will-change: transform;
   }
 
@@ -185,9 +200,9 @@ onBeforeUnmount(() => {
     color: transparent;
     border: 1px dashed var(--el-color-primary) !important;
     border-radius: 8px;
-    background-color: var(--el-color-primary-light-9) !important;
-    box-shadow: inset 0 0 0 1px var(--el-color-primary-light-7) !important;
-    opacity: 0.72;
+    background-color: var(--el-fill-color-lighter) !important;
+    box-shadow: inset 0 0 0 1px var(--el-border-color-light) !important;
+    opacity: 0.6;
   }
 
   :global(.sortable-chosen) {
@@ -195,36 +210,36 @@ onBeforeUnmount(() => {
   }
 
   :global(.sortable-chosen > *) {
-    border-color: var(--el-color-primary) !important;
-    background-color: var(--el-color-primary-light-9) !important;
-    box-shadow: 0 6px 18px rgba(64, 158, 255, 0.18) !important;
+    border-color: var(--el-border-color) !important;
+    background-color: var(--el-bg-color) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   }
 
   :global(.sortable-drag) {
     opacity: 1;
-    transform: scale(1.04);
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
+    transform: scale(1.015);
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12));
     border-radius: 8px;
     z-index: 9999;
   }
 
   :global(.sortable-drag > *) {
-    border-color: var(--el-color-primary) !important;
+    border-color: var(--el-border-color) !important;
     background-color: var(--el-bg-color) !important;
-    box-shadow: 0 10px 24px rgba(64, 158, 255, 0.2) !important;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12) !important;
   }
 
   :global(.sortable-fallback) {
     opacity: 1;
-    transform: scale(1.04);
-    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
+    transform: scale(1.015);
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12));
     border-radius: 8px;
   }
 
   :global(.sortable-fallback > *) {
-    border-color: var(--el-color-primary) !important;
+    border-color: var(--el-border-color) !important;
     background-color: var(--el-bg-color) !important;
-    box-shadow: 0 10px 24px rgba(64, 158, 255, 0.2) !important;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12) !important;
   }
 }
 
