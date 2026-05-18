@@ -25,6 +25,14 @@ function handleCategoryClick(title: string) {
   })
 }
 
+function handleCategoryButtonClick(title: string, draggable?: boolean) {
+  if (draggable) {
+    return
+  }
+
+  handleCategoryClick(title)
+}
+
 function handleComicClick(id: string) {
   const to = router.resolve({
     path: `/comic/detail/${id}`,
@@ -70,7 +78,7 @@ function handleRandomRefresh() {
           :icon="Sort"
           size="small"
           class="drag-toggle-btn"
-          :class="{ 'active': isDragMode }"
+          :class="{ active: isDragMode }"
           @click="toggleDragMode"
         >
           <span class="btn-text">{{ isDragMode ? '完成排序' : '拖拽排序' }}</span>
@@ -98,18 +106,16 @@ function handleRandomRefresh() {
               class="w-full category-button"
               :class="{ 'draggable-button': draggable }"
               plain
-              @click="handleCategoryClick(category.title)"
+              @click="handleCategoryButtonClick(category.title, draggable)"
             >
               <el-icon v-if="draggable" class="drag-handle">
-                <svg viewBox="0 0 24 24" width="14" height="14">
-                  <path fill="currentColor" d="M9 3h2v2H9V3zm0 4h2v2H9V7zm0 4h2v2H9v-2zm0 4h2v2H9v-2zm0 4h2v2H9v-2zm4-16h2v2h-2V3zm0 4h2v2h-2V7zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2zm0 4h2v2h-2v-2z"/>
-                </svg>
+                <Sort />
               </el-icon>
               <span class="category-title">{{ category.title }}</span>
               <div v-if="draggable" class="drag-indicator">
-                <div class="drag-dot"></div>
-                <div class="drag-dot"></div>
-                <div class="drag-dot"></div>
+                <div class="drag-dot" />
+                <div class="drag-dot" />
+                <div class="drag-dot" />
               </div>
             </el-button>
           </template>
@@ -172,40 +178,29 @@ function handleRandomRefresh() {
         align-items: center;
         justify-content: center;
         position: relative;
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        min-height: 32px;
+        transition:
+          border-color 160ms ease,
+          background-color 160ms ease,
+          box-shadow 160ms ease;
         border-radius: 8px;
         overflow: hidden;
 
         &.draggable-button {
           padding: 8px 12px;
-          background: linear-gradient(135deg, var(--el-bg-color) 0%, var(--el-color-primary-light-9) 100%);
+          background-color: var(--el-color-primary-light-9);
           border: 1px solid var(--el-color-primary-light-7);
           cursor: grab;
+          user-select: none;
 
           &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             border-color: var(--el-color-primary);
-            background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-color-primary-light-8) 100%);
+            background-color: var(--el-color-primary-light-8);
+            box-shadow: 0 3px 10px rgba(64, 158, 255, 0.12);
           }
 
           &:active {
             cursor: grabbing;
-          }
-
-          &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.6s;
-          }
-
-          &:hover::before {
-            left: 100%;
           }
         }
 
@@ -214,8 +209,8 @@ function handleRandomRefresh() {
           left: 6px;
           top: 50%;
           transform: translateY(-50%);
-          opacity: 0.4;
-          transition: all 0.3s ease;
+          opacity: 0.55;
+          transition: opacity 160ms ease;
           color: var(--el-color-primary);
           z-index: 1;
         }
@@ -224,7 +219,6 @@ function handleRandomRefresh() {
           flex: 1;
           text-align: center;
           font-weight: 500;
-          transition: all 0.3s ease;
           position: relative;
           z-index: 1;
         }
@@ -237,15 +231,14 @@ function handleRandomRefresh() {
           display: flex;
           flex-direction: column;
           gap: 2px;
-          opacity: 0.4;
-          transition: all 0.3s ease;
+          opacity: 0.55;
+          transition: opacity 160ms ease;
 
           .drag-dot {
             width: 3px;
             height: 3px;
             background: var(--el-color-primary);
             border-radius: 50%;
-            transition: all 0.3s ease;
           }
         }
 
@@ -257,7 +250,6 @@ function handleRandomRefresh() {
 
           .drag-indicator .drag-dot {
             background: var(--el-color-primary);
-            transform: scale(1.2);
           }
         }
       }
@@ -267,14 +259,12 @@ function handleRandomRefresh() {
   .drag-toggle-btn {
     position: relative;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-    .btn-text {
-      transition: all 0.3s ease;
-    }
+    transition:
+      transform 160ms ease,
+      box-shadow 160ms ease;
 
     &.active {
-      animation: pulse-success 2s infinite;
+      box-shadow: 0 0 0 3px var(--el-color-primary-light-8);
 
       .btn-text {
         font-weight: 600;
@@ -283,22 +273,7 @@ function handleRandomRefresh() {
 
     &:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      transition: left 0.6s;
-    }
-
-    &:hover::before {
-      left: 100%;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
     }
   }
 
@@ -306,19 +281,6 @@ function handleRandomRefresh() {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px 10px;
-  }
-}
-
-// 成功脉冲动画
-@keyframes pulse-success {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--el-color-primary-rgb), 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(var(--el-color-primary-rgb), 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(var(--el-color-primary-rgb), 0);
   }
 }
 </style>

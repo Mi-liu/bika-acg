@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SortableEvent } from 'vue-draggable-plus'
 import type { Categories } from '@/api/comic'
 import { VueDraggable } from 'vue-draggable-plus'
 
@@ -7,6 +8,8 @@ const props = defineProps<{
   categories: Categories['categories']
   /** 是否启用拖拽排序 */
   draggable?: boolean
+  /** 拖拽手柄选择器，不传时整项可拖拽 */
+  handle?: string
 }>()
 
 const emit = defineEmits<{
@@ -18,6 +21,10 @@ const localStore = useLocalStoreHook()
 
 // 本地分类数据，用于拖拽排序
 const localCategories = ref<Categories['categories']>([])
+const isSorting = ref(false)
+const isDropSettling = ref(false)
+const dragStartOrder = ref('')
+let settleTimer: ReturnType<typeof window.setTimeout> | undefined
 
 // 监听 props.categories 变化，更新本地数据
 watch(
@@ -30,18 +37,51 @@ watch(
   { immediate: true },
 )
 
-/**
- * 处理拖拽结束事件
- */
-function handleDragEnd() {
-  // 保存到本地存储
+function getOrderSnapshot() {
+  return localCategories.value.map(category => category.title).join('\u001F')
+}
+
+function handleDragStart() {
+  window.clearTimeout(settleTimer)
+  isSorting.value = true
+  isDropSettling.value = true
+  dragStartOrder.value = getOrderSnapshot()
+  document.body.classList.add('sortable-drag-active')
+}
+
+function handleDragEnd(event: SortableEvent) {
+  isSorting.value = false
+  document.body.classList.remove('sortable-drag-active')
+
+  settleTimer = window.setTimeout(() => {
+    isDropSettling.value = false
+  }, 160)
+
+  const oldIndex = event.oldDraggableIndex ?? event.oldIndex
+  const newIndex = event.newDraggableIndex ?? event.newIndex
+  const isSameIndex = oldIndex !== undefined && newIndex !== undefined && oldIndex === newIndex
+  if (isSameIndex || dragStartOrder.value === getOrderSnapshot()) {
+    return
+  }
+
   localStore.updateCategoriesOrder(localCategories.value)
-
-  // 触发顺序改变事件
   emit('orderChange', localCategories.value)
-
   ElMessage.success('分类顺序已更新')
 }
+
+function handleItemClick(event: MouseEvent) {
+  if (!props.draggable || (!isSorting.value && !isDropSettling.value)) {
+    return
+  }
+
+  event.preventDefault()
+  event.stopPropagation()
+}
+
+onBeforeUnmount(() => {
+  window.clearTimeout(settleTimer)
+  document.body.classList.remove('sortable-drag-active')
+})
 </script>
 
 <template>
@@ -50,27 +90,37 @@ function handleDragEnd() {
     class="draggable-categories"
     :class="{ 'draggable-enabled': draggable }"
     :disabled="!draggable"
-    :animation="300"
+    :animation="260"
+    easing="cubic-bezier(0.22, 1, 0.36, 1)"
+    draggable=".draggable-item"
+    :handle="handle"
     ghost-class="sortable-ghost"
     chosen-class="sortable-chosen"
     drag-class="sortable-drag"
     fallback-class="sortable-fallback"
     :force-fallback="true"
-    :swap-threshold="0.65"
+    :fallback-on-body="true"
+    :fallback-tolerance="3"
+    :swap-threshold="0.42"
     :invert-swap="false"
+    :empty-insert-threshold="18"
+    @start="handleDragStart"
     @end="handleDragEnd"
   >
     <div
       v-for="(category, index) in localCategories"
       :key="category.title"
       class="draggable-item"
+      :class="{ 'is-sorting': isSorting }"
       :data-index="index"
+      @click.capture="handleItemClick"
     >
       <!-- 默认插槽：让外部自定义每个分类项的内容 -->
       <slot
         :category="category"
         :index="index"
         :draggable="draggable"
+        :is-sorting="isSorting"
       >
         <!-- 默认内容 -->
         <div class="default-category-item">
@@ -85,41 +135,27 @@ function handleDragEnd() {
 .draggable-categories {
   &.draggable-enabled {
     .draggable-item {
+      touch-action: pan-y;
       cursor: grab;
 
       &:active {
         cursor: grabbing;
       }
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      &:hover:not(.is-sorting) {
+        transform: translateY(-1px);
       }
     }
   }
 
   .draggable-item {
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      pointer-events: none;
-      border-radius: inherit;
-      z-index: -1;
-    }
-
-    &:hover::before {
-      opacity: 1;
-    }
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 180ms ease,
+      box-shadow 180ms ease,
+      filter 180ms ease;
+    will-change: transform;
   }
 
   .default-category-item {
@@ -128,94 +164,67 @@ function handleDragEnd() {
     border-radius: 4px;
     background: var(--el-bg-color);
     text-align: center;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     position: relative;
     overflow: hidden;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease;
 
     &:hover {
       border-color: var(--el-color-primary);
-      background: var(--el-color-primary-light-9);
-      transform: translateY(-1px);
+      background-color: var(--el-color-primary-light-9);
     }
   }
 
-  // 美化的 Sortable 全局样式
   :global(.sortable-ghost) {
-    opacity: 0.3;
-    background: linear-gradient(135deg, var(--el-color-primary-light-9) 0%, var(--el-color-primary-light-8) 100%);
-    border: 2px dashed var(--el-color-primary);
-    border-radius: 8px;
-    transform: scale(0.95);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+  }
 
-    &::after {
-      content: '放置到这里';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: var(--el-color-primary);
-      font-size: 12px;
-      font-weight: 500;
-      white-space: nowrap;
-    }
+  :global(.sortable-ghost > *) {
+    color: transparent;
+    border: 1px dashed var(--el-color-primary) !important;
+    border-radius: 8px;
+    background-color: var(--el-color-primary-light-9) !important;
+    box-shadow: inset 0 0 0 1px var(--el-color-primary-light-7) !important;
+    opacity: 0.72;
   }
 
   :global(.sortable-chosen) {
-    transform: scale(1.08) rotate(2deg);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--el-bg-color) 0%, var(--el-color-primary-light-9) 100%);
-    border: 2px solid var(--el-color-primary);
+    z-index: 3;
+  }
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, var(--el-color-primary), var(--el-color-primary-light-3));
-      border-radius: 8px;
-      z-index: -1;
-      animation: pulse 2s infinite;
-    }
+  :global(.sortable-chosen > *) {
+    border-color: var(--el-color-primary) !important;
+    background-color: var(--el-color-primary-light-9) !important;
+    box-shadow: 0 6px 18px rgba(64, 158, 255, 0.18) !important;
   }
 
   :global(.sortable-drag) {
-    transform: rotate(8deg) scale(1.1);
-    opacity: 0.9;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    opacity: 1;
+    transform: scale(1.04);
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
     border-radius: 8px;
-    background: var(--el-bg-color);
-    border: 2px solid var(--el-color-primary);
     z-index: 9999;
   }
 
-  :global(.sortable-fallback) {
-    opacity: 0.9;
-    background: linear-gradient(135deg, var(--el-color-primary-light-8) 0%, var(--el-color-primary-light-7) 100%);
-    border: 2px solid var(--el-color-primary);
-    border-radius: 8px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    transform: scale(1.05);
+  :global(.sortable-drag > *) {
+    border-color: var(--el-color-primary) !important;
+    background-color: var(--el-bg-color) !important;
+    box-shadow: 0 10px 24px rgba(64, 158, 255, 0.2) !important;
   }
-}
 
-// 脉冲动画
-@keyframes pulse {
-  0% {
-    opacity: 0.7;
-    transform: scale(1);
+  :global(.sortable-fallback) {
+    opacity: 1;
+    transform: scale(1.04);
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.18));
+    border-radius: 8px;
   }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.02);
-  }
-  100% {
-    opacity: 0.7;
-    transform: scale(1);
+
+  :global(.sortable-fallback > *) {
+    border-color: var(--el-color-primary) !important;
+    background-color: var(--el-bg-color) !important;
+    box-shadow: 0 10px 24px rgba(64, 158, 255, 0.2) !important;
   }
 }
 
@@ -225,6 +234,15 @@ function handleDragEnd() {
 
   * {
     cursor: grabbing !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draggable-categories {
+    .draggable-item,
+    .default-category-item {
+      transition-duration: 0.01ms;
+    }
   }
 }
 </style>
