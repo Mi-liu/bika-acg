@@ -22,10 +22,14 @@ form.email = localStore.local.ACCOUNT_INFO.email
 form.password = localStore.local.ACCOUNT_INFO.password
 
 const isLoading = ref(false)
-console.log(decodeURIComponent(props.redirect))
-function handleLogin() {
+async function handleLogin() {
+  if (isLoading.value) {
+    return
+  }
+
   isLoading.value = true
-  login(form).then((res) => {
+  try {
+    const res = await login(form)
     userStore.token = res.token
     if (remember.value) {
       localStore.local.ACCOUNT_INFO = { ...form }
@@ -36,14 +40,18 @@ function handleLogin() {
       localStore.local.ACCOUNT_INFO = { email: '', password: '' }
     }
     if (props.redirect) {
-      router.replace(decodeURIComponent(props.redirect))
+      await router.replace(decodeURIComponent(props.redirect))
     }
     else {
-      router.push('/')
+      await router.push('/')
     }
-  }).finally(() => {
+  }
+  catch {
+    // 请求层会统一展示错误消息，这里只负责收尾 loading 状态。
+  }
+  finally {
     isLoading.value = false
-  })
+  }
 }
 </script>
 
@@ -81,7 +89,7 @@ function handleLogin() {
             </el-form-item>
             <el-form-item>
               <CommonButton
-                w-full type="primary" :loading="isLoading"
+                w-full type="primary"
                 @click="handleLogin"
               >
                 登录

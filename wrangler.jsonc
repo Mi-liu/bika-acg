@@ -1,0 +1,8 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "bika-acg",
+  "compatibility_date": "2026-05-18",
+  "assets": {
+    "directory": "./dist"
+  }
+}

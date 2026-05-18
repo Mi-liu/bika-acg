@@ -68,12 +68,17 @@ export function getsignature(url: string, ts: string, method: MethodType) {
 /**
  * 生成请求头对象
  */
-export function createHeader(pathname: string, method: MethodType) {
+interface CreateHeaderOptions {
+  auth?: boolean
+}
+
+export function createHeader(pathname: string, method: MethodType, options: CreateHeaderOptions = {}) {
   const userStroe = useUserStoreHook()
   const settingStore = useSettingStoreHook()
+  const { auth = true } = options
 
   const setTime = getTimeOnece()
-  const header = {
+  const header: Record<string, string | number> = {
     'app-channel': 1,
     'app-uuid': 'webUUID',
     'Accept': 'application/vnd.picacomic.com.v1+json',
@@ -83,7 +88,11 @@ export function createHeader(pathname: string, method: MethodType) {
     'nonce': getNonce(),
     'image-quality': settingStore.comic.imageQuality,
     'signature': getsignature(pathname, setTime, method),
-    'authorization': userStroe.token,
   }
+
+  if (auth && userStroe.token) {
+    header.authorization = userStroe.token
+  }
+
   return header
 }

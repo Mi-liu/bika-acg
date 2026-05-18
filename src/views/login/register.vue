@@ -108,7 +108,7 @@ async function handleRegister() {
               <div class="w-full select-none flex justify-end">
                 <div class="flex">
                   已有账号？<el-link
-                    type="primary" href="https://www.baidu.com" target="_blank"
+                    type="primary" href="/#/login/index"
                     underline="never"
                   >
                     点击登录

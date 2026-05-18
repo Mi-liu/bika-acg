@@ -15,16 +15,19 @@ const props = defineProps<{
  * @param account 账号信息
  */
 function handleAccountLogin(account: { email: string, password: string }) {
-  const form = { ...account }
-  
+  const form = {
+    email: account.email,
+    password: account.password,
+  }
+
   login(form).then((res) => {
     userStore.token = res.token
-    
+
     // 更新当前账号信息
     localStore.local.ACCOUNT_INFO = { ...form }
     // 更新账号列表中的最后登录时间
     localStore.addOrUpdateAccount({ ...form })
-    
+
     ElMessage.success(`欢迎回来，${account.email}`)
     
     if (props.redirect) {
@@ -68,18 +71,18 @@ function handleBackToLogin() {
  */
 function formatLastLoginTime(timestamp?: number): string {
   if (!timestamp) return '从未登录'
-  
+
   const now = Date.now()
   const diff = now - timestamp
   const minutes = Math.floor(diff / (1000 * 60))
   const hours = Math.floor(diff / (1000 * 60 * 60))
   const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-  
+
   if (minutes < 1) return '刚刚'
   if (minutes < 60) return `${minutes}分钟前`
   if (hours < 24) return `${hours}小时前`
   if (days < 30) return `${days}天前`
-  
+
   return new Date(timestamp).toLocaleDateString()
 }
 </script>
@@ -96,7 +99,7 @@ function formatLastLoginTime(timestamp?: number): string {
             返回登录
           </el-button>
         </div>
-        
+
         <div v-if="localStore.local.ACCOUNT_LIST.length === 0" class="text-center py-12">
           <div class="text-gray-400 text-lg mb-4">
             <i class="i-ep-user text-4xl mb-2" />
@@ -106,7 +109,7 @@ function formatLastLoginTime(timestamp?: number): string {
             去登录
           </CommonButton>
         </div>
-        
+
         <div v-else class="space-y-3">
           <div
             v-for="account in localStore.local.ACCOUNT_LIST"
@@ -137,7 +140,7 @@ function formatLastLoginTime(timestamp?: number): string {
             </div>
           </div>
         </div>
-        
+
         <div class="mt-6 pt-4 border-t border-gray-200">
           <CommonButton w-full type="primary" plain @click="handleBackToLogin">
             <i class="i-ep-plus mr-1" />
@@ -156,7 +159,7 @@ function formatLastLoginTime(timestamp?: number): string {
     background-size: cover;
     background-position: center;
   }
-  
+
   .account-item {
     &:hover {
       transform: translateY(-1px);
