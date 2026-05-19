@@ -88,7 +88,7 @@ onBeforeUnmount(() => {
   <VueDraggable
     v-model="localCategories"
     class="draggable-categories"
-    :class="{ 'draggable-enabled': draggable }"
+    :class="{ 'draggable-enabled': draggable, 'has-drag-handle': draggable && handle }"
     :disabled="!draggable"
     :animation="420"
     easing="cubic-bezier(0.2, 0, 0, 1)"
@@ -159,6 +159,16 @@ onBeforeUnmount(() => {
 
       &:hover:not(.is-sorting) {
         transform: translateY(-0.5px);
+      }
+    }
+  }
+
+  &.has-drag-handle {
+    .draggable-item {
+      cursor: default;
+
+      &:active {
+        cursor: default;
       }
     }
   }
