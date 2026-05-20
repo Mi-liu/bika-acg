@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ScrollbarInstance } from 'element-plus'
 import type { ComicOrderPage, PageData } from '@/api/comic'
-import { QuestionFilled, Setting } from '@element-plus/icons-vue'
+import { CircleCloseFilled, Loading, QuestionFilled, Setting } from '@element-plus/icons-vue'
 import { omit } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
 import { getComicPages } from '@/api/comic'
@@ -33,9 +33,7 @@ const PRELOAD_THRESHOLD_MULTIPLIER = 2
 const settingStore = useSettingStoreHook()
 const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
 
-// 窗口尺寸常量
-const windowInnerWidth = window.innerWidth
-const windowInnerHeight = window.innerHeight
+const { width: windowInnerWidth, height: windowInnerHeight } = useWindowSize()
 
 // 使用 VueUse 的 useDocumentVisibility 监听页面可见性
 const documentVisibility = useDocumentVisibility()
@@ -155,7 +153,7 @@ const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => 
   const distanceFromBottom = scrollHeight - scrollTop - clientHeight
 
   // 预加载阈值：当距离底部小于2个屏幕高度时开始加载下一页
-  const preloadThreshold = windowInnerHeight * PRELOAD_THRESHOLD_MULTIPLIER
+  const preloadThreshold = windowInnerHeight.value * PRELOAD_THRESHOLD_MULTIPLIER
 
   // 检查是否需要加载下一页
   const shouldLoadNextPage
@@ -331,7 +329,7 @@ getChapterPages(1)
 </script>
 
 <template>
-  <div class="flex flex-col bg-[--el-text-color-primary] h-screen">
+  <div class="flex flex-col bg-[--el-text-color-primary] h-dvh">
     <!-- 顶部导航栏 -->
     <div class="h-50px flex justify-between items-center p-3 bg-[--el-color-black] color-[--el-color-white] border-b">
       <!-- 章节标题 -->
@@ -340,12 +338,16 @@ getChapterPages(1)
         <div class="text-sm opacity-75">共{{ maxChapterNum }}章</div>
         <!-- 加载状态指示器 -->
         <div v-if="loadingState.isLoadingNextPage" class="text-sm text-blue-400 flex items-center gap-1">
-          <span class="animate-spin">⏳</span>
+          <el-icon class="is-loading">
+            <Loading />
+          </el-icon>
           加载中...
         </div>
         <!-- 错误状态指示器 -->
         <div v-if="loadingState.hasError" class="text-sm text-red-400 flex items-center gap-1">
-          <span>❌</span>
+          <el-icon>
+            <CircleCloseFilled />
+          </el-icon>
           加载失败
           <el-button size="small" text @click="retryLoad">重试</el-button>
         </div>
@@ -367,16 +369,20 @@ getChapterPages(1)
         </el-button>
 
         <!-- 设置按钮 -->
-        <el-icon class="cursor-pointer hover:text-blue-300 ml-2" @click="drawer = true">
-          <Setting />
-        </el-icon>
+        <el-button
+          text :icon="Setting" aria-label="打开阅读设置"
+          @click="drawer = true"
+        />
       </div>
     </div>
 
     <!-- 内容区域 -->
     <div class="flex-1 overflow-hidden" @contextmenu.prevent="handleContextMenu">
       <el-scrollbar ref="scrollbarRef" class="h-full" @scroll="handleScroll">
-        <div class="mx-auto" :style="{ width: `${settingStore.comic.comicImageWidth}px` }">
+        <div
+          class="mx-auto w-full"
+          :style="{ maxWidth: `${settingStore.comic.comicImageWidth}px` }"
+        >
           <!-- 图片列表 -->
           <Image
             v-for="(item, index) in comicImages" :key="item.id || index" :src="item.path"
