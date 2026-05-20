@@ -3,12 +3,15 @@ import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
-const backStack = ref<string[]>([])
-const forwardStack = ref<string[]>([])
-const pendingHistoryNavigation = ref(false)
+const canGoBack = ref(false)
+const canGoForward = ref(false)
 
-const canGoBack = computed(() => backStack.value.length > 0)
-const canGoForward = computed(() => forwardStack.value.length > 0)
+function syncHistoryState() {
+  const state = window.history.state as Record<string, unknown> | null
+
+  canGoBack.value = typeof state?.back === 'string'
+  canGoForward.value = typeof state?.forward === 'string'
+}
 
 const breadcrumbs = computed(() => {
   const matched = route.matched
@@ -27,55 +30,22 @@ const breadcrumbs = computed(() => {
   })
 })
 
-watch(
-  () => route.fullPath,
-  (to, from) => {
-    if (!from || to === from) {
-      return
-    }
+watch(() => route.fullPath, () => nextTick(syncHistoryState), { immediate: true })
 
-    if (pendingHistoryNavigation.value) {
-      pendingHistoryNavigation.value = false
-      return
-    }
-
-    backStack.value.push(from)
-    forwardStack.value = []
-  },
-)
-
-async function goBack() {
+function goBack() {
   if (!canGoBack.value) {
     return
   }
 
-  const from = route.fullPath
-  const target = backStack.value.at(-1)
-  if (!target) {
-    return
-  }
-
-  pendingHistoryNavigation.value = true
-  await router.push(target)
-  backStack.value.pop()
-  forwardStack.value.push(from)
+  router.go(-1)
 }
 
-async function goForward() {
+function goForward() {
   if (!canGoForward.value) {
     return
   }
 
-  const from = route.fullPath
-  const target = forwardStack.value.at(-1)
-  if (!target) {
-    return
-  }
-
-  pendingHistoryNavigation.value = true
-  await router.push(target)
-  forwardStack.value.pop()
-  backStack.value.push(from)
+  router.go(1)
 }
 </script>
 
