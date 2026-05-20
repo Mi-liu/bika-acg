@@ -30,10 +30,8 @@ function handleCategoryButtonClick(event: MouseEvent, title: string) {
   handleCategoryClick(title)
 }
 
-function handleComicClick(id: string) {
-  router.push({
-    path: `/comic/detail/${id}`,
-  })
+function getComicPath(id: string) {
+  return `/comic/detail/${id}`
 }
 
 /**
@@ -124,15 +122,15 @@ function handleRandomRefresh() {
             </template>
           </el-skeleton>
 
-          <div
-            v-for="comic in randomComics" :key="comic._id" class="random-comic-item cursor-pointer"
-            @click="handleComicClick(comic._id)"
+          <RouterLink
+            v-for="comic in randomComics" :key="comic._id" class="random-comic-item"
+            :to="getComicPath(comic._id)"
           >
-            <Image :src="getImageUrl(comic.thumb.path)" />
+            <Image :src="getImageUrl(comic.thumb.path)" :alt="comic.title" />
             <div class="random-comic-item-title line-clamp-2">
               {{ comic.title }}
             </div>
-          </div>
+          </RouterLink>
         </div>
       </div>
     </div>
@@ -228,6 +226,21 @@ function handleRandomRefresh() {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px 10px;
+
+    .random-comic-item {
+      color: inherit;
+      text-decoration: none;
+      border-radius: 8px;
+      transition:
+        color 160ms ease,
+        transform 160ms ease;
+
+      &:hover,
+      &:focus-visible {
+        color: var(--el-color-primary);
+        transform: translateY(-2px);
+      }
+    }
   }
 }
 </style>

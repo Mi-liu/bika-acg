@@ -101,8 +101,7 @@ function handleLikeClick() {
     })
 }
 
-function handleEpsClick(index: number) {
-  const chapterNum = index + 1
+function handleEpsClick(chapterNum: number) {
   const maxChapter = epsData.value.docs.length
   router.push({
     path: `/comic/chapter/${props.id}`,
@@ -117,8 +116,8 @@ function handleEpsClick(index: number) {
  * 处理推荐漫画点击事件
  * @param comicId 漫画ID
  */
-function handleRecommendationClick(comicId: string) {
-  router.push(`/comic/detail/${comicId}`)
+function getComicDetailPath(comicId: string) {
+  return `/comic/detail/${comicId}`
 }
 </script>
 
@@ -184,7 +183,7 @@ function handleRecommendationClick(comicId: string) {
 
         <!-- 实际内容 -->
         <template v-else>
-          <Image :src="getImageUrl(data?.thumb.path!)" />
+          <Image :src="getImageUrl(data?.thumb.path!)" :alt="data?.title" />
           <div class="flex-1 flex flex-col justify-between ml overflow-hidden">
             <div class="flex-1 overflow-hidden flex flex-col">
               <!-- 标题和基本信息区域 -->
@@ -212,7 +211,7 @@ function handleRecommendationClick(comicId: string) {
                   </el-tag>
                 </div>
                 <!-- 标签 -->
-                <div class="flex flex-wrap gap-10px cursor-pointer mt">
+                <div class="flex flex-wrap gap-10px mt">
                   <el-tag v-for="item in data?.tags" :key="item">
                     {{ item }}
                   </el-tag>
@@ -220,7 +219,7 @@ function handleRecommendationClick(comicId: string) {
               </div>
             </div>
             <div class="flex mt">
-              <el-button type="primary" :icon="Reading" @click="handleEpsClick(0)">开始阅读</el-button>
+              <el-button type="primary" :icon="Reading" @click="handleEpsClick(1)">开始阅读</el-button>
               <CommonButton v-if="data?.isFavourite" @click="handleFavoritesClick">
                 <el-icon class="mr-1" size="18" color="var(--el-color-warning-light-3)">
                   <StarFilled />
@@ -348,7 +347,7 @@ function handleRecommendationClick(comicId: string) {
           <div class="mt3 flex flex-wrap gap-10px">
             <el-button
               v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index" class="ml-0!"
-              @click="handleEpsClick(index)"
+              @click="handleEpsClick(epsData.docs.length - index)"
             >
               {{ item.title }}
             </el-button>
@@ -387,10 +386,10 @@ function handleRecommendationClick(comicId: string) {
 
         <!-- 推荐列表内容 -->
         <div v-else-if="recommendationData && recommendationData.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          <div
+          <RouterLink
             v-for="comic in recommendationData" :key="comic._id"
-            class="group cursor-pointer rounded-2 overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105"
-            @click="handleRecommendationClick(comic._id)"
+            class="recommendation-card group rounded-2 overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105"
+            :to="getComicDetailPath(comic._id)"
           >
             <!-- 封面图 -->
             <div class="relative w-full aspect-3/4 overflow-hidden rounded-2">
@@ -413,7 +412,7 @@ function handleRecommendationClick(comicId: string) {
                 {{ comic.title }}
               </h3>
             </div>
-          </div>
+          </RouterLink>
         </div>
 
         <!-- 无推荐内容 -->
@@ -435,5 +434,10 @@ function handleRecommendationClick(comicId: string) {
     font-weight: bold !important;
     color: var(--el-color-primary) !important;
   }
+}
+
+.recommendation-card {
+  color: inherit;
+  text-decoration: none;
 }
 </style>

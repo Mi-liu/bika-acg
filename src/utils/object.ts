@@ -40,7 +40,7 @@ export function objectToUrlParams(obj: Record<string, any>, url = ''): string {
     }
     else {
       // 如果是基本类型，直接添加到 params 数组
-      params.push(`${prefix}=${value}`)
+      params.push(`${encodeURIComponent(prefix)}=${encodeURIComponent(String(value))}`)
     }
   }
 

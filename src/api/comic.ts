@@ -233,7 +233,7 @@ export function getComicPages(id: string, order: number, page: number, forceRefr
   const params = {
     page,
     // 将画质作为请求参数，确保不同画质有不同的请求
-    settingStore: settingStore.comic.imageQuality,
+    imageQuality: settingStore.comic.imageQuality,
     ...(forceRefresh ? { t: Date.now() } : {}),
   }
 

@@ -107,8 +107,16 @@ async function handleCloseTag(tag: string) {
   }
 }
 
+function getComicPath(item: Comic) {
+  return `/comic/detail/${item._id}`
+}
+
+function getComicLabel(item: Comic) {
+  return `查看漫画 ${item.title}`
+}
+
 function handleComicClick(item: Comic) {
-  router.push(`/comic/detail/${item._id}`)
+  router.push(getComicPath(item))
 }
 
 function handleAddToLater(item: Comic) {
@@ -234,34 +242,41 @@ function formatNumber(num?: number): string {
         >
           <div
             v-for="item in comics" :key="item._id"
-            class="rounded-2 overflow-hidden cursor-pointer p-3 shadow-[--el-box-shadow]"
+            class="comic-card block rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
+            role="link"
+            tabindex="0"
+            :aria-label="getComicLabel(item)"
             @click="handleComicClick(item)"
+            @keydown.enter="handleComicClick(item)"
+            @keydown.space.prevent="handleComicClick(item)"
           >
             <!-- 封面图 -->
             <div class="relative">
-              <Image :src="getImageUrl(item.thumb.path)" />
+              <Image :src="getImageUrl(item.thumb.path)" :alt="item.title" />
               <el-tooltip
                 class="box-item" effect="dark"
                 :content="arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id') ? '从稍后再看中移除' : '添加到稍后再看'"
                 placement="top-start"
               >
-                <div
+                <button
                   v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
-                  class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                  type="button"
+                  class="absolute top-2 right-2 w-44px h-44px bg-[--el-color-info] rounded-1 flex-center"
                   @click.stop="handleAddToLater(item)"
                 >
                   <el-icon class="text-[--el-color-white]!">
                     <Timer />
                   </el-icon>
-                </div>
-                <div
-                  v-else class="absolute top-2 right-2 w-30px h-30px bg-[--el-color-info] rounded-1 flex-center"
+                </button>
+                <button
+                  v-else class="absolute top-2 right-2 w-44px h-44px bg-[--el-color-info] rounded-1 flex-center"
+                  type="button"
                   @click.stop="handleRemoveFromLater(item)"
                 >
                   <el-icon class="text-[--el-color-white]!">
                     <Minus />
                   </el-icon>
-                </div>
+                </button>
               </el-tooltip>
             </div>
             <!-- 标题 -->
@@ -314,5 +329,23 @@ function formatNumber(num?: number): string {
 </template>
 
 <style lang="scss" scoped>
-/* 自定义样式可以在这里添加 */
+.comic-card {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    box-shadow 160ms ease,
+    transform 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    box-shadow: var(--el-box-shadow-light);
+    transform: translateY(-2px);
+  }
+}
+
+button {
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
 </style>
