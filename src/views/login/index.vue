@@ -60,9 +60,9 @@ async function handleLogin() {
   <div class="login relative size-full flex-center">
     <div class="login-bg absolute inset-0" />
     <div class="container relative size-full flex-center">
-      <div class="w-700px bg-white rounded-lg flex p-10 items-center">
-        <img class="w-200px" src="@/assets/image/login/logo.png" alt="">
-        <div class="flex-1 pt-15px ml-5">
+      <div class="w-[calc(100%-32px)] max-w-700px bg-white rounded-lg flex flex-col sm:flex-row p-6 sm:p-10 items-center">
+        <img class="w-140px sm:w-200px" src="@/assets/image/login/logo.png" alt="哔咔漫画">
+        <div class="w-full flex-1 pt-15px sm:ml-5">
           <el-form>
             <el-form-item>
               <el-input v-model="form.email" placeholder="账号" />
@@ -74,7 +74,7 @@ async function handleLogin() {
               />
             </el-form-item>
             <el-form-item>
-              <div class="w-full select-none flex justify-between">
+              <div class="w-full select-none flex flex-col gap-2 sm:flex-row sm:justify-between">
                 <el-checkbox v-model="remember">
                   记住密码
                 </el-checkbox>

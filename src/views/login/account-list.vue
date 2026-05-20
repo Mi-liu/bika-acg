@@ -43,6 +43,10 @@ function handleAccountLogin(account: { email: string, password: string }) {
   })
 }
 
+function getAccountLabel(email: string) {
+  return `使用账号 ${email} 登录`
+}
+
 /**
  * 删除账号
  * @param email 邮箱地址
@@ -98,7 +102,7 @@ function formatLastLoginTime(timestamp?: number): string {
   <div class="account-list relative size-full flex-center">
     <div class="account-list-bg absolute inset-0" />
     <div class="container relative size-full flex-center">
-      <div class="w-600px bg-white rounded-lg p-8">
+      <div class="w-[calc(100%-32px)] max-w-600px bg-white rounded-lg p-6 sm:p-8">
         <div class="flex items-center justify-between mb-6">
           <h2 class="text-2xl font-bold text-gray-800">选择账号</h2>
           <el-button type="primary" link @click="handleBackToLogin">
@@ -122,26 +126,28 @@ function formatLastLoginTime(timestamp?: number): string {
         </div>
 
         <div v-else class="space-y-3">
-          <div
+          <button
             v-for="account in localStore.local.ACCOUNT_LIST"
             :key="account.email"
-            class="account-item flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all cursor-pointer"
+            type="button"
+            class="account-item flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-all"
+            :aria-label="getAccountLabel(account.email)"
             @click="handleAccountLogin(account)"
           >
-            <div class="flex items-center flex-1">
-              <div class="w-12 h-12 bg-blue-100 rounded-full flex-center mr-4">
+            <span class="flex items-center flex-1">
+              <span class="w-12 h-12 bg-blue-100 rounded-full flex-center mr-4">
                 <el-icon class="text-blue-600 text-xl">
                   <User />
                 </el-icon>
-              </div>
-              <div class="flex-1">
-                <div class="font-medium text-gray-800 mb-1">{{ account.email }}</div>
-                <div class="text-sm text-gray-500">
+              </span>
+              <span class="flex-1">
+                <span class="block font-medium text-gray-800 mb-1">{{ account.email }}</span>
+                <span class="block text-sm text-gray-500">
                   最后登录：{{ formatLastLoginTime(account.lastLoginTime) }}
-                </div>
-              </div>
-            </div>
-            <div class="flex items-center space-x-2">
+                </span>
+              </span>
+            </span>
+            <span class="flex items-center space-x-2">
               <el-button
                 type="danger"
                 size="small"
@@ -152,8 +158,8 @@ function formatLastLoginTime(timestamp?: number): string {
                   <Delete />
                 </el-icon>
               </el-button>
-            </div>
-          </div>
+            </span>
+          </button>
         </div>
 
         <div class="mt-6 pt-4 border-t border-gray-200">
@@ -181,6 +187,12 @@ function formatLastLoginTime(timestamp?: number): string {
   }
 
   .account-item {
+    width: 100%;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    font: inherit;
+
     &:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);

@@ -78,9 +78,9 @@ async function handleRegister() {
   <div class="login relative size-full flex-center">
     <div class="login-bg absolute inset-0" />
     <div class="container relative size-full flex-center">
-      <div class="w-900px bg-white rounded-lg flex p-10 items-center">
-        <img class="w-280px" src="@/assets/image/login/logo.png" alt="">
-        <div class="flex-1 pt-15px ml-5 select-none">
+      <div class="w-[calc(100%-32px)] max-w-900px bg-white rounded-lg flex flex-col sm:flex-row p-6 sm:p-10 items-center">
+        <img class="w-160px sm:w-280px" src="@/assets/image/login/logo.png" alt="哔咔漫画">
+        <div class="w-full flex-1 pt-15px sm:ml-5 select-none">
           <el-form
             ref="formRef" autocomplete="off" :rules="rules"
             :model="form"
