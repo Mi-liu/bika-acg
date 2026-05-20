@@ -48,6 +48,8 @@ const CURRENT_WINDOW_ID = `window_${Date.now()}_${Math.random().toString(36).sub
 // 存储需要同步的 store 实例
 const syncEnabledStores = new Map<string, SyncEnabledStore>()
 
+let broadcastChannel: BroadcastChannel | undefined
+
 // 防抖延迟
 const DEBOUNCE_DELAY = 150
 
@@ -60,6 +62,18 @@ function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T
     clearTimeout(timeoutId)
     timeoutId = window.setTimeout(() => func(...args), delay)
   }) as T
+}
+
+function getBroadcastChannel() {
+  if (typeof BroadcastChannel === 'undefined') {
+    return undefined
+  }
+
+  if (!broadcastChannel) {
+    broadcastChannel = new BroadcastChannel('pinia-window-sync')
+  }
+
+  return broadcastChannel
 }
 
 /**
@@ -99,8 +113,8 @@ const broadcastState = debounce((storeId: string, state: Record<string, unknown>
 
   try {
     // 优先使用 BroadcastChannel API
-    if (typeof BroadcastChannel !== 'undefined') {
-      const channel = new BroadcastChannel('pinia-window-sync')
+    const channel = getBroadcastChannel()
+    if (channel) {
       channel.postMessage(message)
     }
     else {
@@ -197,8 +211,8 @@ async function handleSyncMessage(message: WindowSyncMessage) {
  */
 function initializeMessageListeners() {
   // BroadcastChannel 监听
-  if (typeof BroadcastChannel !== 'undefined') {
-    const channel = new BroadcastChannel('pinia-window-sync')
+  const channel = getBroadcastChannel()
+  if (channel) {
     channel.addEventListener('message', (event) => {
       handleSyncMessage(event.data)
     })

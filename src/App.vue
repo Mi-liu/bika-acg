@@ -7,12 +7,6 @@ useRequestProvider({
   /** 延迟 loading 变成 true 的时间，有效防止闪烁 */
   loadingDelay: 500,
 })
-
-// 初始化本地存储
-onMounted(() => {
-  const localStore = useLocalStoreHook()
-  localStore.initStorage()
-})
 </script>
 
 <template>

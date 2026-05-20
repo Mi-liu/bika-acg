@@ -1,6 +1,6 @@
 import type { Categories, Comic } from '@/api/comic'
 import localforage from 'localforage'
-import { cloneDeep, uniq } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { store } from '@/store'
 
 import { smartIndexOf } from '@/utils/array'
@@ -43,6 +43,8 @@ export interface Local {
  * @description 将本地存储的数据映射到 store 中，实现响应式更新
  */
 const useLocalStore = defineStore('local', () => {
+  const initialized = ref(false)
+
   const local = reactive<Local>({
     /**
      * 分类
@@ -69,24 +71,62 @@ const useLocalStore = defineStore('local', () => {
     ACCOUNT_LIST: [],
   })
 
-  /** 将本地local数据，同步到 useLocalStore.local中  */
-  async function initStorage() {
-    for (const key in local) {
-      if (Object.prototype.hasOwnProperty.call(local, key)) {
-        await localforage.getItem<Local[keyof Local]>(key).then((res) => {
-          // @ts-expect-error - 动态键访问需要忽略类型检查
-          local[key] = res || local[key]
-        })
-      }
+  let initPromise: Promise<void> | undefined
+  let stopStorageSync: (() => void) | undefined
+
+  function getUniqueValueKey(value: unknown) {
+    if (value && typeof value === 'object') {
+      const item = value as Record<string, unknown>
+      return item._id ?? item.id ?? item.title ?? JSON.stringify(item)
     }
-    watch(local, (newVal) => {
-      for (const key in newVal) {
-        if (Object.prototype.hasOwnProperty.call(newVal, key)) {
-          // @ts-expect-error - 动态键访问需要忽略类型检查
-          localforage.setItem(key, cloneDeep(newVal[key]))
+
+    return value
+  }
+
+  function uniqueArrayItems<T>(items: T[]) {
+    const keys = new Set<unknown>()
+
+    return items.filter((item) => {
+      const key = getUniqueValueKey(item)
+      if (keys.has(key)) {
+        return false
+      }
+
+      keys.add(key)
+      return true
+    })
+  }
+
+  /** 将本地local数据，同步到 useLocalStore.local中 */
+  async function initStorage() {
+    if (initPromise) {
+      return initPromise
+    }
+
+    initPromise = (async () => {
+      for (const key in local) {
+        if (Object.prototype.hasOwnProperty.call(local, key)) {
+          await localforage.getItem<Local[keyof Local]>(key).then((res) => {
+            // @ts-expect-error - 动态键访问需要忽略类型检查
+            local[key] = res || local[key]
+          })
         }
       }
-    })
+
+      stopStorageSync?.()
+      stopStorageSync = watch(local, (newVal) => {
+        for (const key in newVal) {
+          if (Object.prototype.hasOwnProperty.call(newVal, key)) {
+            // @ts-expect-error - 动态键访问需要忽略类型检查
+            localforage.setItem(key, cloneDeep(newVal[key]))
+          }
+        }
+      })
+
+      initialized.value = true
+    })()
+
+    return initPromise
   }
 
   /**
@@ -97,8 +137,8 @@ const useLocalStore = defineStore('local', () => {
   function pushItem<K extends ArrayKeys<Local>, V extends Local[K][number]>(key: K, value: V) {
     // @ts-expect-error - 数组类型操作需要忽略类型检查
     local[key].push(value)
-    // 使用类型断言来处理 uniq 函数的类型问题
-    const uniqueArray = uniq(local[key] as any[]) as Local[K]
+    const uniqueArray = uniqueArrayItems(local[key] as V[]) as Local[K]
+    local[key] = uniqueArray
     return localforage.setItem(key, cloneDeep(uniqueArray))
   }
 
@@ -174,7 +214,16 @@ const useLocalStore = defineStore('local', () => {
     return localforage.setItem('CATEGORIES', cloneDeep(newCategories))
   }
 
-  return { local, initStorage, pushItem, removeItem, addOrUpdateAccount, removeAccount, updateCategoriesOrder }
+  return {
+    local,
+    initialized,
+    initStorage,
+    pushItem,
+    removeItem,
+    addOrUpdateAccount,
+    removeAccount,
+    updateCategoriesOrder,
+  }
 }, {
   // 本地存储不需要持久化到 localStorage（已经使用 localforage）
   persist: false,

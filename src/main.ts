@@ -8,9 +8,19 @@ import './assets/css/main.css'
 // 导入 UnoCSS 样式
 import 'virtual:uno.css'
 
-const app = createApp(App)
+async function bootstrap() {
+  const app = createApp(App)
 
-app.use(plugins)
+  app.use(plugins)
 
-// 初始化应用并挂载
-app.mount('#app')
+  const localStore = useLocalStoreHook()
+
+  await localStore.initStorage().catch((error) => {
+    console.warn('本地存储初始化失败:', error)
+  })
+
+  // 初始化应用并挂载
+  app.mount('#app')
+}
+
+bootstrap()
