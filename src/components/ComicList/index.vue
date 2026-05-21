@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T extends Partial<ComicsParams>">
+import type { ScrollbarInstance } from 'element-plus'
 import type { ComicsListProps } from './type'
 import type { Comic, Comics, ComicsParams } from '@/api/comic'
 import type { SortOptionValue } from '@/constants/options'
@@ -26,6 +27,7 @@ const settingStore = useSettingStoreHook()
 const localStore = useLocalStoreHook()
 
 const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
+const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
 
 const s = ref<SortOptionValue>(defaultSort)
 
@@ -58,6 +60,8 @@ function handleReset() {
 }
 
 function handlePageChange(event: { currentPage: number }) {
+  scrollbarRef.value?.setScrollTop(0)
+
   // 清空当前数据，显示加载状态
   if (data.value) {
     data.value.docs = []
@@ -185,7 +189,7 @@ function formatNumber(num?: number): string {
       </slot>
     </div>
     <div class="h-full flex-1 overflow-hidden">
-      <el-scrollbar height="100%">
+      <el-scrollbar ref="scrollbarRef" height="100%">
         <div class="w-full h-6px" />
         <!-- 加载状态骨架屏 -->
         <div
