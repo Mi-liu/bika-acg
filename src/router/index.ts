@@ -23,7 +23,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to) => {
+router.afterEach((to) => {
   title.value = String(to.query.title || to.meta.title || '哔咔漫画')
 })
 
