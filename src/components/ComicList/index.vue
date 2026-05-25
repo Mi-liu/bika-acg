@@ -265,7 +265,7 @@ function formatNumber(num?: number): string {
                 <button
                   v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
                   type="button"
-                  class="absolute top-2 right-2 w-44px h-44px bg-[--el-color-info] rounded-1 flex-center"
+                  class="absolute top-2 right-2 size-34px bg-[--el-color-info] rounded-1 flex-center"
                   @click.stop="handleAddToLater(item)"
                 >
                   <el-icon class="text-[--el-color-white]!">
