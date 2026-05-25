@@ -8,10 +8,25 @@ import Image from '@/components/Image/index.vue'
 import { getImageUrl } from '@/utils/string'
 
 const router = useRouter()
+const settingStore = useSettingStoreHook()
 
 const { data: categories } = useRequest(getCategories)
 
 const { data: randomComics, run: randomRefresh, mutate: randomMutate, loading: randomLoading } = useRequest(getRandomComic)
+
+const R18_OFF_VISIBLE_CATEGORY_TITLES = ['禁書目錄']
+
+const visibleCategories = computed<Categories['categories']>(() => {
+  if (!categories.value) {
+    return []
+  }
+
+  if (settingStore.comic.showR18Categories) {
+    return categories.value
+  }
+
+  return categories.value.filter(category => R18_OFF_VISIBLE_CATEGORY_TITLES.includes(category.title))
+})
 
 function handleCategoryClick(title: string) {
   router.push({
@@ -60,8 +75,9 @@ function handleRandomRefresh() {
         <!-- 分类列表，最近更新固定在首位且不参与拖拽 -->
         <DraggableCategories
           v-if="categories"
-          :categories="categories"
-          :draggable="true"
+          :categories="visibleCategories"
+          :draggable="settingStore.comic.showR18Categories"
+          :show-prepend="settingStore.comic.showR18Categories"
           handle=".category-drag-handle"
           class="category-grid"
           @order-change="handleCategoriesOrderChange"

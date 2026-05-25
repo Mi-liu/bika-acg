@@ -20,6 +20,8 @@ const useSettingStore = defineStore(
       autoReadSpeed: 20,
       /** 隐私模式 */
       privacyMode: true,
+      /** R18 分类开关 */
+      showR18Categories: false,
     })
 
     /** 过滤漫画设置 */

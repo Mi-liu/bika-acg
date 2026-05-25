@@ -10,6 +10,8 @@ const props = defineProps<{
   draggable?: boolean
   /** 拖拽手柄选择器，不传时整项可拖拽 */
   handle?: string
+  /** 是否显示前置固定项 */
+  showPrepend?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -108,7 +110,7 @@ onBeforeUnmount(() => {
     @start="handleDragStart"
     @end="handleDragEnd"
   >
-    <div class="static-item">
+    <div v-if="showPrepend !== false && $slots.prepend" class="static-item">
       <slot name="prepend" />
     </div>
 

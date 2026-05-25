@@ -251,6 +251,23 @@ function handleCloseAuthor(author: string) {
           </div>
 
           <el-form :label-width="labelWidth" :label-position="lebelPosition">
+            <el-form-item label="R18">
+              <template #label="{ label }">
+                <div class="size-full flex items-center gap-1">
+                  {{ label }}
+                  <el-tooltip placement="top" content="关闭时首页分类仅显示禁書目錄，开启后显示全部分类">
+                    <el-icon class="cursor-pointer">
+                      <QuestionFilled />
+                    </el-icon>
+                  </el-tooltip>
+                </div>
+              </template>
+              <el-switch
+                v-model="settingStore.comic.showR18Categories"
+                active-text="开"
+                inactive-text="关"
+              />
+            </el-form-item>
             <el-form-item label="过滤分类">
               <div class="w-full flex flex-wrap gap-2">
                 <el-tag
