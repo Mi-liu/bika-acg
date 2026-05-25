@@ -48,7 +48,7 @@ const alova = createAlova({
   requestAdapter: adapterFetch(),
   beforeRequest(method) {
     const settingStore = useSettingStoreHook()
-    method.baseURL = settingStore.comic.proxy.api
+    method.baseURL = settingStore.comic.apiProxy
     const requestPath = method.type === 'GET'
       ? objectToUrlParams(filterUndefined(method.config.params), method.url)
       : method.url

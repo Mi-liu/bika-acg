@@ -1,24 +1,30 @@
 /** 代理配置 */
-export const proxy = [
+export const apiProxy = [
   {
     label: '线路一，无需VPN，速度略慢',
-    value: {
-      api: 'https://picaapi.go2778.com/',
-      file: 'https://storage1.picacomic.com/static/',
-    },
+    value: 'https://picaapi.go2778.com/',
   },
   {
     label: '线路二，需要VPN，速度较快',
-    value: {
-      api: 'https://api.manhuabika.com/',
-      file: 'https://storage-b.picacomic.com/static/',
-    },
+    value: 'https://api.manhuabika.com/',
   },
   {
     label: '线路三，需要VPN，速度较快',
-    value: {
-      api: 'https://picaapi.picacomic.com/',
-      file: 'https://s3.picacomic.com/static/',
-    },
+    value: 'https://picaapi.picacomic.com/',
+  },
+]
+
+export const fileProxy = [
+  {
+    label: '线路一，无需VPN，速度略慢',
+    value: 'https://storage1.picacomic.com/static/',
+  },
+  {
+    label: '线路二，需要VPN，速度较快',
+    value: 'https://storage-b.picacomic.com/static/',
+  },
+  {
+    label: '线路三，需要VPN，速度较快',
+    value: 'https://s3.picacomic.com/static/',
   },
 ]

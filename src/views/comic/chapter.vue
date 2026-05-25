@@ -6,7 +6,7 @@ import { omit } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
 import { getComicPages } from '@/api/comic'
 import { pictureQuality } from '@/constants/options'
-import { proxy } from '@/services/config'
+import { apiProxy, fileProxy } from '@/services/config'
 import { addAutoReadScrollListener, useAutoRead } from '@/utils/autoRead'
 import { getImageUrl } from '@/utils/string'
 
@@ -278,11 +278,11 @@ function handleQualityChange(newQuality: string) {
 }
 
 /**
- * 处理线路代理变化事件
- * @param newProxy 新的线路代理设置
+ * 处理代理线路变化事件
+ * @param newProxy 新的代理线路设置
  */
-function handleProxyChange(newProxy: any) {
-  console.log(`线路代理已更改为 ${newProxy?.label || newProxy}，强制重新加载章节数据`)
+function handleProxyChange(newProxy: string) {
+  console.log(`代理线路已更改为 ${newProxy}，强制重新加载章节数据`)
 
   // 使用强制刷新模式，忽略缓存
   reloadCurrentChapter(true)
@@ -483,13 +483,28 @@ getChapterPages(1)
             </div>
           </el-form-item>
 
-          <el-form-item label="线路代理">
+          <el-form-item label="API代理线路">
             <el-select
-              v-model="settingStore.comic.proxy" value-key="api" placeholder="请选择线路代理"
+              v-model="settingStore.comic.apiProxy" placeholder="请选择API代理线路"
               @change="handleProxyChange"
             >
               <el-option
-                v-for="item in proxy" :key="item.label" :label="item.label"
+                v-for="item in apiProxy" :key="item.value" :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+            <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
+              正在切换代理线路，重新加载图片...
+            </div>
+          </el-form-item>
+
+          <el-form-item label="文件代理线路">
+            <el-select
+              v-model="settingStore.comic.fileProxy" placeholder="请选择文件代理线路"
+              @change="handleProxyChange"
+            >
+              <el-option
+                v-for="item in fileProxy" :key="item.value" :label="item.label"
                 :value="item.value"
               />
             </el-select>

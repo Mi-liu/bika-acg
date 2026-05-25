@@ -1,7 +1,54 @@
 import { cloneDeep } from 'lodash-es'
 import { pictureQuality } from '@/constants/options'
-import { proxy } from '@/services/config'
+import { apiProxy, fileProxy } from '@/services/config'
 import { store } from '@/store'
+
+interface LegacyProxyConfig {
+  api?: string
+  file?: string
+}
+
+interface PersistedSettingState {
+  comic?: {
+    apiProxy?: string
+    fileProxy?: string
+    proxy?: LegacyProxyConfig
+  }
+}
+
+function migrateLegacyProxyStorage() {
+  const storageKey = 'setting'
+  const raw = window.localStorage.getItem(storageKey)
+
+  if (!raw)
+    return
+
+  const state = JSON.parse(raw) as PersistedSettingState
+  const comic = state.comic
+  const legacyProxy = comic?.proxy
+
+  if (!comic || !legacyProxy)
+    return
+
+  let changed = false
+
+  if (!comic.apiProxy && legacyProxy.api) {
+    comic.apiProxy = legacyProxy.api
+    changed = true
+  }
+
+  if (!comic.fileProxy && legacyProxy.file) {
+    comic.fileProxy = legacyProxy.file
+    changed = true
+  }
+
+  delete comic.proxy
+  changed = true
+
+  if (changed) {
+    window.localStorage.setItem(storageKey, JSON.stringify(state))
+  }
+}
 
 const useSettingStore = defineStore(
   'setting',
@@ -10,8 +57,10 @@ const useSettingStore = defineStore(
     const comic = reactive({
       /** 图片质量 */
       imageQuality: pictureQuality[2].value,
-      /** 请求代理 */
-      proxy: cloneDeep(proxy[0].value),
+      /** API 请求代理 */
+      apiProxy: cloneDeep(apiProxy[0].value),
+      /** 文件资源代理 */
+      fileProxy: cloneDeep(fileProxy[0].value),
       /** 漫画图片宽度 */
       comicImageWidth: 800,
       /** 自动阅读 */
@@ -35,7 +84,9 @@ const useSettingStore = defineStore(
     return { comic, filter }
   },
   {
-    persist: true,
+    persist: {
+      beforeHydrate: migrateLegacyProxyStorage,
+    },
     multiWindowSync: {
       enabled: true,
       debounce: 200,

@@ -11,7 +11,7 @@ import {
   Upload,
 } from '@element-plus/icons-vue'
 import { pictureQuality } from '@/constants/options'
-import { proxy } from '@/services/config'
+import { apiProxy, fileProxy } from '@/services/config'
 import { useLocalStoreHook } from '@/store/modules/local'
 import { useSettingStoreHook } from '@/store/modules/setting'
 
@@ -228,11 +228,21 @@ function handleCloseAuthor(author: string) {
           </div>
 
           <el-form :label-width="labelWidth" :label-position="lebelPosition">
-            <el-form-item label="代理线路">
-              <el-select v-model="settingStore.comic.proxy" value-key="api">
+            <el-form-item label="API代理线路">
+              <el-select v-model="settingStore.comic.apiProxy">
                 <el-option
-                  v-for="(option, index) in proxy"
-                  :key="index"
+                  v-for="option in apiProxy"
+                  :key="option.value"
+                  :label="option.label"
+                  :value="option.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="文件代理线路">
+              <el-select v-model="settingStore.comic.fileProxy">
+                <el-option
+                  v-for="option in fileProxy"
+                  :key="option.value"
                   :label="option.label"
                   :value="option.value"
                 />
