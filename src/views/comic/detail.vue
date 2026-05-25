@@ -5,6 +5,7 @@ import { Heart, HeartOutline } from '@vicons/ionicons5'
 import dayjs from 'dayjs'
 import { favorites, getComicDetail, getComicEps, getComicRecommendation, likeComic } from '@/api/comic'
 import Author from '@/components/Author/index.vue'
+import ComicComments from '@/components/ComicComments/index.vue'
 import Image from '@/components/Image/index.vue'
 import { loopRequestList } from '@/utils/fetch'
 import { getImageUrl } from '@/utils/string'
@@ -14,6 +15,7 @@ const props = defineProps<{ id: string }>()
 const router = useRouter()
 
 const localStore = useLocalStoreHook()
+const commentDrawerVisible = ref(false)
 
 const { data, loading, run: fetchComicDetail } = useRequest(getComicDetail, {
   defaultParams: [props.id],
@@ -110,6 +112,18 @@ function handleEpsClick(chapterNum: number) {
       maxChapter,
     },
   })
+}
+
+function handleStatisticClick(prop: (typeof toolList)[number]['prop']) {
+  if (prop === 'totalComments') {
+    commentDrawerVisible.value = true
+  }
+}
+
+function handleCommentSubmitted() {
+  if (data.value) {
+    data.value.totalComments += 1
+  }
 }
 
 /**
@@ -271,12 +285,20 @@ function getComicDetailPath(comicId: string) {
 
         <!-- 实际统计内容 -->
         <template v-else>
-          <div v-for="item in toolList" :key="item.prop" class="flex-1 flex flex-col items-center justify-center">
+          <component
+            :is="item.prop === 'totalComments' ? 'button' : 'div'"
+            v-for="item in toolList"
+            :key="item.prop"
+            v-bind="item.prop === 'totalComments' ? { type: 'button' } : {}"
+            class="statistic-item flex-1 flex flex-col items-center justify-center"
+            :class="{ 'is-clickable': item.prop === 'totalComments' }"
+            @click="handleStatisticClick(item.prop)"
+          >
             <div>
               <el-statistic :value="data?.[item.prop]" />
             </div>
             <div>{{ item.label }}</div>
-          </div>
+          </component>
         </template>
       </div>
 
@@ -424,6 +446,12 @@ function getComicDetailPath(comicId: string) {
         </div>
       </div>
     </div>
+
+    <ComicComments
+      v-model:visible="commentDrawerVisible"
+      :comic-id="props.id"
+      @submitted="handleCommentSubmitted"
+    />
   </el-scrollbar>
 </template>
 
@@ -439,5 +467,27 @@ function getComicDetailPath(comicId: string) {
 .recommendation-card {
   color: inherit;
   text-decoration: none;
+}
+
+button.statistic-item {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+button.statistic-item.is-clickable {
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--el-color-primary);
+    background-color: var(--el-color-primary-light-9);
+    outline: none;
+  }
 }
 </style>

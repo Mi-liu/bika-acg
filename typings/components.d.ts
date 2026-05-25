@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Author: typeof import('./../src/components/Author/index.vue')['default']
+    ComicComments: typeof import('./../src/components/ComicComments/index.vue')['default']
     ComicList: typeof import('./../src/components/ComicList/index.vue')['default']
     DraggableCategories: typeof import('./../src/components/DraggableCategories/index.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']

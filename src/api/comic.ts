@@ -146,6 +146,51 @@ export interface ComicDetail extends Omit<Comic, 'id'> {
   }
 }
 
+export interface ComicCommentUser {
+  _id: string
+  gender: string
+  name: string
+  title?: string
+  verified: boolean
+  exp: number
+  level: number
+  characters: unknown[]
+  role: string
+  avatar?: Comic['thumb']
+  slogan?: string
+  character?: string
+}
+
+export interface ComicComment {
+  _id: string
+  content: string
+  _user: ComicCommentUser
+  _parent?: string
+  _comic: string
+  totalComments: number
+  isTop: boolean
+  hide: boolean
+  created_at: string
+  id: string
+  likesCount: number
+  commentsCount?: number
+  isLiked: boolean
+}
+
+export interface ComicCommentsPage extends Omit<PageData, 'page'> {
+  page: number | string
+  docs: ComicComment[]
+}
+
+export interface ComicComments {
+  comments: ComicCommentsPage
+  topComments: ComicComment[]
+}
+
+export interface ComicCommentChildren {
+  comments: ComicCommentsPage
+}
+
 /**
  * 获取漫画列表
  */
@@ -169,6 +214,34 @@ export function getComicDetail(id: string) {
     comic: ComicDetail
   }>(`comics/${id}`)
     .then(res => res.comic)
+}
+
+/** 获取漫画评论列表 */
+export function getComicComments(id: string, page: number) {
+  return alova.Get<ComicComments>(`comics/${id}/comments`, {
+    params: { page },
+  })
+}
+
+/** 发表漫画评论 */
+export function createComicComment(id: string, content: string) {
+  return alova.Post(`comics/${id}/comments`, {
+    content,
+  })
+}
+
+/** 回复评论 */
+export function createCommentReply(commentId: string, content: string) {
+  return alova.Post(`comments/${commentId}`, {
+    content,
+  })
+}
+
+/** 获取评论回复列表 */
+export function getCommentChildren(commentId: string, page: number) {
+  return alova.Get<ComicCommentChildren>(`comments/${commentId}/childrens`, {
+    params: { page },
+  })
 }
 
 /** 收藏 or 取消收藏本子 */
