@@ -4,7 +4,7 @@ export const proxy = [
     label: '线路一，无需VPN，速度略慢',
     value: {
       api: 'https://picaapi.go2778.com/',
-      file: 'https://s3.go2778.com/static/',
+      file: 'https://storage1.picacomic.com/static/',
     },
   },
   {
