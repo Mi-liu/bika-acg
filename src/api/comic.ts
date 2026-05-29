@@ -264,7 +264,10 @@ export interface ComicEpsItem {
   /** 章节标题 */
   title: string
   /** 章节id */
-  id: string
+  id?: string
+  _id?: string
+  /** 章节顺序 */
+  order: number
 }
 
 /** 获取本子章节列表 */

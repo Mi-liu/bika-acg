@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ComicEps } from '@/api/comic'
 import CommonButton from '@common/components/CommonButton/index.vue'
 import { Document, Memo, Reading, Star, StarFilled } from '@element-plus/icons-vue'
 import { Heart, HeartOutline } from '@vicons/ionicons5'
@@ -7,7 +8,6 @@ import { favorites, getComicDetail, getComicEps, getComicRecommendation, likeCom
 import Author from '@/components/Author/index.vue'
 import ComicComments from '@/components/ComicComments/index.vue'
 import Image from '@/components/Image/index.vue'
-import { loopRequestList } from '@/utils/fetch'
 import { getImageUrl } from '@/utils/string'
 
 const props = defineProps<{ id: string }>()
@@ -50,21 +50,71 @@ const toolList = [
   },
 ] as const
 
-const { data: epsData, run: fetchComicEps } = loopRequestList(page => getComicEps(props.id, page), {
-  key: 'docs',
-  beforeRequest: (page, res) => {
-    if (res === undefined) {
-      return true
+function createInitialEpsData(): ComicEps {
+  return {
+    docs: [],
+    page: 0,
+    pages: 0,
+    total: 0,
+    limit: 0,
+  }
+}
+
+const epsData = ref<ComicEps>(createInitialEpsData())
+
+let epsRequestId = 0
+
+function appendAscendingEps(pageData: ComicEps) {
+  epsData.value = {
+    ...epsData.value,
+    docs: [...epsData.value.docs, ...pageData.docs.toReversed()],
+  }
+}
+
+async function fetchComicEps() {
+  const requestId = ++epsRequestId
+  epsData.value = createInitialEpsData()
+
+  const firstPageData = await getComicEps(props.id, 1)
+
+  if (requestId !== epsRequestId) {
+    return
+  }
+
+  epsData.value = {
+    ...firstPageData,
+    docs: [],
+  }
+
+  if (firstPageData.pages <= 1) {
+    appendAscendingEps(firstPageData)
+    return
+  }
+
+  for (let page = firstPageData.pages; page >= 2; page--) {
+    const pageData = await getComicEps(props.id, page)
+
+    if (requestId !== epsRequestId) {
+      return
     }
-    return page <= res.pages
-  },
+
+    appendAscendingEps(pageData)
+  }
+
+  appendAscendingEps(firstPageData)
+}
+
+const maxChapter = computed(() => {
+  return epsData.value.total || data.value?.epsCount || epsData.value.docs.length
 })
 
 watch(() => props.id, (id) => {
   fetchComicDetail(id)
   fetchComicRecommendation(id)
-  fetchComicEps()
+  void fetchComicEps()
 })
+
+void fetchComicEps()
 
 function handleTagClick(tag: string) {
   router.push({
@@ -104,12 +154,11 @@ function handleLikeClick() {
 }
 
 function handleEpsClick(chapterNum: number) {
-  const maxChapter = epsData.value.docs.length
   router.push({
     path: `/comic/chapter/${props.id}`,
     query: {
       chapter: chapterNum,
-      maxChapter,
+      maxChapter: maxChapter.value,
     },
   })
 }
@@ -368,8 +417,8 @@ function getComicDetailPath(comicId: string) {
           </div>
           <div class="mt3 flex flex-wrap gap-10px">
             <el-button
-              v-for="(item, index) in epsData.docs.toReversed()" :key="item.id || index" class="ml-0!"
-              @click="handleEpsClick(epsData.docs.length - index)"
+              v-for="(item, index) in epsData.docs" :key="item.id || item._id || index" class="ml-0!"
+              @click="handleEpsClick(item.order)"
             >
               {{ item.title }}
             </el-button>
