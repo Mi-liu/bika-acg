@@ -108,6 +108,16 @@ const maxChapter = computed(() => {
   return epsData.value.total || data.value?.epsCount || epsData.value.docs.length
 })
 
+type ToggleStatisticProp = 'totalLikes' | 'totalViews'
+
+function updateToggleStatistic(prop: ToggleStatisticProp, nextState: boolean, previousState: boolean) {
+  if (nextState === previousState || data.value === undefined) {
+    return
+  }
+
+  data.value[prop] = Math.max(0, data.value[prop] + (nextState ? 1 : -1))
+}
+
 watch(() => props.id, (id) => {
   fetchComicDetail(id)
   fetchComicRecommendation(id)
@@ -128,13 +138,22 @@ function handleTagClick(tag: string) {
 function handleFavoritesClick() {
   if (data.value === undefined)
     return
-  return favorites(data.value._id)
+  const comicId = data.value._id
+  const previousFavouriteState = data.value.isFavourite
+
+  return favorites(comicId)
     .then((res) => {
+      if (data.value?._id !== comicId) {
+        return
+      }
+
       if (res === 'favourite') {
         data.value!.isFavourite = true
+        updateToggleStatistic('totalViews', true, previousFavouriteState)
       }
       else if (res === 'un_favourite') {
         data.value!.isFavourite = false
+        updateToggleStatistic('totalViews', false, previousFavouriteState)
       }
     })
 }
@@ -142,13 +161,22 @@ function handleFavoritesClick() {
 function handleLikeClick() {
   if (data.value === undefined)
     return
-  return likeComic(data.value._id)
+  const comicId = data.value._id
+  const previousLikedState = data.value.isLiked
+
+  return likeComic(comicId)
     .then((res) => {
+      if (data.value?._id !== comicId) {
+        return
+      }
+
       if (res === 'like') {
         data.value!.isLiked = true
+        updateToggleStatistic('totalLikes', true, previousLikedState)
       }
       else if (res === 'unlike') {
         data.value!.isLiked = false
+        updateToggleStatistic('totalLikes', false, previousLikedState)
       }
     })
 }
