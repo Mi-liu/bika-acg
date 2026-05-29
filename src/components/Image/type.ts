@@ -3,4 +3,5 @@ export interface ImageProps {
   alt?: string
   /** 图片宽高比 */
   aspect?: string
+  loading?: 'eager' | 'lazy'
 }

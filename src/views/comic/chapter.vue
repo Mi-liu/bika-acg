@@ -28,10 +28,13 @@ const props = defineProps<{
 }>()
 // 常量定义
 const SCROLL_DEBOUNCE_DELAY = 50
-const PRELOAD_THRESHOLD_MULTIPLIER = 2
+const PRELOAD_THRESHOLD_MULTIPLIER = 4
+const PRELOAD_AHEAD_COUNT = 6
+const EAGER_LOAD_IMAGE_COUNT = 3
 
 const settingStore = useSettingStoreHook()
 const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
+const imageListRef = useTemplateRef<HTMLElement>('imageListRef')
 
 const { width: windowInnerWidth, height: windowInnerHeight } = useWindowSize()
 
@@ -88,6 +91,8 @@ const drawer = ref(false)
 
 /** 漫画图片列表 */
 const comicImages = reactive<ComicImage[]>([])
+const preloadedImageUrls = new Set<string>()
+const preloadingImages = new Map<string, HTMLImageElement>()
 
 /** 加载状态管理 */
 const loadingState = reactive({
@@ -127,6 +132,7 @@ async function getChapterPages(page?: number, forceRefresh = false) {
 
     // 添加到图片列表
     comicImages.push(...formatData)
+    preloadImagesAhead(Math.max(comicImages.length - formatData.length, 0))
   }
   catch (error) {
     console.error('章节数据加载失败:', error)
@@ -148,11 +154,14 @@ const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => 
   if (!scrollElement)
     return
 
+  const currentImageIndex = getCurrentImageIndex(scrollElement)
+  preloadImagesAhead(currentImageIndex + 1)
+
   const { scrollTop } = e
   const { scrollHeight, clientHeight } = scrollElement
   const distanceFromBottom = scrollHeight - scrollTop - clientHeight
 
-  // 预加载阈值：当距离底部小于2个屏幕高度时开始加载下一页
+  // 预加载阈值：当距离底部小于指定屏幕高度时开始加载下一页
   const preloadThreshold = windowInnerHeight.value * PRELOAD_THRESHOLD_MULTIPLIER
 
   // 检查是否需要加载下一页
@@ -166,12 +175,59 @@ const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => 
   }
 }, SCROLL_DEBOUNCE_DELAY)
 
+function preloadComicImage(src: string) {
+  if (!src || preloadedImageUrls.has(src) || typeof window === 'undefined')
+    return
+
+  preloadedImageUrls.add(src)
+  const img = new window.Image()
+  preloadingImages.set(src, img)
+  img.decoding = 'async'
+  img.onload = () => {
+    preloadingImages.delete(src)
+  }
+  img.onerror = () => {
+    preloadedImageUrls.delete(src)
+    preloadingImages.delete(src)
+  }
+  img.src = src
+}
+
+function preloadImagesAhead(startIndex: number) {
+  const start = Math.max(startIndex, 0)
+  const end = Math.min(start + PRELOAD_AHEAD_COUNT, comicImages.length)
+
+  for (let index = start; index < end; index++) {
+    preloadComicImage(comicImages[index].path)
+  }
+}
+
+function getCurrentImageIndex(scrollElement: HTMLElement) {
+  const imageElements = imageListRef.value?.querySelectorAll<HTMLElement>(
+    '[data-comic-image-index]',
+  )
+  if (!imageElements?.length)
+    return 0
+
+  const viewportTop = scrollElement.getBoundingClientRect().top
+
+  for (const imageElement of imageElements) {
+    const imageIndex = Number(imageElement.dataset.comicImageIndex)
+    if (imageElement.getBoundingClientRect().bottom > viewportTop)
+      return Number.isNaN(imageIndex) ? 0 : imageIndex
+  }
+
+  return comicImages.length - 1
+}
+
 /**
  * 清空当前数据状态
  */
 function clearCurrentData() {
   // 清空图片列表
   comicImages.length = 0
+  preloadedImageUrls.clear()
+  preloadingImages.clear()
 
   // 清空章节信息
   Object.keys(chapterInfo).forEach((key) => {
@@ -249,6 +305,8 @@ function retryLoad() {
 function reloadCurrentChapter(forceRefresh = false) {
   // 清空当前图片列表
   comicImages.length = 0
+  preloadedImageUrls.clear()
+  preloadingImages.clear()
 
   // 重置分页信息
   Object.assign(pageInfo, {
@@ -380,13 +438,16 @@ getChapterPages(1)
     <div class="flex-1 overflow-hidden" @contextmenu.prevent="handleContextMenu">
       <el-scrollbar ref="scrollbarRef" class="h-full" @scroll="handleScroll">
         <div
+          ref="imageListRef"
           class="mx-auto w-full"
           :style="{ maxWidth: `${settingStore.comic.comicImageWidth}px` }"
         >
           <!-- 图片列表 -->
           <Image
             v-for="(item, index) in comicImages" :key="item.id || index" :src="item.path"
+            :data-comic-image-index="index"
             aspect="auto"
+            :loading="index < EAGER_LOAD_IMAGE_COUNT ? 'eager' : 'lazy'"
             :alt="`第${index + 1}张图片`"
             @mouseenter="autoRead.pauseByHover"
             @mouseleave="autoRead.resumeByHover"

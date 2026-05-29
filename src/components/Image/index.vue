@@ -5,6 +5,7 @@ import { Hide } from '@element-plus/icons-vue'
 const props = withDefaults(defineProps<ImageProps>(), {
   src: '',
   aspect: '3/4',
+  loading: 'lazy',
 })
 
 const settingStore = useSettingStoreHook()
@@ -37,7 +38,7 @@ function handleRefreshImage() {
     <el-image
       v-if="uri.length" class="w-full vertical-top" :class="[aspect]"
       :src="uri" :alt="props.alt" fit="cover"
-      loading="lazy"
+      :loading="props.loading"
       @load="state = 'load'" @error="state = 'error'"
     >
       <template #error>
