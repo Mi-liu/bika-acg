@@ -83,11 +83,12 @@ const chapterInfo = reactive<Partial<ChapterInfo>>({})
 const pageInfo = reactive<PageData>({
   page: 1,
   pages: 1,
-  total: 1,
+  total: 0,
   limit: 40,
 })
 
 const drawer = ref(false)
+const currentImageIndex = ref(0)
 
 /** 漫画图片列表 */
 const comicImages = reactive<ComicImage[]>([])
@@ -99,6 +100,14 @@ const loadingState = reactive({
   isLoadingNextPage: false,
   hasError: false,
   errorMessage: '',
+})
+
+const chapterImageTotal = computed(() => Math.max(pageInfo.total, comicImages.length))
+const currentImageNumber = computed(() => {
+  if (comicImages.length === 0)
+    return 0
+
+  return Math.min(currentImageIndex.value + 1, chapterImageTotal.value)
 })
 
 /**
@@ -133,6 +142,7 @@ async function getChapterPages(page?: number, forceRefresh = false) {
     // 添加到图片列表
     comicImages.push(...formatData)
     preloadImagesAhead(Math.max(comicImages.length - formatData.length, 0))
+    nextTick(updateCurrentImageIndex)
   }
   catch (error) {
     console.error('章节数据加载失败:', error)
@@ -154,8 +164,8 @@ const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => 
   if (!scrollElement)
     return
 
-  const currentImageIndex = getCurrentImageIndex(scrollElement)
-  preloadImagesAhead(currentImageIndex + 1)
+  currentImageIndex.value = getCurrentImageIndex(scrollElement)
+  preloadImagesAhead(currentImageIndex.value + 1)
 
   const { scrollTop } = e
   const { scrollHeight, clientHeight } = scrollElement
@@ -220,12 +230,21 @@ function getCurrentImageIndex(scrollElement: HTMLElement) {
   return comicImages.length - 1
 }
 
+function updateCurrentImageIndex() {
+  const scrollElement = scrollbarRef.value?.wrapRef
+  if (!scrollElement)
+    return
+
+  currentImageIndex.value = getCurrentImageIndex(scrollElement)
+}
+
 /**
  * 清空当前数据状态
  */
 function clearCurrentData() {
   // 清空图片列表
   comicImages.length = 0
+  currentImageIndex.value = 0
   preloadedImageUrls.clear()
   preloadingImages.clear()
 
@@ -238,7 +257,7 @@ function clearCurrentData() {
   Object.assign(pageInfo, {
     page: 1,
     pages: 1,
-    total: 1,
+    total: 0,
     limit: 40,
   })
 
@@ -305,6 +324,7 @@ function retryLoad() {
 function reloadCurrentChapter(forceRefresh = false) {
   // 清空当前图片列表
   comicImages.length = 0
+  currentImageIndex.value = 0
   preloadedImageUrls.clear()
   preloadingImages.clear()
 
@@ -312,7 +332,7 @@ function reloadCurrentChapter(forceRefresh = false) {
   Object.assign(pageInfo, {
     page: 1,
     pages: 1,
-    total: 1,
+    total: 0,
     limit: 40,
   })
 
@@ -394,6 +414,12 @@ getChapterPages(1)
       <div class="flex items-center gap-3">
         <div class="font-medium">{{ chapterInfo.title || '加载中...' }}</div>
         <div class="text-sm opacity-75">共{{ maxChapterNum }}章</div>
+        <div
+          v-if="chapterImageTotal > 0"
+          class="text-sm opacity-75 tabular-nums"
+        >
+          第{{ currentImageNumber }} / 共{{ chapterImageTotal }}张
+        </div>
         <!-- 加载状态指示器 -->
         <div v-if="loadingState.isLoadingNextPage" class="text-sm text-blue-400 flex items-center gap-1">
           <el-icon class="is-loading">
