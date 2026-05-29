@@ -32,6 +32,8 @@ const loading = ref(false)
 const initialized = ref(false)
 const childLoading = ref(false)
 const childInitialized = ref(false)
+const COMMENT_COLLAPSE_LINES = 4
+const COMMENT_EXPAND_LENGTH = 120
 
 const pageInfo = reactive<Omit<ComicCommentsPage, 'docs'>>({
   page: 1,
@@ -284,7 +286,8 @@ function increaseReplyCount(comment: ComicComment) {
 }
 
 function shouldShowExpand(content: string) {
-  return content.length > 120 || content.includes('\n')
+  const manualLineCount = content.split(/\r\n|\r|\n/).length
+  return content.length > COMMENT_EXPAND_LENGTH || manualLineCount > COMMENT_COLLAPSE_LINES
 }
 
 function formatCommentTime(dateString: string) {
