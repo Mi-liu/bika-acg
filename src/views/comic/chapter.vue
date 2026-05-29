@@ -381,8 +381,6 @@ function handleContextMenu(e: MouseEvent) {
 let autoReadCleanupFunctions: (() => void)[] = []
 
 onMounted(() => {
-  useEventListener(document.querySelector('.chapter-drawer-modal'), 'contextmenu', handleContextMenu)
-
   // 初始化自动阅读事件监听器
   nextTick(() => {
     const scrollContainer = scrollbarRef.value?.wrapRef
@@ -451,12 +449,6 @@ getChapterPages(1)
         >
           下一章
         </el-button>
-
-        <!-- 设置按钮 -->
-        <el-button
-          text :icon="Setting" aria-label="打开阅读设置"
-          @click="drawer = true"
-        />
       </div>
     </div>
 
@@ -492,122 +484,194 @@ getChapterPages(1)
       </el-scrollbar>
     </div>
 
-    <!-- 设置抽屉 -->
-    <el-drawer
-      v-model="drawer" modal-class="chapter-drawer-modal" direction="rtl"
-      size="400px" :with-header="false"
+    <!-- 设置悬浮面板 -->
+    <div
+      class="chapter-settings-fab"
+      @mouseenter="drawer = true"
+      @mouseleave="drawer = false"
+      @focusin="drawer = true"
+      @focusout="drawer = false"
+      @contextmenu.stop.prevent
     >
-      <div class="size-full">
-        <el-form label-width="100px" label-position="left">
-          <el-form-item label="宽度">
-            <el-slider
-              v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth"
-              :step="10"
-            />
-          </el-form-item>
-          <el-form-item label="画质">
-            <el-select
-              v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
-              :loading="loadingState.isLoadingNextPage" @change="handleQualityChange"
-            >
-              <el-option
-                v-for="item in pictureQuality" :key="item.value" :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-            <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
-              正在切换画质，重新加载图片...
-            </div>
-          </el-form-item>
-          <el-form-item label="自动阅读">
-            <template #label="{ label }">
-              {{ label }}
-              <el-tooltip placement="top">
-                <template #content>
-                  自动下滑阅读，解放双手，鼠标移动到图片上会暂停
-                  <br>建议网速较好的情况下使用
-                  <br>手动滚动后会在1秒后自动恢复
-                </template>
-                <el-icon class="ml-1 cursor-pointer">
-                  <QuestionFilled />
-                </el-icon>
-              </el-tooltip>
-            </template>
-            <div class="flex items-center gap-2">
-              <el-switch v-model="settingStore.comic.autoRead" />
-              <el-button
-                v-if="settingStore.comic.autoRead"
-                :type="autoRead.state.isAutoScrolling ? 'danger' : 'primary'"
-                size="small"
-                @click="autoRead.toggle"
-              >
-                {{ autoRead.state.isAutoScrolling ? '暂停' : '开始' }}
-              </el-button>
-            </div>
-          </el-form-item>
-          <el-form-item v-if="settingStore.comic.autoRead" label="自动阅读速度">
-            <div class="w-full">
+      <transition name="chapter-settings-panel">
+        <div
+          v-show="drawer"
+          class="chapter-settings-panel"
+          role="dialog"
+          aria-label="阅读设置"
+          @click.stop
+        >
+          <el-form label-width="100px" label-position="left">
+            <el-form-item label="宽度">
               <el-slider
-                v-model="settingStore.comic.autoReadSpeed"
-                :min="5"
-                :max="200"
-                :step="5"
-                show-input
-                :show-input-controls="false"
+                v-model="settingStore.comic.comicImageWidth" :min="300" :max="windowInnerWidth"
+                :step="10"
               />
-              <div class="text-xs text-gray-400 mt-1">
-                当前速度: {{ settingStore.comic.autoReadSpeed }} 像素/秒
-                <span v-if="!isPageVisible" class="text-red-400 ml-2">
-                  (页面失去焦点已暂停)
-                </span>
-                <span v-else-if="autoRead.state.isPausedByHover" class="text-yellow-400 ml-2">
-                  (鼠标悬停已暂停)
-                </span>
-                <span v-else-if="autoRead.state.isPausedByManualScroll" class="text-blue-400 ml-2">
-                  (手动滚动已暂停)
-                </span>
+            </el-form-item>
+            <el-form-item label="画质">
+              <el-select
+                v-model="settingStore.comic.imageQuality" placeholder="请选择画质"
+                :loading="loadingState.isLoadingNextPage" :teleported="false" @change="handleQualityChange"
+              >
+                <el-option
+                  v-for="item in pictureQuality" :key="item.value" :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
+                正在切换画质，重新加载图片...
               </div>
-            </div>
-          </el-form-item>
+            </el-form-item>
+            <el-form-item label="自动阅读">
+              <template #label="{ label }">
+                {{ label }}
+                <el-tooltip placement="top">
+                  <template #content>
+                    自动下滑阅读，解放双手，鼠标移动到图片上会暂停
+                    <br>建议网速较好的情况下使用
+                    <br>手动滚动后会在1秒后自动恢复
+                  </template>
+                  <el-icon class="ml-1 cursor-pointer">
+                    <QuestionFilled />
+                  </el-icon>
+                </el-tooltip>
+              </template>
+              <div class="flex items-center gap-2">
+                <el-switch v-model="settingStore.comic.autoRead" />
+                <el-button
+                  v-if="settingStore.comic.autoRead"
+                  :type="autoRead.state.isAutoScrolling ? 'danger' : 'primary'"
+                  size="small"
+                  @click="autoRead.toggle"
+                >
+                  {{ autoRead.state.isAutoScrolling ? '暂停' : '开始' }}
+                </el-button>
+              </div>
+            </el-form-item>
+            <el-form-item v-if="settingStore.comic.autoRead" label="自动阅读速度">
+              <div class="w-full">
+                <el-slider
+                  v-model="settingStore.comic.autoReadSpeed"
+                  :min="5"
+                  :max="200"
+                  :step="5"
+                  show-input
+                  :show-input-controls="false"
+                />
+                <div class="text-xs text-gray-400 mt-1">
+                  当前速度: {{ settingStore.comic.autoReadSpeed }} 像素/秒
+                  <span v-if="!isPageVisible" class="text-red-400 ml-2">
+                    (页面失去焦点已暂停)
+                  </span>
+                  <span v-else-if="autoRead.state.isPausedByHover" class="text-yellow-400 ml-2">
+                    (鼠标悬停已暂停)
+                  </span>
+                  <span v-else-if="autoRead.state.isPausedByManualScroll" class="text-blue-400 ml-2">
+                    (手动滚动已暂停)
+                  </span>
+                </div>
+              </div>
+            </el-form-item>
 
-          <el-form-item label="API代理线路">
-            <el-select
-              v-model="settingStore.comic.apiProxy" placeholder="请选择API代理线路"
-              @change="handleProxyChange"
-            >
-              <el-option
-                v-for="item in apiProxy" :key="item.value" :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-            <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
-              正在切换代理线路，重新加载图片...
-            </div>
-          </el-form-item>
+            <el-form-item label="API代理线路">
+              <el-select
+                v-model="settingStore.comic.apiProxy" placeholder="请选择API代理线路"
+                :teleported="false"
+                @change="handleProxyChange"
+              >
+                <el-option
+                  v-for="item in apiProxy" :key="item.value" :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
+                正在切换代理线路，重新加载图片...
+              </div>
+            </el-form-item>
 
-          <el-form-item label="文件代理线路">
-            <el-select
-              v-model="settingStore.comic.fileProxy" placeholder="请选择文件代理线路"
-              @change="handleProxyChange"
-            >
-              <el-option
-                v-for="item in fileProxy" :key="item.value" :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-            <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
-              正在切换线路，重新加载图片...
-            </div>
-          </el-form-item>
-        </el-form>
-      </div>
-    </el-drawer>
+            <el-form-item label="文件代理线路">
+              <el-select
+                v-model="settingStore.comic.fileProxy" placeholder="请选择文件代理线路"
+                :teleported="false"
+                @change="handleProxyChange"
+              >
+                <el-option
+                  v-for="item in fileProxy" :key="item.value" :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+              <div v-if="loadingState.isLoadingNextPage" class="text-xs text-gray-400 mt-1">
+                正在切换线路，重新加载图片...
+              </div>
+            </el-form-item>
+          </el-form>
+        </div>
+      </transition>
+
+      <el-button
+        class="chapter-settings-trigger"
+        :icon="Setting"
+        circle
+        aria-label="阅读设置"
+        @click.stop="drawer = true"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
-:deep(.el-drawer) {
-  background-color: var(--el-color-black);
+.chapter-settings-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.chapter-settings-panel {
+  position: absolute;
+  right: 0;
+  bottom: 58px;
+  width: 400px;
+  max-height: min(680px, calc(100vh - 96px));
+  overflow-y: auto;
+  padding: 20px 20px 8px;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 8px;
+  background: rgb(16 16 16 / 96%);
+  box-shadow: 0 18px 50px rgb(0 0 0 / 45%);
+  backdrop-filter: blur(12px);
+}
+
+.chapter-settings-trigger {
+  width: 46px;
+  height: 46px;
+  border-color: rgb(255 255 255 / 16%);
+  background: rgb(16 16 16 / 88%);
+  color: var(--el-color-white);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 35%);
+}
+
+.chapter-settings-trigger:hover,
+.chapter-settings-trigger:focus-visible {
+  border-color: var(--el-color-primary);
+  background: rgb(24 24 24 / 96%);
+  color: var(--el-color-primary-light-3);
+}
+
+.chapter-settings-panel-enter-active,
+.chapter-settings-panel-leave-active {
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.chapter-settings-panel-enter-from,
+.chapter-settings-panel-leave-to {
+  opacity: 0;
+  transform: translateY(8px) scale(0.98);
 }
 
 .el-form-item {
