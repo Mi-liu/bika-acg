@@ -3,6 +3,8 @@
 哔咔漫画的 PC 版本，基于 Vue 3、Vite 7、TypeScript、Pinia 和 Element Plus 开发。
 当前仓库已配置 Cloudflare Workers 静态资源部署，部署说明见 [CLOUDFLARE.md](./CLOUDFLARE.md)。
 
+在线预览：[https://bika-acg.miliu.workers.dev](https://bika-acg.miliu.workers.dev)
+
 ## 使用说明
 
 - 图片默认开启隐私模式，会以灰色遮挡展示。可在「用户头像 - 设置 - 漫画阅读」中关闭「隐私模式」。

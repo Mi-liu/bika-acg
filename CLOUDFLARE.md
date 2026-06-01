@@ -2,6 +2,8 @@
 
 This project is configured for Cloudflare Workers with static assets.
 
+Current preview URL: <https://bika-acg.miliu.workers.dev>
+
 ## Dashboard deployment with Git
 
 In Cloudflare Workers, import the Git repository and use:
