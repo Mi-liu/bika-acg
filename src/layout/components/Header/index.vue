@@ -19,7 +19,7 @@ const layoutStore = useLayoutStoreHook()
       <Logo />
       <Ranking />
     </div>
-    <div class="flex items-center gap-10px">
+    <div class="flex items-center gap-15px">
       <Search />
       <ThemeSwitch />
       <Weather />
