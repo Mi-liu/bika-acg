@@ -1,3 +1,16 @@
+:root {
+  --el-border-radius-base: 8px;
+}
+
+:root .el-input,
+:root .el-textarea {
+  --el-input-border-radius: 10px;
+}
+
+:root .el-pagination {
+  --el-pagination-border-radius: 10px;
+}
+
 body {
   margin: 0;
   color: var(--el-text-color-primary);
