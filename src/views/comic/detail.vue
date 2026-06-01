@@ -17,6 +17,14 @@ const router = useRouter()
 const localStore = useLocalStoreHook()
 const commentDrawerVisible = ref(false)
 
+function removeComicFromWatchLater(id: string) {
+  const watchLaterComic = localStore.local.WATCH_LATER_LIST.find(item => item._id === id)
+
+  if (watchLaterComic) {
+    void localStore.removeItem('WATCH_LATER_LIST', watchLaterComic, '_id')
+  }
+}
+
 const { data, loading, run: fetchComicDetail } = useRequest(getComicDetail, {
   defaultParams: [props.id],
 })
@@ -30,8 +38,8 @@ const {
 })
 
 watch(data, (newVal) => {
-  if (newVal) {
-    localStore.removeItem('WATCH_LATER_LIST', newVal, '_id')
+  if (newVal?._id === props.id) {
+    removeComicFromWatchLater(props.id)
   }
 })
 

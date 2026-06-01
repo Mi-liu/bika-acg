@@ -32,6 +32,14 @@ const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
 const s = ref<SortOptionValue>(defaultSort)
 
 const requestParamsKey = computed(() => JSON.stringify(props.params ?? {}))
+const showSkeleton = ref(true)
+
+interface RefreshOptions {
+  page?: number
+  showSkeleton?: boolean
+  clearBeforeFetch?: boolean
+  resetScroll?: boolean
+}
 
 // 使用 useRequest 管理分页请求
 const { loading, data, run: fetchComics } = useRequest<Comics['comics'], [T & { page: number, s: string }]>(
@@ -51,6 +59,8 @@ const { loading, data, run: fetchComics } = useRequest<Comics['comics'], [T & { 
   },
 )
 
+const shouldShowSkeleton = computed(() => loading.value && showSkeleton.value)
+
 function handleSelectChange() {
   handleReset()
 }
@@ -59,20 +69,38 @@ function handleReset() {
   CommonPaginationRef.value?.reset()
 }
 
-function handlePageChange(event: { currentPage: number }) {
-  scrollbarRef.value?.setScrollTop(0)
+function refresh(options: RefreshOptions = {}) {
+  const {
+    page = data.value?.page || 1,
+    showSkeleton: nextShowSkeleton = true,
+    clearBeforeFetch = nextShowSkeleton,
+    resetScroll = false,
+  } = options
 
-  // 清空当前数据，显示加载状态
-  if (data.value) {
+  showSkeleton.value = nextShowSkeleton
+
+  if (resetScroll) {
+    scrollbarRef.value?.setScrollTop(0)
+  }
+
+  if (clearBeforeFetch && data.value) {
     data.value.docs = []
   }
 
-  // 使用 useRequest 的 run 方法触发请求
-  fetchComics({
-    page: event.currentPage,
+  return fetchComics({
+    page,
     s: s.value,
     ...props.params,
   } as T & { page: number, s: string })
+}
+
+function handlePageChange(event: { currentPage: number }) {
+  refresh({
+    page: event.currentPage,
+    showSkeleton: true,
+    clearBeforeFetch: true,
+    resetScroll: true,
+  })
 }
 
 // 初始化加载第一页数据
@@ -157,6 +185,10 @@ function formatNumber(num?: number): string {
   }
   return num.toString()
 }
+
+defineExpose({
+  refresh,
+})
 </script>
 
 <template>
@@ -193,7 +225,7 @@ function formatNumber(num?: number): string {
         <div class="w-full h-6px" />
         <!-- 加载状态骨架屏 -->
         <div
-          v-if="loading" class="grid justify-center gap-5"
+          v-if="shouldShowSkeleton" class="grid justify-center gap-5"
           style="grid-template-columns: repeat(auto-fill, 270px);"
         >
           <Motion

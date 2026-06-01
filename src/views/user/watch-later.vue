@@ -8,6 +8,15 @@ import ComicList from '@/components/ComicList/index.vue'
  */
 
 const localStore = useLocalStoreHook()
+const comicListRef = useTemplateRef<{ refresh: (options?: { showSkeleton?: boolean }) => void }>('comicListRef')
+const watchLaterIds = computed(() => localStore.local.WATCH_LATER_LIST.map(item => item._id).join(','))
+
+function refreshWatchLaterList() {
+  comicListRef.value?.refresh({ showSkeleton: false })
+}
+
+watch(watchLaterIds, refreshWatchLaterList)
+onActivated(refreshWatchLaterList)
 
 /**
  * 获取稍后再看列表的适配器函数
@@ -60,7 +69,10 @@ async function getWatchLaterList(params: Partial<ComicsParams> & { page: number,
 
 <template>
   <div class="watch-later-page">
-    <ComicList title="稍后再看" :params="{}" :fetch="getWatchLaterList" />
+    <ComicList
+      ref="comicListRef" title="稍后再看" :params="{}"
+      :fetch="getWatchLaterList"
+    />
   </div>
 </template>
 
