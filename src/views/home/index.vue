@@ -12,20 +12,22 @@ const settingStore = useSettingStoreHook()
 
 const { data: categories } = useRequest(getCategories)
 
-const { data: randomComics, run: randomRefresh, mutate: randomMutate, loading: randomLoading } = useRequest(getRandomComic)
+const { data: randomComics, run: randomRefresh, mutate: randomMutate, loading: randomLoading } = useRequest(getRandomComic, {
+  manual: true,
+})
 
-const R18_OFF_VISIBLE_CATEGORY_TITLES = ['禁書目錄']
+const R18_DISABLED_VISIBLE_CATEGORY_TITLES = ['禁書目錄']
 
 const visibleCategories = computed<Categories['categories']>(() => {
   if (!categories.value) {
     return []
   }
 
-  if (settingStore.comic.showR18Categories) {
+  if (settingStore.comic.enableR18Content) {
     return categories.value
   }
 
-  return categories.value.filter(category => R18_OFF_VISIBLE_CATEGORY_TITLES.includes(category.title))
+  return categories.value.filter(category => R18_DISABLED_VISIBLE_CATEGORY_TITLES.includes(category.title))
 })
 
 function handleCategoryClick(title: string) {
@@ -58,9 +60,26 @@ function handleCategoriesOrderChange(newCategories: Categories['categories']) {
 }
 
 function handleRandomRefresh() {
+  if (!settingStore.comic.enableR18Content) {
+    return
+  }
+
   randomMutate(undefined)
   randomRefresh()
 }
+
+watch(
+  () => settingStore.comic.enableR18Content,
+  (enableR18Content) => {
+    if (enableR18Content) {
+      randomRefresh()
+      return
+    }
+
+    randomMutate(undefined)
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -76,8 +95,8 @@ function handleRandomRefresh() {
         <DraggableCategories
           v-if="categories"
           :categories="visibleCategories"
-          :draggable="settingStore.comic.showR18Categories"
-          :show-prepend="settingStore.comic.showR18Categories"
+          :draggable="settingStore.comic.enableR18Content"
+          :show-prepend="settingStore.comic.enableR18Content"
           handle=".category-drag-handle"
           class="category-grid"
           @order-change="handleCategoriesOrderChange"
@@ -115,7 +134,7 @@ function handleRandomRefresh() {
           </template>
         </DraggableCategories>
       </div>
-      <div>
+      <div v-if="settingStore.comic.enableR18Content">
         <div class="flex items-center justify-between mt-3">
           <div class="text-20px">随机漫画</div>
           <el-button :icon="Refresh" @click="handleRandomRefresh">

@@ -8,6 +8,7 @@ import User from './User.vue'
 import Weather from './Weather.vue'
 
 const layoutStore = useLayoutStoreHook()
+const settingStore = useSettingStoreHook()
 </script>
 
 <template>
@@ -17,7 +18,7 @@ const layoutStore = useLayoutStoreHook()
   >
     <div class="h-full flex-1 flex items-center gap-10px">
       <Logo />
-      <Ranking />
+      <Ranking v-if="settingStore.comic.enableR18Content" />
     </div>
     <div class="flex items-center gap-15px">
       <Search />

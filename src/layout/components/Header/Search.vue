@@ -2,7 +2,11 @@
 import { Search } from '@element-plus/icons-vue'
 import { getKeywords } from '@/api/keywords'
 
-const { data: keywords } = useRequest(getKeywords)
+const settingStore = useSettingStoreHook()
+
+const { data: keywords, run: fetchKeywords } = useRequest(getKeywords, {
+  manual: true,
+})
 
 const router = useRouter()
 
@@ -10,8 +14,19 @@ const inputValue = ref('')
 
 const isFocus = ref(false)
 
+const showHotSearch = computed(() => settingStore.comic.enableR18Content && isFocus.value)
+
 function handleFocus() {
+  if (!settingStore.comic.enableR18Content) {
+    isFocus.value = false
+    return
+  }
+
   isFocus.value = true
+
+  if (!keywords.value) {
+    fetchKeywords()
+  }
 }
 
 function handleBlur() {
@@ -31,6 +46,10 @@ function handleSearch() {
 }
 
 function handleKeywordClick(keyword: string) {
+  if (!settingStore.comic.enableR18Content) {
+    return
+  }
+
   inputValue.value = keyword
 
   router.push({
@@ -40,6 +59,15 @@ function handleKeywordClick(keyword: string) {
     },
   })
 }
+
+watch(
+  () => settingStore.comic.enableR18Content,
+  (enableR18Content) => {
+    if (!enableR18Content) {
+      isFocus.value = false
+    }
+  },
+)
 </script>
 
 <template>
@@ -58,7 +86,7 @@ function handleKeywordClick(keyword: string) {
       leave-to-class="opacity-0 transform scale-95 translate-y-[-8px]"
     >
       <div
-        v-show="isFocus"
+        v-show="showHotSearch"
         class="absolute w-full right-0 p-4 top-[calc(100%+12px)] bg-[--el-bg-color] shadow-lg rounded-lg border border-[--el-border-color-light] z-50 backdrop-blur-sm"
       >
         <div class="space-y-3">

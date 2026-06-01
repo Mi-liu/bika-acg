@@ -145,7 +145,16 @@ function confirmImportData() {
         throw new Error('数据格式不正确')
       }
 
-      Object.assign(settingStore.comic, data.settings)
+      const importedSettings = { ...data.settings }
+      if (
+        importedSettings.enableR18Content === undefined
+        && importedSettings.showR18Categories !== undefined
+      ) {
+        importedSettings.enableR18Content = importedSettings.showR18Categories
+      }
+      delete importedSettings.showR18Categories
+
+      Object.assign(settingStore.comic, importedSettings)
       if (data.appearance) {
         Object.assign(settingStore.appearance, data.appearance)
       }
@@ -413,17 +422,17 @@ function handleCloseAuthor(author: string) {
               <div class="setting-row">
                 <div class="setting-copy">
                   <span class="setting-label">
-                    R18 分类
-                    <el-tooltip placement="top" content="关闭时首页分类仅显示非成人目录，开启后显示全部分类。">
+                    R18 内容
+                    <el-tooltip placement="top" content="关闭时隐藏或限制 R18 相关入口，开启后允许显示 R18 内容与功能。">
                       <el-icon class="help-icon">
                         <QuestionFilled />
                       </el-icon>
                     </el-tooltip>
                   </span>
-                  <span class="setting-help">控制首页分类入口的显示范围。</span>
+                  <span class="setting-help">控制 R18 内容和相关功能是否可见。</span>
                 </div>
                 <el-switch
-                  v-model="settingStore.comic.showR18Categories"
+                  v-model="settingStore.comic.enableR18Content"
                   active-text="开"
                   inactive-text="关"
                 />

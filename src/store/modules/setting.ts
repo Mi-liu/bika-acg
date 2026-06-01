@@ -16,12 +16,14 @@ interface PersistedSettingState {
     apiProxy?: string
     fileProxy?: string
     proxy?: LegacyProxyConfig
+    enableR18Content?: boolean
+    showR18Categories?: boolean
   }
 }
 
 export type ThemeMode = 'system' | 'light' | 'dark'
 
-function migrateLegacyProxyStorage() {
+function migratePersistedSettingStorage() {
   const storageKey = 'setting'
   const raw = window.localStorage.getItem(storageKey)
 
@@ -32,23 +34,35 @@ function migrateLegacyProxyStorage() {
   const comic = state.comic
   const legacyProxy = comic?.proxy
 
-  if (!comic || !legacyProxy)
+  if (!comic)
     return
 
   let changed = false
 
-  if (!comic.apiProxy && legacyProxy.api) {
+  if (!comic.apiProxy && legacyProxy?.api) {
     comic.apiProxy = legacyProxy.api
     changed = true
   }
 
-  if (!comic.fileProxy && legacyProxy.file) {
+  if (!comic.fileProxy && legacyProxy?.file) {
     comic.fileProxy = legacyProxy.file
     changed = true
   }
 
-  delete comic.proxy
-  changed = true
+  if (legacyProxy) {
+    delete comic.proxy
+    changed = true
+  }
+
+  if (comic.enableR18Content === undefined && comic.showR18Categories !== undefined) {
+    comic.enableR18Content = comic.showR18Categories
+    changed = true
+  }
+
+  if (comic.showR18Categories !== undefined) {
+    delete comic.showR18Categories
+    changed = true
+  }
 
   if (changed) {
     window.localStorage.setItem(storageKey, JSON.stringify(state))
@@ -78,8 +92,8 @@ const useSettingStore = defineStore(
       autoReadSpeed: 20,
       /** 隐私模式 */
       privacyMode: true,
-      /** R18 分类开关 */
-      showR18Categories: false,
+      /** R18 内容开关 */
+      enableR18Content: false,
     })
 
     /** 过滤漫画设置 */
@@ -94,7 +108,7 @@ const useSettingStore = defineStore(
   },
   {
     persist: {
-      beforeHydrate: migrateLegacyProxyStorage,
+      beforeHydrate: migratePersistedSettingStorage,
     },
     multiWindowSync: {
       enabled: true,
