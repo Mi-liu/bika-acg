@@ -44,7 +44,7 @@ const nowWeather = computed(() => data.value)
 
 <template>
   <div v-if="!isEmpty(nowWeather)" class="flex items-center select-none">
-    {{ nowWeather.location.name }}
+    <!-- {{ nowWeather.location.name }} -->
     {{ nowWeather.now.text }}
     {{ nowWeather.now.temperature }}°C
     <img class="h-24px ml-1" :src="weatherImagesMap.get(nowWeather.now.code)">
