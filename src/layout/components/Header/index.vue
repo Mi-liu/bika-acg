@@ -3,6 +3,7 @@ import Logo from './Logo.vue'
 import ProxySwitch from './ProxySwitch.vue'
 import Ranking from './Ranking.vue'
 import Search from './Search.vue'
+import ThemeSwitch from './ThemeSwitch.vue'
 import User from './User.vue'
 import Weather from './Weather.vue'
 
@@ -20,6 +21,7 @@ const layoutStore = useLayoutStoreHook()
     </div>
     <div class="flex items-center gap-10px">
       <Search />
+      <ThemeSwitch />
       <Weather />
       <ProxySwitch />
       <User />

@@ -9,12 +9,17 @@ interface LegacyProxyConfig {
 }
 
 interface PersistedSettingState {
+  appearance?: {
+    themeMode?: ThemeMode
+  }
   comic?: {
     apiProxy?: string
     fileProxy?: string
     proxy?: LegacyProxyConfig
   }
 }
+
+export type ThemeMode = 'system' | 'light' | 'dark'
 
 function migrateLegacyProxyStorage() {
   const storageKey = 'setting'
@@ -54,6 +59,10 @@ const useSettingStore = defineStore(
   'setting',
   () => {
     /** 漫画设置 */
+    const appearance = reactive({
+      themeMode: 'system' as ThemeMode,
+    })
+
     const comic = reactive({
       /** 图片质量 */
       imageQuality: pictureQuality[2].value,
@@ -81,7 +90,7 @@ const useSettingStore = defineStore(
       authors: [] as string[],
     })
 
-    return { comic, filter }
+    return { appearance, comic, filter }
   },
   {
     persist: {

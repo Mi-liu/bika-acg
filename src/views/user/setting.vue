@@ -7,8 +7,11 @@ import {
   Download,
   Filter,
   InfoFilled,
+  Monitor,
+  Moon,
   QuestionFilled,
   Reading,
+  Sunny,
   SwitchButton,
   Timer,
   Upload,
@@ -28,6 +31,24 @@ const appVersion = import.meta.env.VITE_APP_VERSION
 const importDialogVisible = ref(false)
 const importFile = ref<File | null>(null)
 
+const themeOptions = [
+  {
+    value: 'system',
+    label: '跟随系统',
+    icon: Monitor,
+  },
+  {
+    value: 'light',
+    label: '浅色模式',
+    icon: Sunny,
+  },
+  {
+    value: 'dark',
+    label: '深色模式',
+    icon: Moon,
+  },
+]
+
 const currentImageQuality = computed(() => {
   return pictureQuality.find(item => item.value === settingStore.comic.imageQuality)?.label || '未选择'
 })
@@ -38,6 +59,10 @@ const currentApiProxy = computed(() => {
 
 const currentFileProxy = computed(() => {
   return fileProxy.find(item => item.value === settingStore.comic.fileProxy)?.label || '未选择'
+})
+
+const currentTheme = computed(() => {
+  return themeOptions.find(item => item.value === settingStore.appearance.themeMode)?.label || '跟随系统'
 })
 
 const localStats = computed(() => [
@@ -73,6 +98,7 @@ function handleExportData() {
     const exportData = {
       timestamp: new Date().toISOString(),
       version: '1.0.0',
+      appearance: settingStore.appearance,
       settings: settingStore.comic,
       localData: localStore.local,
     }
@@ -120,6 +146,9 @@ function confirmImportData() {
       }
 
       Object.assign(settingStore.comic, data.settings)
+      if (data.appearance) {
+        Object.assign(settingStore.appearance, data.appearance)
+      }
       Object.assign(localStore.local, data.localData)
 
       ElMessage.success('数据导入成功')
@@ -179,6 +208,10 @@ function handleCloseAuthor(author: string) {
             <strong>{{ settingStore.comic.comicImageWidth }}px</strong>
           </div>
           <div class="hero-status-card">
+            <span>主题</span>
+            <strong>{{ currentTheme }}</strong>
+          </div>
+          <div class="hero-status-card">
             <span>隐私模式</span>
             <strong>{{ settingStore.comic.privacyMode ? '开启' : '关闭' }}</strong>
           </div>
@@ -187,6 +220,47 @@ function handleCloseAuthor(author: string) {
 
       <div class="settings-layout">
         <div class="settings-main">
+          <section class="settings-panel" aria-labelledby="appearance-settings-title">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span class="panel-icon">
+                  <el-icon><Monitor /></el-icon>
+                </span>
+                <div>
+                  <h2 id="appearance-settings-title">
+                    外观主题
+                  </h2>
+                  <p>默认跟随当前设备，也可以固定为浅色或深色模式。</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="setting-list">
+              <div class="setting-row">
+                <div class="setting-copy">
+                  <span class="setting-label">主题模式</span>
+                  <span class="setting-help">影响页面、弹窗、表单和浏览器原生控件配色。</span>
+                </div>
+                <el-radio-group
+                  v-model="settingStore.appearance.themeMode"
+                  class="theme-mode-group"
+                  aria-label="主题模式"
+                >
+                  <el-radio-button
+                    v-for="option in themeOptions"
+                    :key="option.value"
+                    :value="option.value"
+                  >
+                    <span class="theme-mode-option">
+                      <el-icon><component :is="option.icon" /></el-icon>
+                      {{ option.label }}
+                    </span>
+                  </el-radio-button>
+                </el-radio-group>
+              </div>
+            </div>
+          </section>
+
           <section class="settings-panel" aria-labelledby="reading-settings-title">
             <div class="panel-header">
               <div class="panel-title">
@@ -584,7 +658,7 @@ function handleCloseAuthor(author: string) {
 
 .hero-status-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   align-self: center;
 }
@@ -776,6 +850,20 @@ function handleCloseAuthor(author: string) {
 
 .setting-control {
   width: 220px;
+}
+
+.theme-mode-group {
+  flex: 0 0 auto;
+
+  :deep(.el-radio-button__inner) {
+    min-height: 40px;
+  }
+}
+
+.theme-mode-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .setting-control-wide,

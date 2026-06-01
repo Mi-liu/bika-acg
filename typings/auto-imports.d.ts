@@ -324,4 +324,7 @@ declare global {
   // @ts-ignore
   export type { Local } from '../src/store/modules/local'
   import('../src/store/modules/local')
+  // @ts-ignore
+  export type { ThemeMode } from '../src/store/modules/setting'
+  import('../src/store/modules/setting')
 }

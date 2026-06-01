@@ -3,6 +3,7 @@ import App from './App.vue'
 
 // 导入插件系统
 import plugins from './plugins'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 import './assets/css/main.css'
 
 // 导入 UnoCSS 样式

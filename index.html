@@ -4,6 +4,27 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      ;(() => {
+        try {
+          const rawSetting = window.localStorage.getItem('setting')
+          const storedTheme = rawSetting ? JSON.parse(rawSetting)?.appearance?.themeMode : 'system'
+          const themeMode = ['light', 'dark', 'system'].includes(storedTheme) ? storedTheme : 'system'
+          const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+          const isDark = themeMode === 'dark' || (themeMode === 'system' && prefersDark)
+
+          document.documentElement.classList.toggle('dark', isDark)
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+        }
+        catch {
+          const isDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+
+          document.documentElement.classList.toggle('dark', isDark)
+          document.documentElement.style.colorScheme = isDark ? 'dark' : 'light'
+        }
+      })()
+    </script>
     <title>哔咔漫画</title>
   </head>
   <body>

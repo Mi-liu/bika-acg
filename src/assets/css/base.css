@@ -1,5 +1,7 @@
 body {
   margin: 0;
+  color: var(--el-text-color-primary);
+  background: var(--el-bg-color-page);
 }
 
 #app {

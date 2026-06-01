@@ -216,7 +216,7 @@ function getComicDetailPath(comicId: string) {
   <el-scrollbar>
     <div class="max-w-1100px mx-auto px-2">
       <!-- 主要信息区域 -->
-      <div class="h-400px flex p4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+      <div class="h-400px flex p4 rounded-2 bg-[--el-bg-color] shadow-[--el-box-shadow-light]">
         <!-- 骨架屏 -->
         <el-skeleton v-if="loading" class="size-full" :loading="true">
           <template #template>
@@ -347,7 +347,7 @@ function getComicDetailPath(comicId: string) {
       </div>
 
       <!-- 统计 -->
-      <div class="h-90px flex mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+      <div class="h-90px flex mt-4 rounded-2 bg-[--el-bg-color] shadow-[--el-box-shadow-light]">
         <!-- 统计区域骨架屏 -->
         <el-skeleton v-if="loading" class="size-full p-4" :loading="true">
           <template #template>
@@ -380,7 +380,7 @@ function getComicDetailPath(comicId: string) {
       </div>
 
       <!-- 简介 -->
-      <div class="p4 mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+      <div class="p4 mt-4 rounded-2 bg-[--el-bg-color] shadow-[--el-box-shadow-light]">
         <!-- 简介区域骨架屏 -->
         <el-skeleton v-if="loading" class="size-full" :loading="true">
           <template #template>
@@ -414,7 +414,7 @@ function getComicDetailPath(comicId: string) {
       </div>
 
       <!-- 章节信息 -->
-      <div class="p4 mt-4  rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+      <div class="p4 mt-4  rounded-2 bg-[--el-bg-color] shadow-[--el-box-shadow-light]">
         <!-- 章节列表区域骨架屏 -->
         <el-skeleton v-if="loading || epsData.docs.length === 0" class="size-full" :loading="true">
           <template #template>
@@ -455,7 +455,7 @@ function getComicDetailPath(comicId: string) {
       </div>
 
       <!-- 相关推荐 -->
-      <div class="p4 mt-4 rounded-2 bg-[--el-color-white] shadow-[--el-box-shadow-light]">
+      <div class="p4 mt-4 rounded-2 bg-[--el-bg-color] shadow-[--el-box-shadow-light]">
         <div class="flex items-center gap-1 text-18px font-bold mb-4">
           <el-icon>
             <Star />
