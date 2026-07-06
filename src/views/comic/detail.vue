@@ -13,8 +13,11 @@ import { getImageUrl } from '@/utils/string'
 const props = defineProps<{ id: string }>()
 
 const router = useRouter()
+const route = useRoute()
+const pageTabFullPath = route.fullPath
 
 const localStore = useLocalStoreHook()
+const layoutStore = useLayoutStoreHook()
 const commentDrawerVisible = ref(false)
 
 function removeComicFromWatchLater(id: string) {
@@ -40,6 +43,7 @@ const {
 watch(data, (newVal) => {
   if (newVal?._id === props.id) {
     removeComicFromWatchLater(props.id)
+    layoutStore.updatePageTabSubtitle(pageTabFullPath, newVal.title)
   }
 })
 
