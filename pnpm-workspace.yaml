@@ -1,3 +1,9 @@
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  vue-demi: true
+  workerd: true
 onlyBuiltDependencies:
   - esbuild
   - unrs-resolver
