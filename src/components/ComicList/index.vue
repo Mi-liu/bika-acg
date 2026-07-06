@@ -25,14 +25,25 @@ const router = useRouter()
 const settingStore = useSettingStoreHook()
 
 const localStore = useLocalStoreHook()
+const layoutStore = useLayoutStoreHook()
 
 const CommonPaginationRef = useTemplateRef('CommonPaginationRef')
 const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
 
 const s = ref<SortOptionValue>(defaultSort)
+const contextMenu = reactive({
+  visible: false,
+  x: 0,
+  y: 0,
+  comic: undefined as Comic | undefined,
+})
 
 const requestParamsKey = computed(() => JSON.stringify(props.params ?? {}))
 const showSkeleton = ref(true)
+const contextMenuStyle = computed(() => ({
+  left: `${contextMenu.x}px`,
+  top: `${contextMenu.y}px`,
+}))
 
 interface RefreshOptions {
   page?: number
@@ -147,8 +158,36 @@ function getComicLabel(item: Comic) {
   return `查看漫画 ${item.title}`
 }
 
-function handleComicClick(item: Comic) {
-  router.push(getComicPath(item))
+function closeContextMenu() {
+  contextMenu.visible = false
+  contextMenu.comic = undefined
+}
+
+function showContextMenu(event: MouseEvent, item: Comic) {
+  event.preventDefault()
+  event.stopPropagation()
+
+  const menuWidth = 180
+  const menuHeight = 48
+  const margin = 8
+  const maxX = window.innerWidth - menuWidth - margin
+  const maxY = window.innerHeight - menuHeight - margin
+
+  contextMenu.x = Math.max(margin, Math.min(event.clientX, maxX))
+  contextMenu.y = Math.max(margin, Math.min(event.clientY, maxY))
+  contextMenu.comic = item
+  contextMenu.visible = true
+}
+
+function openComicInPageTab(item: Comic) {
+  layoutStore.upsertPageTab({
+    title: '漫画详情',
+    baseTitle: '漫画详情',
+    subtitle: item.title,
+    fullPath: getComicPath(item),
+    path: getComicPath(item),
+  })
+  closeContextMenu()
 }
 
 function handleAddToLater(item: Comic) {
@@ -185,6 +224,15 @@ function formatNumber(num?: number): string {
   }
   return num.toString()
 }
+
+useEventListener(document, 'click', closeContextMenu)
+useEventListener(document, 'scroll', closeContextMenu, true)
+useEventListener(window, 'resize', closeContextMenu)
+useEventListener(document, 'keydown', (event) => {
+  if (event.key === 'Escape') {
+    closeContextMenu()
+  }
+})
 
 defineExpose({
   refresh,
@@ -276,16 +324,16 @@ defineExpose({
           v-else class="grid justify-center gap-5"
           style="grid-template-columns: repeat(auto-fill, 270px);"
         >
-          <div
+          <article
             v-for="item in comics" :key="item._id"
-            class="comic-card block rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
-            role="link"
-            tabindex="0"
-            :aria-label="getComicLabel(item)"
-            @click="handleComicClick(item)"
-            @keydown.enter="handleComicClick(item)"
-            @keydown.space.prevent="handleComicClick(item)"
+            class="comic-card rounded-2 overflow-hidden p-3 shadow-[--el-box-shadow]"
+            @contextmenu="showContextMenu($event, item)"
           >
+            <RouterLink
+              class="comic-card-link"
+              :to="getComicPath(item)"
+              :aria-label="getComicLabel(item)"
+            />
             <!-- 封面图 -->
             <div class="relative">
               <Image :src="getImageUrl(item.thumb.path)" :alt="item.title" />
@@ -297,7 +345,7 @@ defineExpose({
                 <button
                   v-if="!arrayContains(localStore.local.WATCH_LATER_LIST, item._id, '_id')"
                   type="button"
-                  class="absolute top-2 right-2 size-34px bg-[--el-color-info] rounded-1 flex-center"
+                  class="absolute top-2 right-2 z-2 size-34px bg-[--el-color-info] rounded-1 flex-center"
                   @click.stop="handleAddToLater(item)"
                 >
                   <el-icon class="text-[--el-color-white]!">
@@ -305,7 +353,7 @@ defineExpose({
                   </el-icon>
                 </button>
                 <button
-                  v-else class="absolute top-2 right-2 w-44px h-44px bg-[--el-color-info] rounded-1 flex-center"
+                  v-else class="absolute top-2 right-2 z-2 w-44px h-44px bg-[--el-color-info] rounded-1 flex-center"
                   type="button"
                   @click.stop="handleRemoveFromLater(item)"
                 >
@@ -325,7 +373,7 @@ defineExpose({
                 item.pagesCount }}P
             </div>
             <!-- 作者 -->
-            <div class="text-[--el-text-color-secondary] flex">
+            <div class="relative z-2 text-[--el-text-color-secondary] flex">
               作者:
               <div class="flex-1 flex gap-2 ml-2 flex-wrap">
                 <Author v-for="author in item.author.split(/[、,，]\s*/)" :key="author" :author="author" />
@@ -347,7 +395,7 @@ defineExpose({
               </div>
             </div>
             <!-- 分类 -->
-            <div class="mt-1 flex flex-wrap gap-2">
+            <div class="relative z-2 mt-1 flex flex-wrap gap-2">
               <el-tag
                 v-for="tag in item.categories" :key="tag" closable
                 type="primary" effect="plain"
@@ -356,26 +404,59 @@ defineExpose({
                 {{ tag }}
               </el-tag>
             </div>
-          </div>
+          </article>
           <div class="w-full h-6px" />
         </div>
       </el-scrollbar>
     </div>
+    <Teleport to="body">
+      <div
+        v-if="contextMenu.visible && contextMenu.comic"
+        class="comic-context-menu"
+        :style="contextMenuStyle"
+        role="menu"
+        @click.stop
+        @contextmenu.prevent.stop
+      >
+        <button
+          type="button"
+          class="comic-context-menu__item"
+          role="menuitem"
+          @click="openComicInPageTab(contextMenu.comic)"
+        >
+          在新标签页中打开链接
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .comic-card {
+  position: relative;
   color: inherit;
-  text-decoration: none;
   transition:
     box-shadow 160ms ease,
     transform 160ms ease;
 
   &:hover,
-  &:focus-visible {
+  &:focus-within {
     box-shadow: var(--el-box-shadow-light);
     transform: translateY(-2px);
+  }
+}
+
+.comic-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  color: inherit;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 2px solid var(--el-color-primary);
+    outline-offset: -2px;
   }
 }
 
@@ -383,5 +464,36 @@ button {
   border: 0;
   padding: 0;
   cursor: pointer;
+}
+
+.comic-context-menu {
+  position: fixed;
+  z-index: 3000;
+  min-width: 180px;
+  padding: 8px;
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 10px;
+  background: var(--el-bg-color-overlay);
+  box-shadow: var(--el-box-shadow-light);
+}
+
+.comic-context-menu__item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--el-text-color-primary);
+  font-size: 14px;
+  text-align: left;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--el-fill-color-light);
+    color: var(--el-color-primary);
+    outline: none;
+  }
 }
 </style>
