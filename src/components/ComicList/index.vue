@@ -226,6 +226,7 @@ function formatNumber(num?: number): string {
 }
 
 useEventListener(document, 'click', closeContextMenu)
+useEventListener(document, 'contextmenu', closeContextMenu)
 useEventListener(document, 'scroll', closeContextMenu, true)
 useEventListener(window, 'resize', closeContextMenu)
 useEventListener(document, 'keydown', (event) => {
