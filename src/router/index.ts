@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { getRouteTitle } from './title'
 
 const title = useTitle('首页', { titleTemplate: '%s | 哔咔漫画' })
 
@@ -24,7 +25,7 @@ const router = createRouter({
 })
 
 router.afterEach((to) => {
-  title.value = String(to.query.title || to.meta.title || '哔咔漫画')
+  title.value = getRouteTitle(to)
 })
 
 export default router

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RouteLocationNormalizedLoaded } from 'vue-router'
+import { getRouteTitle } from '@/router/title'
 
 interface PageNavTabItem {
   title: string
@@ -12,17 +12,6 @@ interface PageNavTabItem {
 const router = useRouter()
 const route = useRoute()
 const layoutStore = useLayoutStoreHook()
-
-function getRouteTitle(currentRoute: RouteLocationNormalizedLoaded) {
-  if (typeof currentRoute.query.title === 'string' && currentRoute.query.title) {
-    return currentRoute.query.title
-  }
-
-  const matchedWithTitle = currentRoute.matched.filter(record => record.meta?.title)
-  const lastMatched = matchedWithTitle.at(-1)
-
-  return String(lastMatched?.meta?.title || currentRoute.name || currentRoute.path || '未命名页面')
-}
 
 const pageTabs = computed(() => layoutStore.pageTabs)
 const activeFullPath = computed(() => route.fullPath)
