@@ -4,7 +4,7 @@ import type { ComicOrderPage, PageData } from '@/api/comic'
 import { CircleCloseFilled, Loading, QuestionFilled, Setting } from '@element-plus/icons-vue'
 import { omit } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
-import { getComicPages } from '@/api/comic'
+import { getComicDetail, getComicPages } from '@/api/comic'
 import { pictureQuality } from '@/constants/options'
 import { addAutoReadScrollListener, useAutoRead } from '@/utils/autoRead'
 import { getImageUrl } from '@/utils/string'
@@ -32,6 +32,9 @@ const PRELOAD_AHEAD_COUNT = 6
 const EAGER_LOAD_IMAGE_COUNT = 3
 
 const settingStore = useSettingStoreHook()
+const route = useRoute()
+const layoutStore = useLayoutStoreHook()
+const pageTabFullPath = route.fullPath
 const scrollbarRef = useTemplateRef<ScrollbarInstance>('scrollbarRef')
 const imageListRef = useTemplateRef<HTMLElement>('imageListRef')
 
@@ -88,6 +91,10 @@ const pageInfo = reactive<PageData>({
 
 const drawer = ref(false)
 const currentImageIndex = ref(0)
+
+getComicDetail(props.id).then((comic) => {
+  layoutStore.updatePageTabSubtitle(pageTabFullPath, comic.title)
+})
 
 /** 漫画图片列表 */
 const comicImages = reactive<ComicImage[]>([])
