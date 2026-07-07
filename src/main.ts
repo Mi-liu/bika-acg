@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-import { logAppVersion } from '@/utils/appVersion'
+// import { logAppVersion } from '@/utils/appVersion'
 import App from './App.vue'
 
 // 导入插件系统
@@ -23,7 +23,7 @@ async function bootstrap() {
 
   // 初始化应用并挂载
   app.mount('#app')
-  void logAppVersion()
+  // void logAppVersion()
 }
 
 bootstrap()

@@ -17,8 +17,15 @@ export async function logAppVersion() {
     }
 
     const versionJson = await response.json() as AppVersionInfo
+    const isSameVersion = currentVersionInfo.version === versionJson.version
+    const isSameCommit = currentVersionInfo.commit === versionJson.commit
 
     console.info('[version]', {
+      compare: {
+        isSameVersion,
+        isSameCommit,
+        result: isSameVersion && isSameCommit ? 'same' : 'different',
+      },
       currentVersion: currentVersionInfo.version,
       currentCommit: currentVersionInfo.commit,
       currentBuildTime: currentVersionInfo.buildTime,
