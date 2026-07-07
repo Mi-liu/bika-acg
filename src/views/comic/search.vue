@@ -6,6 +6,14 @@ const props = defineProps<{
   /** 搜索的关键词 */
   keyword: string
 }>()
+
+const route = useRoute()
+const layoutStore = useLayoutStoreHook()
+const pageTabFullPath = route.fullPath
+
+watch(() => props.keyword, (keyword) => {
+  layoutStore.updatePageTabSubtitle(pageTabFullPath, keyword)
+}, { immediate: true })
 </script>
 
 <template>
