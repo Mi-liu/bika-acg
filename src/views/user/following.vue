@@ -31,11 +31,11 @@ async function handleUnfollow(authorName: string) {
     <div>
       我的关注
     </div>
-    <el-scrollbar>
+    <el-scrollbar v-if="localStore.local.FOLLOW_AUTHOR_LIST.length > 0">
       <div class="flex gap-2">
         <ElButton v-for="item in localStore.local.FOLLOW_AUTHOR_LIST" :key="item" class="ml-0! h-fit!">
           <el-avatar class="mr-2" size="small" :icon="UserFilled" />
-          <Author :author="item" />
+          <Author :author="item" :show-menus="false" />
 
           <div
             class="size-20px rounded-50% flex-center ml-2 hover:text-[--el-color-danger]"
@@ -48,6 +48,13 @@ async function handleUnfollow(authorName: string) {
         </ElButton>
       </div>
     </el-scrollbar>
+    <div v-else class="flex-center h-full min-h-400px">
+      <el-empty description="暂无关注作者" :image-size="160">
+        <div class="text-14px text-[--el-text-color-secondary] leading-relaxed text-center">
+          关注喜欢的作者后，会在这里展示
+        </div>
+      </el-empty>
+    </div>
   </div>
 </template>
 

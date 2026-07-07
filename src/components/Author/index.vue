@@ -2,9 +2,12 @@
 import type { CommonPopoverMenuProps } from '@common/components/CommonPopoverMenus/type'
 import CommonPopoverMenus from '@common/components/CommonPopoverMenus/index.vue'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   author: string
-}>()
+  showMenus?: boolean
+}>(), {
+  showMenus: true,
+})
 
 const localStore = useLocalStoreHook()
 const settingStore = useSettingStoreHook()
@@ -55,11 +58,17 @@ function handleAuthorClick(author: string) {
 </script>
 
 <template>
-  <CommonPopoverMenus :menus="menus">
+  <CommonPopoverMenus v-if="showMenus" :menus="menus">
     <el-link type="primary" underline="always" @click.stop="handleAuthorClick(author)">
       {{ author }}
     </el-link>
   </CommonPopoverMenus>
+  <el-link
+    v-else type="primary" underline="always"
+    @click.stop="handleAuthorClick(author)"
+  >
+    {{ author }}
+  </el-link>
 </template>
 
 <style lang="scss" scoped>
