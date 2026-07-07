@@ -1,3 +1,5 @@
+import { execSync } from 'node:child_process'
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 import basicSsl from '@vitejs/plugin-basic-ssl'
@@ -7,10 +9,73 @@ import UnoCSS from 'unocss/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 const root = process.cwd()
+const envDir = path.resolve(root, 'env')
+
+interface AppVersionInfo {
+  version: string
+  commit: string
+  buildTime: string
+}
+
+function getGitCommit() {
+  try {
+    return execSync('git rev-parse --short HEAD', { cwd: root, encoding: 'utf8' }).trim()
+  }
+  catch {
+    return 'unknown'
+  }
+}
+
+function getPackageVersion() {
+  const packageJsonPath = path.resolve(root, 'package.json')
+  const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8')) as { version?: string }
+
+  return packageJson.version || '0.0.0'
+}
+
+function createAppVersionInfo(env: Record<string, string>): AppVersionInfo {
+  const commit
+    = process.env.CF_PAGES_COMMIT_SHA?.slice(0, 7)
+      || process.env.COMMIT_SHA?.slice(0, 7)
+      || process.env.GITHUB_SHA?.slice(0, 7)
+      || getGitCommit()
+
+  return {
+    version: env.VITE_APP_VERSION || process.env.VITE_APP_VERSION || getPackageVersion(),
+    commit,
+    buildTime: new Date().toISOString(),
+  }
+}
+
+function createVersionJsonPlugin(versionInfo: AppVersionInfo) {
+  return {
+    name: 'pic-age-version-json',
+    configureServer(server: import('vite').ViteDevServer) {
+      server.middlewares.use('/version.json', (_request, response) => {
+        response.setHeader('Content-Type', 'application/json; charset=utf-8')
+        response.setHeader('Cache-Control', 'no-store')
+        response.end(JSON.stringify(versionInfo, null, 2))
+      })
+    },
+    writeBundle(options: { dir?: string }) {
+      const outputDir = options.dir ? path.resolve(root, options.dir) : path.resolve(root, 'dist')
+
+      mkdirSync(outputDir, { recursive: true })
+      writeFileSync(
+        path.join(outputDir, 'version.json'),
+        `${JSON.stringify(versionInfo, null, 2)}\n`,
+        'utf8',
+      )
+    },
+  }
+}
+
+const viteMode = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+const appVersionInfo = createAppVersionInfo(loadEnv(viteMode, envDir, ''))
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -34,8 +99,12 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
       dts: 'typings/components.d.ts',
     }),
+    createVersionJsonPlugin(appVersionInfo),
   ],
-  envDir: path.resolve(root, 'env'),
+  envDir,
+  define: {
+    __APP_VERSION_INFO__: JSON.stringify(appVersionInfo),
+  },
   resolve: {
     alias: {
       '@': `${root}/src`,

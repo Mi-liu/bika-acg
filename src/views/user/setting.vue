@@ -21,12 +21,13 @@ import { pictureQuality } from '@/constants/options'
 import { apiProxy, fileProxy } from '@/services/config'
 import { useLocalStoreHook } from '@/store/modules/local'
 import { useSettingStoreHook } from '@/store/modules/setting'
+import { currentVersionInfo } from '@/utils/appVersion'
 
 const settingStore = useSettingStoreHook()
 const localStore = useLocalStoreHook()
 
 const appName = import.meta.env.VITE_APP_NAME
-const appVersion = import.meta.env.VITE_APP_VERSION
+const appVersion = currentVersionInfo.version
 
 const importDialogVisible = ref(false)
 const importFile = ref<File | null>(null)
