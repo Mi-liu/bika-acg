@@ -62,7 +62,7 @@ const { loading, data, run: fetchComics } = useRequest<Comics['comics'], [T & { 
       total: 0,
       page: 1,
       pages: 0,
-      limit: DEFAULT_PAGE_SIZE,
+      limit: props.pageSize,
     } as Comics['comics'],
     onError: (error) => {
       console.error('获取漫画列表失败:', error)
@@ -399,6 +399,7 @@ defineExpose({
             <div class="relative z-2 mt-1 flex flex-wrap gap-2">
               <el-tag
                 v-for="tag in item.categories" :key="tag" closable
+                class="comic-category-tag"
                 type="primary" effect="plain"
                 @close="handleCloseTag(tag)" @click.stop="handleTagClick(tag)"
               >
@@ -459,6 +460,10 @@ defineExpose({
     outline: 2px solid var(--el-color-primary);
     outline-offset: -2px;
   }
+}
+
+.comic-category-tag {
+  cursor: pointer;
 }
 
 button {
