@@ -47,6 +47,6 @@ const nowWeather = computed(() => data.value)
     <!-- {{ nowWeather.location.name }} -->
     {{ nowWeather.now.text }}
     {{ nowWeather.now.temperature }}°C
-    <img class="h-24px ml-1" :src="weatherImagesMap.get(nowWeather.now.code)">
+    <img class="h-20px ml-1.5" :src="weatherImagesMap.get(nowWeather.now.code)">
   </div>
 </template>

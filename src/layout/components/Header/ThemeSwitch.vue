@@ -50,6 +50,7 @@ function handleThemeCommand(command: string | number | object) {
   <el-dropdown trigger="click" placement="bottom-end" @command="handleThemeCommand">
     <el-button
       circle
+      size="default"
       class="theme-switch-button"
       :aria-label="`切换主题，当前${currentThemeOption.label}`"
     >

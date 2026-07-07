@@ -20,11 +20,11 @@ const settingStore = useSettingStoreHook()
       <Logo />
       <Ranking v-if="settingStore.comic.enableR18Content" />
     </div>
-    <div class="flex items-center gap-15px">
+    <div class="flex items-center gap-13px">
       <Search />
       <ThemeSwitch />
-      <Weather />
       <ProxySwitch />
+      <Weather />
       <User />
     </div>
   </header>
