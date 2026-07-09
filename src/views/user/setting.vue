@@ -205,23 +205,25 @@ function handleCloseAuthor(author: string) {
     <main class="settings-page">
       <header class="settings-hero">
         <div class="hero-copy">
+          <span class="eyebrow">偏好中心</span>
+          <h1>设置</h1>
           <p>快速调整漫画阅读体验、代理线路、过滤规则，并管理本地备份数据。</p>
         </div>
 
         <div class="hero-status-grid" aria-label="当前设置概览">
-          <div class="hero-status-card">
+          <div class="hero-status-card is-primary">
             <span>画质</span>
             <strong>{{ currentImageQuality }}</strong>
           </div>
-          <div class="hero-status-card">
+          <div class="hero-status-card is-success">
             <span>阅读宽度</span>
             <strong>{{ settingStore.comic.comicImageWidth }}px</strong>
           </div>
-          <div class="hero-status-card">
+          <div class="hero-status-card is-warning">
             <span>主题</span>
             <strong>{{ currentTheme }}</strong>
           </div>
-          <div class="hero-status-card">
+          <div class="hero-status-card is-danger">
             <span>隐私模式</span>
             <strong>{{ settingStore.comic.privacyMode ? '开启' : '关闭' }}</strong>
           </div>
@@ -602,29 +604,39 @@ function handleCloseAuthor(author: string) {
 .settings-scrollbar {
   height: 100%;
   background:
-    radial-gradient(circle at 8% 0%, var(--el-color-primary-light-8), transparent 32%),
-    linear-gradient(135deg, var(--el-fill-color-extra-light) 0%, var(--el-bg-color-page) 100%);
+    linear-gradient(180deg, var(--el-fill-color-extra-light) 0%, var(--el-bg-color-page) 42%),
+    var(--el-bg-color-page);
 }
 
 .settings-page {
-  width: min(1180px, calc(100% - 32px));
+  width: min(1200px, calc(100% - 40px));
   min-height: 100%;
-  padding: 24px 0 40px;
+  padding: 28px 0 44px;
   margin: 0 auto;
 }
 
 .settings-hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 420px);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
+  gap: 28px;
   align-items: stretch;
-  padding: 28px;
-  margin-bottom: 24px;
+  padding: 32px;
+  margin-bottom: 26px;
   overflow: hidden;
-  background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--el-color-primary-light-9) 62%, var(--el-bg-color)) 0%, var(--el-bg-color) 48%, var(--el-fill-color-extra-light) 100%);
+  border: 1px solid color-mix(in srgb, var(--el-color-primary-light-7) 50%, var(--el-border-color-light));
   border-radius: 8px;
-  box-shadow: var(--el-box-shadow-light);
+  box-shadow: 0 18px 42px color-mix(in srgb, var(--el-color-primary) 10%, transparent);
+
+  &::before {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 4px;
+    content: '';
+    background: linear-gradient(90deg, var(--el-color-primary), var(--el-color-success), var(--el-color-warning));
+  }
 }
 
 .hero-copy {
@@ -635,10 +647,10 @@ function handleCloseAuthor(author: string) {
 
   h1 {
     max-width: 640px;
-    margin: 12px 0 10px;
-    font-size: 30px;
-    font-weight: 750;
-    line-height: 1.25;
+    margin: 10px 0 8px;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.18;
     color: var(--el-text-color-primary);
     letter-spacing: 0;
   }
@@ -657,12 +669,12 @@ function handleCloseAuthor(author: string) {
   align-items: center;
   width: fit-content;
   gap: 8px;
-  padding: 6px 10px;
-  font-size: 13px;
+  padding: 6px 12px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--el-color-primary);
   background: var(--el-color-primary-light-9);
-  border: 1px solid var(--el-color-primary-light-7);
+  border: 1px solid color-mix(in srgb, var(--el-color-primary) 18%, var(--el-color-primary-light-7));
   border-radius: 6px;
 }
 
@@ -674,11 +686,36 @@ function handleCloseAuthor(author: string) {
 }
 
 .hero-status-card {
+  --status-color: var(--el-color-primary);
+
+  position: relative;
   min-width: 0;
-  padding: 14px;
-  background: var(--el-fill-color-extra-light);
-  border: 1px solid var(--el-border-color-lighter);
+  padding: 15px 16px 14px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--el-bg-color) 92%, var(--status-color));
+  border: 1px solid color-mix(in srgb, var(--status-color) 22%, var(--el-border-color-lighter));
   border-radius: 8px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--status-color) 8%, transparent);
+
+  &::before {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    content: '';
+    background: var(--status-color);
+  }
+
+  &.is-success {
+    --status-color: var(--el-color-success);
+  }
+
+  &.is-warning {
+    --status-color: var(--el-color-warning);
+  }
+
+  &.is-danger {
+    --status-color: var(--el-color-danger);
+  }
 
   span,
   strong {
@@ -692,11 +729,12 @@ function handleCloseAuthor(author: string) {
   span {
     margin-bottom: 8px;
     font-size: 12px;
+    font-weight: 650;
     color: var(--el-text-color-secondary);
   }
 
   strong {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 750;
     line-height: 1.2;
     color: var(--el-text-color-primary);
@@ -705,7 +743,7 @@ function handleCloseAuthor(author: string) {
 
 .settings-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 330px;
+  grid-template-columns: minmax(0, 1fr) 340px;
   gap: 24px;
   align-items: start;
 }
@@ -725,20 +763,20 @@ function handleCloseAuthor(author: string) {
 
 .settings-panel {
   min-width: 0;
-  padding: 22px;
+  padding: 24px;
   background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-light);
+  border: 1px solid color-mix(in srgb, var(--el-border-color-light) 82%, transparent);
   border-radius: 8px;
-  box-shadow: var(--el-box-shadow-lighter);
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--el-text-color-primary) 6%, transparent);
 }
 
 .compact-panel {
-  padding: 20px;
+  padding: 22px;
 }
 
 .panel-header {
-  padding-bottom: 16px;
-  margin-bottom: 4px;
+  padding-bottom: 18px;
+  margin-bottom: 2px;
   border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
@@ -750,7 +788,7 @@ function handleCloseAuthor(author: string) {
   h2 {
     margin: 0;
     font-size: 18px;
-    font-weight: 750;
+    font-weight: 800;
     line-height: 1.35;
     color: var(--el-text-color-primary);
     letter-spacing: 0;
@@ -766,15 +804,15 @@ function handleCloseAuthor(author: string) {
 
 .panel-icon {
   display: inline-flex;
-  flex: 0 0 38px;
+  flex: 0 0 40px;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   font-size: 20px;
   color: var(--el-color-primary);
   background: var(--el-color-primary-light-9);
-  border: 1px solid var(--el-color-primary-light-7);
+  border: 1px solid color-mix(in srgb, var(--el-color-primary) 20%, var(--el-color-primary-light-7));
   border-radius: 8px;
 }
 
@@ -812,18 +850,23 @@ function handleCloseAuthor(author: string) {
   gap: 20px;
   align-items: center;
   justify-content: space-between;
-  min-height: 72px;
-  padding: 16px 0;
+  min-height: 76px;
+  padding: 18px 0;
   border-bottom: 1px solid var(--el-border-color-lighter);
+  transition: background-color 180ms ease, border-color 180ms ease;
 
   &:last-child {
     border-bottom: 0;
+  }
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--el-color-primary) 22%, var(--el-border-color-lighter));
   }
 }
 
 .setting-row-stacked {
   display: grid;
-  grid-template-columns: minmax(190px, 260px) minmax(0, 1fr);
+  grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
   align-items: center;
 }
 
@@ -837,7 +880,7 @@ function handleCloseAuthor(author: string) {
   gap: 6px;
   margin-bottom: 5px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 750;
   line-height: 1.4;
   color: var(--el-text-color-primary);
 }
@@ -847,10 +890,10 @@ function handleCloseAuthor(author: string) {
   max-width: 100%;
   overflow: hidden;
   font-size: 13px;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--el-text-color-secondary);
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .help-icon {
@@ -859,14 +902,31 @@ function handleCloseAuthor(author: string) {
 }
 
 .setting-control {
-  width: 220px;
+  width: 240px;
 }
 
 .theme-mode-group {
   flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 
   :deep(.el-radio-button__inner) {
-    min-height: 40px;
+    min-height: 42px;
+    padding: 11px 14px;
+    border-left: var(--el-border);
+    border-radius: 8px;
+    box-shadow: none;
+    transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
+  }
+
+  :deep(.el-radio-button:first-child .el-radio-button__inner),
+  :deep(.el-radio-button:last-child .el-radio-button__inner) {
+    border-radius: 8px;
+  }
+
+  :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner) {
+    border-color: var(--el-color-primary);
   }
 }
 
@@ -882,7 +942,7 @@ function handleCloseAuthor(author: string) {
 }
 
 .tag-group {
-  padding: 16px 0;
+  padding: 18px 0;
   border-bottom: 1px solid var(--el-border-color-lighter);
 
   &:last-child {
@@ -914,6 +974,11 @@ function handleCloseAuthor(author: string) {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+
+  :deep(.el-tag) {
+    min-height: 30px;
+    border-radius: 6px;
+  }
 }
 
 .stat-list {
@@ -928,8 +993,8 @@ function handleCloseAuthor(author: string) {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 12px;
-  background: var(--el-fill-color-extra-light);
+  padding: 13px 14px;
+  background: linear-gradient(135deg, var(--el-fill-color-extra-light), var(--el-bg-color));
   border: 1px solid var(--el-border-color-lighter);
   border-radius: 8px;
 
@@ -961,7 +1026,9 @@ function handleCloseAuthor(author: string) {
   :deep(.el-button) {
     justify-content: flex-start;
     width: 100%;
+    min-height: 42px;
     margin-left: 0;
+    border-radius: 8px;
   }
 }
 
@@ -1017,6 +1084,15 @@ function handleCloseAuthor(author: string) {
   border-radius: 8px;
 }
 
+:deep(.el-select .el-input__wrapper),
+:deep(.el-input-number .el-input__wrapper) {
+  min-height: 42px;
+}
+
+:deep(.el-switch) {
+  min-height: 44px;
+}
+
 :deep(.el-empty) {
   padding: 18px 0;
 }
@@ -1033,13 +1109,15 @@ function handleCloseAuthor(author: string) {
 
   .settings-aside {
     position: static;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 720px) {
   .settings-page {
-    width: min(100% - 20px, 1180px);
-    padding: 12px 0 28px;
+    width: min(100% - 20px, 1200px);
+    padding: 12px 0 30px;
   }
 
   .settings-hero,
@@ -1048,7 +1126,7 @@ function handleCloseAuthor(author: string) {
   }
 
   .hero-copy h1 {
-    font-size: 24px;
+    font-size: 26px;
   }
 
   .hero-status-grid {
@@ -1067,8 +1145,36 @@ function handleCloseAuthor(author: string) {
     width: 100%;
   }
 
-  .setting-help {
-    white-space: normal;
+  .theme-mode-group,
+  .settings-aside {
+    grid-template-columns: 1fr;
+  }
+
+  .theme-mode-group {
+    :deep(.el-radio-button) {
+      flex: 1 1 100%;
+    }
+
+    :deep(.el-radio-button__inner) {
+      width: 100%;
+    }
+  }
+
+  :deep(.el-slider__runway.show-input) {
+    margin-right: 0;
+  }
+
+  :deep(.el-slider__input) {
+    position: static;
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .setting-row,
+  .theme-mode-group :deep(.el-radio-button__inner) {
+    transition: none;
   }
 }
 </style>
