@@ -111,12 +111,7 @@ export interface UserProfile {
 export function getUserProfile() {
   return alova.Get<{
     user: UserProfile
-  }>('users/profile', {
-    cacheFor: {
-      mode: 'restore',
-      expire: 60 * 10 * 1000,
-    },
-  })
+  }>('users/profile')
 }
 
 /**
