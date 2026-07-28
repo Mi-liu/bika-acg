@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import type { ScrollbarInstance } from 'element-plus'
-import type { ComicOrderPage, PageData } from '@/api/comic'
-import { CircleCloseFilled, Loading, QuestionFilled, Setting } from '@element-plus/icons-vue'
+import type { ComicDetail, ComicOrderPage, PageData } from '@/api/comic'
+import { ArrowUp, CircleCloseFilled, Loading, QuestionFilled, Setting, Star, StarFilled } from '@element-plus/icons-vue'
+import { Heart, HeartOutline } from '@vicons/ionicons5'
 import { omit } from 'lodash-es'
 import debounce from 'lodash-es/debounce'
-import { getComicDetail, getComicPages } from '@/api/comic'
+import { favorites, getComicDetail, getComicPages, likeComic } from '@/api/comic'
 import { pictureQuality } from '@/constants/options'
 import { addAutoReadScrollListener, useAutoRead } from '@/utils/autoRead'
 import { getImageUrl } from '@/utils/string'
@@ -91,8 +92,11 @@ const pageInfo = reactive<PageData>({
 
 const drawer = ref(false)
 const currentImageIndex = ref(0)
+const showBackToTop = ref(false)
+const comicDetail = ref<ComicDetail>()
 
 getComicDetail(props.id).then((comic) => {
+  comicDetail.value = comic
   layoutStore.updatePageTabSubtitle(pageTabFullPath, comic.title)
 })
 
@@ -174,6 +178,7 @@ const handleScroll = debounce((e: { scrollTop: number, scrollLeft: number }) => 
   preloadImagesAhead(currentImageIndex.value + 1)
 
   const { scrollTop } = e
+  showBackToTop.value = scrollTop > windowInnerHeight.value
   const { scrollHeight, clientHeight } = scrollElement
   const distanceFromBottom = scrollHeight - scrollTop - clientHeight
 
@@ -242,6 +247,44 @@ function updateCurrentImageIndex() {
     return
 
   currentImageIndex.value = getCurrentImageIndex(scrollElement)
+}
+
+function scrollToTop() {
+  scrollbarRef.value?.wrapRef?.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function handleFavoritesClick() {
+  if (comicDetail.value === undefined)
+    return
+
+  const comicId = comicDetail.value._id
+
+  return favorites(comicId).then((action) => {
+    if (comicDetail.value?._id !== comicId)
+      return
+
+    if (action === 'favourite')
+      comicDetail.value.isFavourite = true
+    else if (action === 'un_favourite')
+      comicDetail.value.isFavourite = false
+  })
+}
+
+function handleLikeClick() {
+  if (comicDetail.value === undefined)
+    return
+
+  const comicId = comicDetail.value._id
+
+  return likeComic(comicId).then((action) => {
+    if (comicDetail.value?._id !== comicId)
+      return
+
+    if (action === 'like')
+      comicDetail.value.isLiked = true
+    else if (action === 'unlike')
+      comicDetail.value.isLiked = false
+  })
 }
 
 /**
@@ -405,6 +448,14 @@ getChapterPages(1)
     <div class="h-50px flex justify-between items-center p-3 bg-[--el-color-black] color-[--el-color-white] border-b">
       <!-- 章节标题 -->
       <div class="flex items-center gap-3">
+        <RouterLink
+          v-if="comicDetail"
+          class="chapter-comic-title"
+          :title="comicDetail.title"
+          :to="`/comic/detail/${props.id}`"
+        >
+          {{ comicDetail.title }}
+        </RouterLink>
         <div class="font-medium">{{ chapterInfo.title || '加载中...' }}</div>
         <div class="text-sm opacity-75">共{{ maxChapterNum }}章</div>
         <div
@@ -432,6 +483,36 @@ getChapterPages(1)
 
       <!-- 章节导航按钮 -->
       <div class="flex items-center gap-2">
+        <el-tooltip :content="comicDetail?.isFavourite ? '取消收藏' : '收藏漫画'" placement="bottom">
+          <el-icon
+            class="chapter-comic-action"
+            :class="{ 'is-favourite': comicDetail?.isFavourite }"
+            role="button"
+            tabindex="0"
+            :aria-label="comicDetail?.isFavourite ? '取消收藏' : '收藏漫画'"
+            :aria-pressed="comicDetail?.isFavourite"
+            @click="handleFavoritesClick"
+            @keydown.enter="handleFavoritesClick"
+            @keydown.space.prevent="handleFavoritesClick"
+          >
+            <component :is="comicDetail?.isFavourite ? StarFilled : Star" />
+          </el-icon>
+        </el-tooltip>
+        <el-tooltip :content="comicDetail?.isLiked ? '取消喜欢' : '喜欢'" placement="bottom">
+          <el-icon
+            class="chapter-comic-action"
+            :class="{ 'is-liked': comicDetail?.isLiked }"
+            role="button"
+            tabindex="0"
+            :aria-label="comicDetail?.isLiked ? '取消喜欢' : '喜欢'"
+            :aria-pressed="comicDetail?.isLiked"
+            @click="handleLikeClick"
+            @keydown.enter="handleLikeClick"
+            @keydown.space.prevent="handleLikeClick"
+          >
+            <component :is="comicDetail?.isLiked ? Heart : HeartOutline" />
+          </el-icon>
+        </el-tooltip>
         <el-button
           :disabled="!canGoPrevChapter" text bg
           @click="prevChapter"
@@ -480,6 +561,17 @@ getChapterPages(1)
     </div>
 
     <!-- 设置悬浮面板 -->
+    <el-tooltip content="回到顶部" placement="left">
+      <el-button
+        v-show="showBackToTop"
+        class="chapter-back-to-top"
+        :icon="ArrowUp"
+        circle
+        aria-label="回到顶部"
+        @click="scrollToTop"
+      />
+    </el-tooltip>
+
     <div
       class="chapter-settings-fab"
       @mouseenter="drawer = true"
@@ -593,6 +685,59 @@ getChapterPages(1)
   align-items: flex-end;
 }
 
+.chapter-comic-action {
+  font-size: 20px;
+  color: rgb(255 255 255 / 78%);
+  cursor: pointer;
+}
+
+.chapter-comic-title {
+  max-width: min(36vw, 320px);
+  overflow: hidden;
+  color: var(--el-color-white);
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chapter-comic-title:hover,
+.chapter-comic-title:focus-visible {
+  color: var(--el-color-primary-light-3);
+}
+
+.chapter-comic-action:hover,
+.chapter-comic-action:focus-visible {
+  color: var(--el-color-white);
+}
+
+.chapter-comic-action:focus-visible {
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--el-color-primary-light-3);
+}
+
+.chapter-comic-action.is-favourite {
+  color: var(--el-color-warning-light-3);
+}
+
+.chapter-comic-action.is-liked {
+  color: var(--el-color-danger);
+}
+
+.chapter-back-to-top {
+  position: fixed;
+  right: 24px;
+  bottom: 82px;
+  z-index: 20;
+  width: 46px;
+  height: 46px;
+  border-color: rgb(255 255 255 / 16%);
+  background: rgb(16 16 16 / 88%);
+  color: var(--el-color-white);
+  box-shadow: 0 10px 30px rgb(0 0 0 / 35%);
+}
+
 .chapter-settings-panel {
   position: absolute;
   right: 0;
@@ -619,6 +764,13 @@ getChapterPages(1)
 
 .chapter-settings-trigger:hover,
 .chapter-settings-trigger:focus-visible {
+  border-color: var(--el-color-primary);
+  background: rgb(24 24 24 / 96%);
+  color: var(--el-color-primary-light-3);
+}
+
+.chapter-back-to-top:hover,
+.chapter-back-to-top:focus-visible {
   border-color: var(--el-color-primary);
   background: rgb(24 24 24 / 96%);
   color: var(--el-color-primary-light-3);

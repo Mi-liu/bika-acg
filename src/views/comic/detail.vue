@@ -193,14 +193,16 @@ function handleLikeClick() {
     })
 }
 
-function handleEpsClick(chapterNum: number) {
-  router.push({
+async function handleEpsClick(chapterNum: number) {
+  await router.push({
     path: `/comic/chapter/${props.id}`,
     query: {
       chapter: chapterNum,
       maxChapter: maxChapter.value,
     },
   })
+
+  layoutStore.removePageTab(pageTabFullPath)
 }
 
 function handleStatisticClick(prop: (typeof toolList)[number]['prop']) {
