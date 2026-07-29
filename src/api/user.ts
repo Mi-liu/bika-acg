@@ -1,4 +1,4 @@
-import type { Comics, ComicsParams, PageData } from './comic'
+import type { Comic, Comics, ComicsParams, PageData } from './comic'
 import alova from '@/services'
 
 /**
@@ -143,6 +143,8 @@ interface Comments {
         _id: string
         /** 漫画标题 */
         title: string
+        /** 漫画封面 */
+        thumb?: Comic['thumb']
       }
     }[]
   } & PageData
