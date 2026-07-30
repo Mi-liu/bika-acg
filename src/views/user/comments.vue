@@ -292,7 +292,7 @@ h1 {
 
 .comment-card:hover,
 .comment-card:focus-within {
-  border-color: var(--el-color-primary-light-6);
+  border-color: var(--el-color-primary);
   box-shadow: var(--el-box-shadow);
 }
 
