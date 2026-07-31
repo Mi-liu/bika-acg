@@ -227,13 +227,6 @@ const useLocalStore = defineStore('local', () => {
 }, {
   // 本地存储不需要持久化到 localStorage（已经使用 localforage）
   persist: false,
-  multiWindowSync: {
-    enabled: true,
-    debounce: 300,
-    conflictResolution: 'merge',
-    // 同步关注作者和稍后观看列表
-    include: ['local'],
-  },
 })
 
 /**

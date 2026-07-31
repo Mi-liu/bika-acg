@@ -76,12 +76,6 @@ const useLayoutStore = defineStore('layout', () => {
   return { header, pageTabs, upsertPageTab, updatePageTabSubtitle, removePageTab }
 }, {
   persist: true,
-  multiWindowSync: {
-    enabled: true,
-    debounce: 150,
-    conflictResolution: 'latest',
-    include: ['pageTabs'],
-  },
 })
 
 export function useLayoutStoreHook() {

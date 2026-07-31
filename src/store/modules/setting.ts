@@ -110,11 +110,6 @@ const useSettingStore = defineStore(
     persist: {
       beforeHydrate: migratePersistedSettingStorage,
     },
-    multiWindowSync: {
-      enabled: true,
-      debounce: 200,
-      conflictResolution: 'latest',
-    },
   },
 )
 
